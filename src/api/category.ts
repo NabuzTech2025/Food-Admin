@@ -31,7 +31,7 @@ export const getCategory = async (
 ): Promise<Category[]> => {
   try {
     const res = await axiosInstance.get(`categories/`, {
-      params: { store_id },
+      params: { store_id, include_inactive: true },
     });
     return Array.isArray(res.data) ? res.data : (res.data.data ?? []);
   } catch (error) {
@@ -45,7 +45,6 @@ export const addCategory = async (
   payload: CategoryPayload,
 ): Promise<Category> => {
   try {
-    console.log("payload ==========>", payload);
     const res = await axiosInstance.post(`/categories/`, payload);
     return res.data;
   } catch (error) {
@@ -64,6 +63,28 @@ export const updateCategory = async (
     return res.data;
   } catch (error) {
     console.error("Update Category Error:", error);
+    throw error;
+  }
+};
+
+export const changeCategoryStatus = async (
+  id: number,
+  payload: CategoryPayload,
+): Promise<Category> => {
+  try {
+    const res = await axiosInstance.put(`categories/${id}`, payload);
+    return res.data;
+  } catch (error) {
+    console.error("Change Category Status Error:", error);
+    throw error;
+  }
+};
+
+export const deleteCategory = async (id: number): Promise<void> => {
+  try {
+    await axiosInstance.delete(`categories/${id}`);
+  } catch (error) {
+    console.error("Delete Category Error:", error);
     throw error;
   }
 };

@@ -1,6 +1,8 @@
 // src/pages/Admin/Category.tsx
 import { useState } from "react";
 import { Search, Loader2, Pencil, Trash2, Plus } from "lucide-react";
+import { toast } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -12,8 +14,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useAdminStore } from "@/context/store/useAdminStore";
-import { useGetCategory } from "@/hooks/useCategory";
+import {
+  useGetCategory,
+  useDeleteCategory,
+  useChangeCategoryStatus,
+} from "@/hooks/useCategory";
 import CategoryForm from "@/components/Forms/CategoryForm";
 import type { Category } from "@/api/category";
 
@@ -22,8 +38,13 @@ function CategoryPage() {
   const [search, setSearch] = useState("");
   const [formOpen, setFormOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const { data: categories, isLoading } = useGetCategory(store_id);
+  const { mutateAsync: deleteCategory, isPending: isDeleting } =
+    useDeleteCategory();
+  const { mutateAsync: changeStatus } = useChangeCategoryStatus();
 
   const filtered = (Array.isArray(categories) ? categories : []).filter(
     (c) =>
@@ -47,8 +68,45 @@ function CategoryPage() {
     setEditingCategory(null);
   };
 
+  const handleDeleteConfirm = async () => {
+    if (!deletingId) return;
+    try {
+      await deleteCategory(deletingId);
+      toast.success("Category deleted successfully");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to delete category");
+    } finally {
+      setDeleteDialogOpen(false);
+      setDeletingId(null);
+    }
+  };
+
+  const handleToggleStatus = async (item: Category) => {
+    try {
+      await changeStatus({
+        id: item.id,
+        payload: {
+          isActive: !item.isActive,
+          name: item.name,
+          store_id: store_id!,
+          tax_id: item.tax?.id ?? null,
+          image_url: item.image_url ?? "",
+          description: item.description ?? "",
+          display_order: item.display_order,
+        },
+      });
+      toast.success(
+        `Category ${!item.isActive ? "activated" : "deactivated"} successfully`,
+      );
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to change status");
+    }
+  };
+
   return (
     <div className="space-y-4">
+      <Toaster />
+
       <div className="bg-white rounded-xl border border-border shadow-sm">
         {/* Card Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-5 py-4 border-b border-border">
@@ -70,7 +128,7 @@ function CategoryPage() {
             </div>
             <Button
               onClick={openAddForm}
-              className="flex items-center gap-1 whitespace-nowrap cursor-pointer"
+              className="flex items-center gap-1 whitespace-nowrap"
             >
               <Plus size={16} />
               <span className="hidden sm:inline">Add New</span>
@@ -159,11 +217,12 @@ function CategoryPage() {
                     </TableCell>
                     <TableCell>
                       <Badge
-                        className={
+                        onClick={() => handleToggleStatus(item)}
+                        className={`cursor-pointer ${
                           item.isActive
-                            ? "bg-green-100 text-green-700 hover:bg-green-100"
-                            : "bg-gray-100 text-gray-500 hover:bg-gray-100"
-                        }
+                            ? "bg-green-100 text-green-700 hover:bg-green-200"
+                            : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                        }`}
                       >
                         {item.isActive ? "Active" : "Inactive"}
                       </Badge>
@@ -174,7 +233,7 @@ function CategoryPage() {
                           size="sm"
                           variant="outline"
                           onClick={() => openEditForm(item)}
-                          className="flex items-center gap-1 h-8 cursor-pointer"
+                          className="flex items-center gap-1 h-8"
                         >
                           <Pencil size={13} />
                           Edit
@@ -182,7 +241,11 @@ function CategoryPage() {
                         <Button
                           size="sm"
                           variant="destructive"
-                          className="flex items-center gap-1 h-8 cursor-pointer"
+                          onClick={() => {
+                            setDeletingId(item.id);
+                            setDeleteDialogOpen(true);
+                          }}
+                          className="flex items-center gap-1 h-8"
                         >
                           <Trash2 size={13} />
                           Delete
@@ -241,10 +304,11 @@ function CategoryPage() {
                         ` · Order: ${item.display_order}`}
                     </p>
                     <Badge
-                      className={`mt-1 text-xs ${
+                      onClick={() => handleToggleStatus(item)}
+                      className={`mt-1 text-xs cursor-pointer ${
                         item.isActive
-                          ? "bg-green-100 text-green-700 hover:bg-green-100"
-                          : "bg-gray-100 text-gray-500 hover:bg-gray-100"
+                          ? "bg-green-100 text-green-700 hover:bg-green-200"
+                          : "bg-gray-100 text-gray-500 hover:bg-gray-200"
                       }`}
                     >
                       {item.isActive ? "Active" : "Inactive"}
@@ -256,14 +320,18 @@ function CategoryPage() {
                     size="sm"
                     variant="outline"
                     onClick={() => openEditForm(item)}
-                    className="h-8 w-8 p-0 cursor-pointer"
+                    className="h-8 w-8 p-0"
                   >
                     <Pencil size={13} />
                   </Button>
                   <Button
                     size="sm"
                     variant="destructive"
-                    className="h-8 w-8 p-0 cursor-pointer"
+                    onClick={() => {
+                      setDeletingId(item.id);
+                      setDeleteDialogOpen(true);
+                    }}
+                    className="h-8 w-8 p-0"
                   >
                     <Trash2 size={13} />
                   </Button>
@@ -286,13 +354,45 @@ function CategoryPage() {
         </div>
       </div>
 
-      {/* Single form for both Add and Edit */}
+      {/* Add / Edit Form */}
       <CategoryForm
         open={formOpen}
         onClose={handleFormClose}
         existingCategories={categories ?? []}
         editData={editingCategory}
       />
+
+      {/* Delete Confirm Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="mx-4 sm:mx-auto rounded-xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Category</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this category? This action cannot
+              be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col-reverse sm:flex-row gap-2">
+            <AlertDialogCancel
+              onClick={() => setDeleteDialogOpen(false)}
+              className="w-full sm:w-auto mt-0"
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              disabled={isDeleting}
+              className="bg-destructive hover:bg-destructive/90 w-full sm:w-auto"
+            >
+              {isDeleting ? (
+                <Loader2 className="animate-spin" size={16} />
+              ) : (
+                "Delete"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

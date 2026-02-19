@@ -42,7 +42,6 @@ export const updateTax = async (
 ): Promise<Tax> => {
   try {
     const res = await axiosInstance.put(`taxes/${id}`, payload);
-    console.log("res ========>", res);
     return res.data;
   } catch (error) {
     console.error("Update Tax Error:", error);
