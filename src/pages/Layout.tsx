@@ -116,7 +116,7 @@ function AdminLayout() {
         {/* Logo */}
         <div className="h-16 flex items-center justify-center relative flex-shrink-0 border-b border-gray-100">
           {role_id === 1 ? (
-            <img src="/super-admin-logo.png" alt="" className="w-80" />
+            <img src="/super-admin-logo.png" alt="" className="w-36" />
           ) : (
             <h1 className="font-semibold text-primary">Store Name</h1>
           )}

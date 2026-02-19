@@ -49,8 +49,8 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-md mx-auto space-y-6 shadow-lg p-8 rounded-lg bg-card border border-border z-20">
-      <div className="flex flex-col items-center mb-10">
-        <img src="/brand.svg" className="w-52" />
+      <div className="flex flex-col items-center">
+        <img src="/super-admin-logo.png" className="w-52" />
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
         <div className="space-y-2">
