@@ -13,6 +13,7 @@ import Toppings from "./pages/Product/Toppings";
 import ToppingGroups from "./pages/Product/ToppingGroups";
 import GroupItem from "./pages/Product/GroupItem";
 import VariantGroups from "./pages/Product/Variant-groups";
+import DeliveryZonePage from "./pages/Delivery_Zone";
 function App() {
   const queryClient = new QueryClient();
   const loadFromStorage = useAdminStore((state) => state.loadFromStorage);
@@ -50,6 +51,7 @@ function App() {
                 path="product/variant-groups"
                 element={<VariantGroups />}
               />
+              <Route path="delivery-zone" element={<DeliveryZonePage />} />
             </Route>
           </Routes>
         </BrowserRouter>

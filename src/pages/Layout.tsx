@@ -1,6 +1,13 @@
 import Header from "@/components/Header";
 import { useAdminStore } from "@/context/store/useAdminStore";
-import { Home, Landmark, ShoppingCart, X, ChevronDown } from "lucide-react";
+import {
+  Home,
+  Landmark,
+  ShoppingCart,
+  X,
+  ChevronDown,
+  LandPlot,
+} from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
@@ -47,6 +54,11 @@ function AdminLayout() {
                 link: "/admin/product/variant-groups",
               },
             ],
+          },
+          {
+            name: "Delivery Zone",
+            icon: LandPlot,
+            link: "/admin/delivery-zone",
           },
         ];
 
