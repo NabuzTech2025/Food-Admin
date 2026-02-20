@@ -47,7 +47,7 @@ axiosInstance.interceptors.response.use(
       // ✅ Remove AdminData (not userData)
       localStorage.removeItem("AdminData");
       // ✅ Redirect to admin login (not /login)
-      window.location.href = "/admin/login";
+      window.location.href = "/admin-login";
     }
     return Promise.reject(error);
   },
