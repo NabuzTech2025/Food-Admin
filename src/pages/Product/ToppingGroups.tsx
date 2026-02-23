@@ -1,5 +1,5 @@
 import React from "react";
 
-export default function ToppingGroups() {
-  return <div>ToppingGroups</div>;
+export default function Toppings() {
+  return <div>Toppingsgroup</div>;
 }
