@@ -7,6 +7,7 @@ import {
   X,
   ChevronDown,
   Salad,
+  LandPlot,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
@@ -63,6 +64,11 @@ function AdminLayout() {
               { name: "Add Allergy", link: "/admin/allergy/add-allergy" },
               { name: "Item Allergy", link: "/admin/allergy/item-allergy" },
             ],
+          },
+          {
+            name: "Delivery Zone",
+            icon: LandPlot,
+            link: "/admin/delivery-zone",
           },
         ];
 
