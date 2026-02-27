@@ -30,7 +30,7 @@ import {
 } from "@/hooks/useToppingGroup";
 import ToppingGroupForm from "@/components/Forms/ToppingGroupForm";
 import { toast } from "sonner";
-import type { ToppingGroup } from "@/api/toppingGroup";
+import type { ToppingGroup } from "@/api/toppingsGroup";
 
 function ToppingGroupPage() {
   const { store_id } = useAdminStore();
