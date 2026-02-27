@@ -99,10 +99,11 @@ function AllergyForm({ open, onClose, editData }: AllergyFormProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-lg w-[calc(100%-2rem)] rounded-xl p-0 flex flex-col max-h-[90vh] overflow-hidden gap-0">
+      {/* ── BADA card: max-w-xl, taller ── */}
+      <DialogContent className="sm:max-w-xl w-[calc(100%-2rem)] rounded-xl p-0 flex flex-col max-h-[90vh] overflow-hidden gap-0">
         {/* Sticky Header */}
-        <div className="flex-shrink-0 px-6 py-4 border-b bg-white rounded-t-xl">
-          <DialogTitle className="text-base font-semibold">
+        <div className="flex-shrink-0 px-8 py-5 border-b bg-white rounded-t-xl">
+          <DialogTitle className="text-lg font-semibold">
             {isEditMode ? "Edit Allergy" : "Add New Allergy"}
           </DialogTitle>
         </div>
@@ -112,10 +113,10 @@ function AllergyForm({ open, onClose, editData }: AllergyFormProps) {
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col flex-1 min-h-0"
         >
-          <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+          <div className="flex-1 overflow-y-auto px-8 py-8 space-y-6">
             {/* Name */}
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">
+              <label className="text-sm font-semibold text-neutral-700">
                 Allergy Name <span className="text-destructive">*</span>
               </label>
               <Input
@@ -127,7 +128,9 @@ function AllergyForm({ open, onClose, editData }: AllergyFormProps) {
 
             {/* Description — ReactQuill */}
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">Description</label>
+              <label className="text-sm font-semibold text-neutral-700">
+                Description
+              </label>
               <Controller
                 name="description"
                 control={control}
@@ -139,7 +142,7 @@ function AllergyForm({ open, onClose, editData }: AllergyFormProps) {
                       onChange={field.onChange}
                       placeholder="Write detailed description..."
                       modules={QUILL_MODULES}
-                      style={{ minHeight: "150px" }}
+                      style={{ minHeight: "180px" }}
                     />
                   </div>
                 )}
@@ -148,19 +151,19 @@ function AllergyForm({ open, onClose, editData }: AllergyFormProps) {
           </div>
 
           {/* Sticky Footer */}
-          <div className="flex-shrink-0 flex flex-col-reverse sm:flex-row justify-end gap-2 px-6 py-4 border-t bg-white rounded-b-xl">
+          <div className="flex-shrink-0 flex flex-col-reverse sm:flex-row justify-end gap-3 px-8 py-5 border-t bg-white rounded-b-xl">
             <Button
               type="button"
               variant="outline"
               onClick={handleClose}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-32 h-10"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-36 h-10"
             >
               {isLoading ? (
                 <>
