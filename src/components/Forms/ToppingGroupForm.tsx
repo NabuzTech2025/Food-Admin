@@ -11,7 +11,7 @@ import {
   useAddToppingGroup,
   useUpdateToppingGroup,
 } from "@/hooks/useToppingGroup";
-import type { ToppingGroup } from "@/api/toppingGroup";
+import type { ToppingGroup } from "@/api/toppingsGroup";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

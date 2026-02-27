@@ -13,7 +13,10 @@ import {
 } from "@/components/ui/command";
 import { Plus, Check, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
-import type { PhysicalExamOption } from "../Forms/Case/types/CreateCaseForm.type";
+interface PhysicalExamOption {
+  value: string;
+  label: string;
+}
 
 interface Subsection {
   name: string;
