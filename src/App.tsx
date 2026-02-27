@@ -13,6 +13,8 @@ import Toppings from "./pages/Product/Toppings";
 import ToppingGroups from "./pages/Product/ToppingGroups";
 import GroupItem from "./pages/Product/GroupItem";
 import VariantGroups from "./pages/Product/Variant-groups";
+import AddAllergy from "./pages/Allergy/Add-Allergy";
+import ItemAllergy from "./pages/Allergy/Item-Allergy";
 function App() {
   const queryClient = new QueryClient();
   const loadFromStorage = useAdminStore((state) => state.loadFromStorage);
@@ -50,6 +52,10 @@ function App() {
                 path="product/variant-groups"
                 element={<VariantGroups />}
               />
+            </Route>
+            <Route path="/admin/allergy" element={<AdminLayout />}>
+              <Route path="add-allergy" element={<AddAllergy />} />
+              <Route path="item-allergy" element={<ItemAllergy />} />
             </Route>
           </Routes>
         </BrowserRouter>

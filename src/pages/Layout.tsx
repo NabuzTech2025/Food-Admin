@@ -1,6 +1,13 @@
 import Header from "@/components/Header";
 import { useAdminStore } from "@/context/store/useAdminStore";
-import { Home, Landmark, ShoppingCart, X, ChevronDown } from "lucide-react";
+import {
+  Home,
+  Landmark,
+  ShoppingCart,
+  X,
+  ChevronDown,
+  Salad,
+} from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
@@ -46,6 +53,15 @@ function AdminLayout() {
                 name: "Product-Variant Groups",
                 link: "/admin/product/variant-groups",
               },
+            ],
+          },
+          {
+            name: "Allergy",
+            icon: Salad,
+            link: "/admin/allergy",
+            children: [
+              { name: "Add Allergy", link: "/admin/allergy/add-allergy" },
+              { name: "Item Allergy", link: "/admin/allergy/item-allergy" },
             ],
           },
         ];
