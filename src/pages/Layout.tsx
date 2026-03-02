@@ -64,6 +64,11 @@ function AdminLayout() {
               { name: "Item Allergy", link: "/admin/allergy/item-allergy" },
             ],
           },
+          {
+            name: "Category",
+            icon: Salad,
+            link: "/admin/category",
+          },
         ];
 
   // Auto-open parent if a child route is active

@@ -15,6 +15,7 @@ import GroupItem from "./pages/Product/GroupItem";
 import VariantGroups from "./pages/Product/Variant-groups";
 import AddAllergy from "./pages/Allergy/Add-Allergy";
 import ItemAllergy from "./pages/Allergy/Item-Allergy";
+import Categories from "./pages/Categories";
 function App() {
   const queryClient = new QueryClient();
   const loadFromStorage = useAdminStore((state) => state.loadFromStorage);
@@ -56,6 +57,9 @@ function App() {
             <Route path="/admin/allergy" element={<AdminLayout />}>
               <Route path="add-allergy" element={<AddAllergy />} />
               <Route path="item-allergy" element={<ItemAllergy />} />
+            </Route>
+            <Route path="/admin/category" element={<AdminLayout />}>
+              <Route path="/admin/category" element={<Categories />} />
             </Route>
           </Routes>
         </BrowserRouter>
