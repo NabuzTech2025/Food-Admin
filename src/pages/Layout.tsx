@@ -7,6 +7,8 @@ import {
   X,
   ChevronDown,
   Salad,
+  LayoutGrid,
+  Settings2,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
@@ -66,8 +68,14 @@ function AdminLayout() {
           },
           {
             name: "Category",
-            icon: Salad,
+            icon: LayoutGrid,
             link: "/admin/category",
+          },
+
+          {
+            name: "Store Settings",
+            icon: Settings2,
+            link: "/admin/store-settings",
           },
         ];
 
