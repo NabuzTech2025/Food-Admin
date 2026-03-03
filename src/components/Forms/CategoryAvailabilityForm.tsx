@@ -190,7 +190,7 @@ function CategoryAvailabilityForm({
       <DialogContent className="sm:max-w-xl w-[calc(100%-2rem)] rounded-xl p-0 flex flex-col max-h-[90vh] overflow-hidden gap-0">
         {/* Sticky Header */}
         <div className="flex-shrink-0 px-8 py-5 border-b bg-white rounded-t-xl">
-          <DialogTitle className="text-lg font-semibold">
+          <DialogTitle className="text-xl font-semibold">
             {isEditMode
               ? "Edit Category Availability"
               : "Add Category Availability"}
@@ -202,7 +202,7 @@ function CategoryAvailabilityForm({
           <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
             {/* ── Category Select ── */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-neutral-700">
+              <label className="text-base font-semibold text-neutral-700">
                 Select Categories <span className="text-destructive">*</span>
               </label>
               <SearchableSelect
@@ -223,7 +223,7 @@ function CategoryAvailabilityForm({
                   {selectedCategories.map((cat) => (
                     <div
                       key={cat.id}
-                      className="flex items-center gap-1.5 bg-primary/10 text-primary text-sm px-3 py-1.5 rounded-full"
+                      className="flex items-center gap-1.5 bg-primary/10 text-primary text-base px-3 py-1.5 rounded-full"
                     >
                       <span>{cat.name}</span>
                       <button
@@ -242,26 +242,26 @@ function CategoryAvailabilityForm({
             {/* ── Time Fields ── */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-neutral-700">
+                <label className="text-base font-semibold text-neutral-700">
                   Opening Time <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="time"
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
-                  className="w-full h-10 px-3 text-sm rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full h-10 px-3 text-base rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
                   required
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-neutral-700">
+                <label className="text-base font-semibold text-neutral-700">
                   Closing Time <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="time"
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
-                  className="w-full h-10 px-3 text-sm rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full h-10 px-3 text-base rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
                   required
                 />
               </div>
@@ -270,7 +270,7 @@ function CategoryAvailabilityForm({
             {/* ── Day Selection ── */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-neutral-700">
+                <label className="text-base font-semibold text-neutral-700">
                   Select Days <span className="text-destructive">*</span>
                 </label>
                 <button
@@ -291,7 +291,7 @@ function CategoryAvailabilityForm({
                       type="button"
                       title={day.name}
                       onClick={() => toggleDay(day.value)}
-                      className={`w-10 h-10 rounded-full text-xs font-semibold border-2 transition-all cursor-pointer ${
+                      className={`w-11 h-11 rounded-full text-sm font-semibold border-2 transition-all cursor-pointer ${
                         selected
                           ? "bg-primary text-white border-primary"
                           : "bg-white text-neutral-500 border-neutral-200 hover:border-primary hover:text-primary"
@@ -304,7 +304,7 @@ function CategoryAvailabilityForm({
               </div>
 
               {selectedDays.length > 0 && (
-                <p className="text-xs text-neutral-500">
+                <p className="text-sm text-neutral-500">
                   {selectedDays.length} day{selectedDays.length > 1 ? "s" : ""}{" "}
                   selected:{" "}
                   {selectedDays
@@ -326,7 +326,7 @@ function CategoryAvailabilityForm({
               />
               <label
                 htmlFor="isActive"
-                className="text-sm font-medium text-neutral-700 cursor-pointer"
+                className="text-base font-medium text-neutral-700 cursor-pointer"
               >
                 Active
               </label>
