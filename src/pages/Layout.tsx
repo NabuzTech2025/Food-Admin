@@ -78,11 +78,11 @@ function AdminLayout() {
             icon: Settings2,
             link: "/admin/store-settings",
           },
-          // {
-          //   name: "Discount",
-          //   icon: Disc,
-          //   link: "/admin/discount",
-          // }
+          {
+            name: "Discount",
+            icon: Disc,
+            link: "/admin/discount",
+          }
         ];
 
   // Auto-open parent if a child route is active

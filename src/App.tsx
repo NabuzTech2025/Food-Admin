@@ -65,9 +65,9 @@ function App() {
             <Route path="/admin/store-settings" element={<AdminLayout />}>
               <Route path="/admin/store-settings" element={<StoreSettings />} />
             </Route>
-            {/* <Route path="/admin/discount" element={<AdminLayout />}>
+            <Route path="/admin/discount" element={<AdminLayout />}>
               <Route path="/admin/discount" element={<h1>Discount Page</h1>} />
-            </Route> */}
+            </Route>
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>
