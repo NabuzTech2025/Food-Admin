@@ -354,3 +354,5 @@ const translations = {
     select_valid_time: "Bitte gültige Zeit wählen.",
   },
 };
+
+export const currentLanguage = translations.de;

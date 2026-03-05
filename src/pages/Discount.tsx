@@ -205,10 +205,10 @@ function DiscountPage() {
                 </p>
               </div>
             ) : discounts.filter(
-                (d) =>
-                  d.code === "DELIVERY_DISCOUNT" ||
-                  d.code === "PICKUP_DISCOUNT",
-              ).length > 0 ? (
+              (d) =>
+                d.code === "DELIVERY_DISCOUNT" ||
+                d.code === "PICKUP_DISCOUNT",
+            ).length > 0 ? (
               <div>
                 {/* ✅ Table header — properly aligned */}
                 <div className="grid grid-cols-2 px-4 py-2 mb-1">
@@ -251,19 +251,19 @@ function DiscountPage() {
                             <p className="text-xs text-neutral-500">
                               {discount.expires_at
                                 ? new Date(
-                                    discount.expires_at,
-                                  ).toLocaleDateString("de-DE")
+                                  discount.expires_at,
+                                ).toLocaleDateString("de-DE")
                                 : "-"}
                             </p>
                           </div>
                         </div>
 
-                        {/* Right: value — right-aligned, tight */}
-                        <div className="flex flex-col items-end leading-tight">
-                          <span className="text-2xl font-bold text-primary leading-none">
+                        {/* Right: value — right-aligned, properly vertically aligned */}
+                        <div className="flex items-baseline justify-end gap-1.5">
+                          <span className="text-2xl font-bold text-primary">
                             {discount.value}%
                           </span>
-                          <span className="text-xs text-neutral-500 mt-0.5">
+                          <span className="text-sm font-medium text-neutral-500">
                             {currentLanguage.discount}
                           </span>
                         </div>
