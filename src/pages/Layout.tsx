@@ -9,6 +9,7 @@ import {
   Salad,
   LayoutGrid,
   Settings2,
+  Disc,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
@@ -77,6 +78,11 @@ function AdminLayout() {
             icon: Settings2,
             link: "/admin/store-settings",
           },
+          // {
+          //   name: "Discount",
+          //   icon: Disc,
+          //   link: "/admin/discount",
+          // }
         ];
 
   // Auto-open parent if a child route is active
