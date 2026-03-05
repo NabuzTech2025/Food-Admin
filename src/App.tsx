@@ -17,6 +17,8 @@ import AddAllergy from "./pages/Allergy/Add-Allergy";
 import ItemAllergy from "./pages/Allergy/Item-Allergy";
 import Categories from "./pages/Categories";
 import StoreSettings from "./pages/Store-Settings";
+import Discount from "./pages/Discount"; //
+
 function App() {
   const queryClient = new QueryClient();
   const loadFromStorage = useAdminStore((state) => state.loadFromStorage);
@@ -24,6 +26,7 @@ function App() {
   useEffect(() => {
     loadFromStorage();
   }, []);
+
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <QueryClientProvider client={queryClient}>
@@ -31,15 +34,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/admin-login" replace />} />
             <Route path="/admin-login" element={<Login />} />
-            {/* Admin Layout Routes */}
-            <Route
-              path="/admin"
-              element={
-                // <ProtectedRoute userType={["ADMIN"]}>
-                <AdminLayout />
-                // </ProtectedRoute>
-              }
-            >
+
+            {/* ✅ Sab routes ek hi AdminLayout ke andar */}
+            <Route path="/admin" element={<AdminLayout />}>
               <Route index path="dashboard" element={<Dashboard />} />
               <Route path="tax" element={<Tax />} />
               <Route path="product/category" element={<Category />} />
@@ -49,24 +46,16 @@ function App() {
                 path="product/topping-groups"
                 element={<ToppingGroups />}
               />
-              <Route path="product/group-item" element={<GroupItem />} />{" "}
+              <Route path="product/group-item" element={<GroupItem />} />
               <Route
                 path="product/variant-groups"
                 element={<VariantGroups />}
               />
-            </Route>
-            <Route path="/admin/allergy" element={<AdminLayout />}>
-              <Route path="add-allergy" element={<AddAllergy />} />
-              <Route path="item-allergy" element={<ItemAllergy />} />
-            </Route>
-            <Route path="/admin/category" element={<AdminLayout />}>
-              <Route path="/admin/category" element={<Categories />} />
-            </Route>
-            <Route path="/admin/store-settings" element={<AdminLayout />}>
-              <Route path="/admin/store-settings" element={<StoreSettings />} />
-            </Route>
-            <Route path="/admin/discount" element={<AdminLayout />}>
-              <Route path="/admin/discount" element={<h1>Discount Page</h1>} />
+              <Route path="allergy/add-allergy" element={<AddAllergy />} />
+              <Route path="allergy/item-allergy" element={<ItemAllergy />} />
+              <Route path="category" element={<Categories />} />
+              <Route path="store-settings" element={<StoreSettings />} />
+              <Route path="discount" element={<Discount />} />
             </Route>
           </Routes>
         </BrowserRouter>

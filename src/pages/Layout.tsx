@@ -82,7 +82,7 @@ function AdminLayout() {
             name: "Discount",
             icon: Disc,
             link: "/admin/discount",
-          }
+          },
         ];
 
   // Auto-open parent if a child route is active
