@@ -11,8 +11,7 @@ import {
   useAddDiscount,
   useUpdateDiscount,
 } from "@/hooks/useDiscount";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
+import { currentLanguage } from "@/utils/helper/Lang-Trancelate";
 
 interface FormData {
   deliveryValue: string;
@@ -22,8 +21,6 @@ interface FormData {
 
 const FieldError = ({ message }: { message?: string }) =>
   message ? <p className="text-xs text-destructive mt-0.5">{message}</p> : null;
-
-// ─── Component ────────────────────────────────────────────────────────────────
 
 function DiscountPage() {
   const { store_id } = useAdminStore();
@@ -47,7 +44,6 @@ function DiscountPage() {
     formState: { errors },
   } = useForm<FormData>({ mode: "onBlur" });
 
-  // ── Pre-fill form with existing data ──
   useEffect(() => {
     if (discounts.length > 0) {
       reset({
@@ -63,7 +59,6 @@ function DiscountPage() {
 
   const onSubmit = async (data: FormData) => {
     const expiryDate = new Date(data.expiresAt).toISOString();
-
     const deliveryPayload = {
       code: "DELIVERY_DISCOUNT",
       type: "percentage",
@@ -71,7 +66,6 @@ function DiscountPage() {
       expires_at: expiryDate,
       store_id: Number(store_id),
     };
-
     const pickupPayload = {
       code: "PICKUP_DISCOUNT",
       type: "percentage",
@@ -79,7 +73,6 @@ function DiscountPage() {
       expires_at: expiryDate,
       store_id: Number(store_id),
     };
-
     try {
       await Promise.all([
         deliveryDiscount
@@ -89,25 +82,26 @@ function DiscountPage() {
           ? updateItem({ id: pickupDiscount.id, payload: pickupPayload })
           : addItem(pickupPayload),
       ]);
-      toast.success("Discounts saved successfully");
+      toast.success(currentLanguage.save_discounts);
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "Failed to save discounts");
     }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="space-y-4">
+      {/* ── Page Title ── */}
+      <h2 className="text-2xl font-bold text-neutral-800">
+        {currentLanguage.discount_management}
+      </h2>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* ── Left: Form ── */}
         <div className="bg-white rounded-xl border border-border shadow-sm">
-          {/* Header */}
-          <div className="px-6 py-4 border-b">
-            <div className="flex items-center gap-2">
-              <Tag size={18} className="text-primary" />
-              <h2 className="text-base font-semibold text-neutral-800">
-                Set Discount Percentages
-              </h2>
-            </div>
+          <div className="px-6 py-4 border-b flex items-center gap-2">
+            <Tag size={18} className="text-primary" />
+            <h2 className="text-base font-semibold text-neutral-800">
+              {currentLanguage.set_discount_percentages}
+            </h2>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -116,8 +110,8 @@ function DiscountPage() {
               <div className="space-y-1.5">
                 <label className="text-sm font-semibold text-neutral-700 flex items-center gap-1.5">
                   <Truck size={15} className="text-primary" />
-                  Delivery Discount (%)
-                  <span className="text-destructive">*</span>
+                  {currentLanguage.delivery_discount_percentage}
+                  <span className="text-destructive ml-0.5">*</span>
                 </label>
                 <Input
                   type="number"
@@ -126,9 +120,9 @@ function DiscountPage() {
                   max={100}
                   step={1}
                   {...register("deliveryValue", {
-                    required: "Delivery discount is required",
-                    min: { value: 0, message: "Min value is 0" },
-                    max: { value: 100, message: "Max value is 100" },
+                    required: currentLanguage.form_fill_message,
+                    min: { value: 0, message: "Min 0" },
+                    max: { value: 100, message: "Max 100" },
                   })}
                 />
                 <FieldError message={errors.deliveryValue?.message} />
@@ -138,8 +132,8 @@ function DiscountPage() {
               <div className="space-y-1.5">
                 <label className="text-sm font-semibold text-neutral-700 flex items-center gap-1.5">
                   <ShoppingBag size={15} className="text-primary" />
-                  Pickup Discount (%)
-                  <span className="text-destructive">*</span>
+                  {currentLanguage.pickup_discount_percentage}
+                  <span className="text-destructive ml-0.5">*</span>
                 </label>
                 <Input
                   type="number"
@@ -148,9 +142,9 @@ function DiscountPage() {
                   max={100}
                   step={1}
                   {...register("pickupValue", {
-                    required: "Pickup discount is required",
-                    min: { value: 0, message: "Min value is 0" },
-                    max: { value: 100, message: "Max value is 100" },
+                    required: currentLanguage.form_fill_message,
+                    min: { value: 0, message: "Min 0" },
+                    max: { value: 100, message: "Max 100" },
                   })}
                 />
                 <FieldError message={errors.pickupValue?.message} />
@@ -159,21 +153,21 @@ function DiscountPage() {
               {/* Expiry Date */}
               <div className="space-y-1.5">
                 <label className="text-sm font-semibold text-neutral-700">
-                  Expiry Date <span className="text-destructive">*</span>
+                  {currentLanguage.expiry_date}
+                  <span className="text-destructive ml-0.5">*</span>
                 </label>
                 <input
                   type="date"
                   min={new Date().toISOString().split("T")[0]}
                   className="w-full h-10 px-3 text-sm rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
                   {...register("expiresAt", {
-                    required: "Expiry date is required",
+                    required: currentLanguage.form_fill_message,
                   })}
                 />
                 <FieldError message={errors.expiresAt?.message} />
               </div>
             </div>
 
-            {/* Footer */}
             <div className="px-6 py-4 border-t bg-muted/30 rounded-b-xl">
               <Button
                 type="submit"
@@ -183,10 +177,10 @@ function DiscountPage() {
                 {isSaving ? (
                   <>
                     <Loader2 className="animate-spin mr-2" size={16} />
-                    Saving...
+                    {currentLanguage.saving}
                   </>
                 ) : (
-                  "Save Discounts"
+                  currentLanguage.save_discounts
                 )}
               </Button>
             </div>
@@ -194,77 +188,93 @@ function DiscountPage() {
         </div>
 
         {/* ── Right: Current Discounts ── */}
-        <div className="bg-white rounded-xl border border-border shadow-sm">
-          {/* Header */}
-          <div className="px-6 py-4 border-b">
-            <div className="flex items-center gap-2">
-              <Tag size={18} className="text-primary" />
-              <h2 className="text-base font-semibold text-neutral-800">
-                Current Discounts
-              </h2>
-            </div>
+        <div className="bg-white rounded-xl border border-border shadow-sm h-fit">
+          <div className="px-6 py-4 border-b flex items-center gap-2">
+            <Tag size={18} className="text-primary" />
+            <h2 className="text-base font-semibold text-neutral-800">
+              {currentLanguage.current_discounts}
+            </h2>
           </div>
 
-          <div className="px-6 py-6">
+          <div className="px-6 py-4">
             {isLoading ? (
-              <div className="flex justify-center py-10">
+              <div className="flex flex-col items-center justify-center py-10 gap-2">
                 <Loader2 className="animate-spin text-primary" size={24} />
+                <p className="text-sm text-neutral-500">
+                  {currentLanguage.loading_discounts}
+                </p>
               </div>
             ) : discounts.filter(
                 (d) =>
                   d.code === "DELIVERY_DISCOUNT" ||
                   d.code === "PICKUP_DISCOUNT",
               ).length > 0 ? (
-              <div className="space-y-3">
-                {discounts
-                  .filter(
-                    (d) =>
-                      d.code === "DELIVERY_DISCOUNT" ||
-                      d.code === "PICKUP_DISCOUNT",
-                  )
-                  .map((discount) => (
-                    <div
-                      key={discount.id}
-                      className="flex items-center justify-between p-4 rounded-xl border border-border bg-muted/20 hover:bg-muted/40 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          {discount.code === "DELIVERY_DISCOUNT" ? (
-                            <Truck size={18} className="text-primary" />
-                          ) : (
-                            <ShoppingBag size={18} className="text-primary" />
-                          )}
+              <div>
+                {/* ✅ Table header — properly aligned */}
+                <div className="grid grid-cols-2 px-4 py-2 mb-1">
+                  <span className="text-xs font-bold text-neutral-500 uppercase tracking-widest">
+                    {currentLanguage.type}
+                  </span>
+                  <span className="text-xs font-bold text-neutral-500 uppercase tracking-widest text-right">
+                    {currentLanguage.value}
+                  </span>
+                </div>
+
+                <div className="space-y-3">
+                  {discounts
+                    .filter(
+                      (d) =>
+                        d.code === "DELIVERY_DISCOUNT" ||
+                        d.code === "PICKUP_DISCOUNT",
+                    )
+                    .map((discount) => (
+                      <div
+                        key={discount.id}
+                        className="grid grid-cols-2 items-center p-4 rounded-xl border border-border bg-muted/20 hover:bg-muted/40 transition-colors"
+                      >
+                        {/* Left: icon + name — ✅ English mein */}
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            {discount.code === "DELIVERY_DISCOUNT" ? (
+                              <Truck size={16} className="text-primary" />
+                            ) : (
+                              <ShoppingBag size={16} className="text-primary" />
+                            )}
+                          </div>
+                          <div>
+                            {/* ✅ English names */}
+                            <p className="text-sm font-semibold text-neutral-800">
+                              {discount.code === "DELIVERY_DISCOUNT"
+                                ? "Delivery"
+                                : "Pickup"}
+                            </p>
+                            <p className="text-xs text-neutral-500">
+                              {discount.expires_at
+                                ? new Date(
+                                    discount.expires_at,
+                                  ).toLocaleDateString("de-DE")
+                                : "-"}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-sm font-semibold text-neutral-800">
-                            {discount.code === "DELIVERY_DISCOUNT"
-                              ? "Delivery"
-                              : "Pickup"}
-                          </p>
-                          <p className="text-xs text-neutral-500">
-                            Expires:{" "}
-                            {discount.expires_at
-                              ? new Date(
-                                  discount.expires_at,
-                                ).toLocaleDateString("en-GB")
-                              : "-"}
-                          </p>
+
+                        {/* Right: value — right-aligned, tight */}
+                        <div className="flex flex-col items-end leading-tight">
+                          <span className="text-2xl font-bold text-primary leading-none">
+                            {discount.value}%
+                          </span>
+                          <span className="text-xs text-neutral-500 mt-0.5">
+                            {currentLanguage.discount}
+                          </span>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <span className="text-2xl font-bold text-primary">
-                          {discount.value}%
-                        </span>
-                        <p className="text-xs text-neutral-500">discount</p>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                </div>
               </div>
             ) : (
               <div className="text-center py-10 text-neutral-400">
                 <Tag size={32} className="mx-auto mb-2 opacity-30" />
-                <p className="text-sm">No discounts set yet.</p>
-                <p className="text-xs mt-1">Fill the form to add discounts.</p>
+                <p className="text-sm">{currentLanguage.loading_discounts}</p>
               </div>
             )}
           </div>

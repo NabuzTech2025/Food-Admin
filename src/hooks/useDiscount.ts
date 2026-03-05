@@ -8,7 +8,7 @@ const DISCOUNT_KEY = "discounts";
 export const useGetDiscounts = (store_id: number | string | null) =>
   useQuery({
     queryKey: [DISCOUNT_KEY, store_id],
-    queryFn: () => getDiscounts(store_id!),
+    queryFn: () => getDiscounts(store_id!),                               
     enabled: !!store_id,
   });
 
