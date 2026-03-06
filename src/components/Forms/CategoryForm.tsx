@@ -47,7 +47,7 @@ function CategoryForm({
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
 
-  const { data: taxList = [] } = useGetTax(store_id);
+  const { data: taxList = [] } = useGetTax(store_id, { enabled: open });
   const { mutateAsync: addCategory, isPending: isAdding } = useAddCategory();
   const { mutateAsync: updateCategory, isPending: isUpdating } =
     useUpdateCategory();

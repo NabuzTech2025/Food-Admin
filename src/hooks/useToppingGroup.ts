@@ -6,7 +6,7 @@ import {
   updateToppingGroup,
   deleteToppingGroup,
   reactivateToppingGroup,
-} from "@/api/toppingsGroup";
+} from "@/api/toppingGroup";
 import type { ToppingGroupPayload } from "@/api/toppingGroup";
 
 const TOPPING_GROUP_KEY = "topping-groups";

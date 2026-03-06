@@ -20,8 +20,16 @@ import StoreSettings from "./pages/Store-Settings";
 import Discount from "./pages/Discount";
 import PostCode from "./pages/PostCode";
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false, // Don't refetch on window focus
+      staleTime: 5 * 60 * 1000,    // 5 minutes until data is considered "stale"
+    },
+  },
+});
+
 function App() {
-  const queryClient = new QueryClient();
   const loadFromStorage = useAdminStore((state) => state.loadFromStorage);
 
   useEffect(() => {

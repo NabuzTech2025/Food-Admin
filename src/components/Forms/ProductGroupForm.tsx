@@ -168,9 +168,9 @@ function ProductGroupForm({
       selectedGroupId,
     );
 
-    const payload = {
+    const payload: any = {
       topping_group_id: selectedGroupId!,
-      product_id: mode === "variant" ? selectedVariantId! : selectedProductId!,
+      product_id: mode === "variant" ? selectedVariantId! : selectedProductId!
     };
 
     try {
@@ -195,17 +195,21 @@ function ProductGroupForm({
       }
       handleClose();
     } catch (err: any) {
-      toast.error(
-        err?.response?.data?.detail ||
-          err?.response?.data?.message ||
-          "Something went wrong",
-      );
+      console.error(err);
+      const detail = err?.response?.data?.detail;
+      let errMsg = err?.response?.data?.message || "Something went wrong";
+      if (typeof detail === "string") {
+        errMsg = detail;
+      } else if (Array.isArray(detail)) {
+        errMsg = detail.map((d: any) => d.msg).join(", ");
+      }
+      toast.error(errMsg);
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md w-[calc(100%-2rem)] rounded-xl p-0 flex flex-col max-h-[90vh] overflow-hidden gap-0">
+      <DialogContent className="sm:max-w-xl w-[calc(100%-2rem)] rounded-xl p-0 flex flex-col max-h-[90vh] overflow-hidden gap-0">
         {/* Sticky Header */}
         <div className="flex-shrink-0 px-6 py-4 border-b bg-white rounded-t-xl">
           <DialogTitle className="text-base font-semibold">

@@ -23,7 +23,8 @@ export interface ProductVariantGroup {
 
 export interface ProductGroupPayload {
   topping_group_id: number;
-  product_id: number;
+  product_id?: number;
+  variant_id?: number;
 }
 
 // ─── Product Group APIs ───────────────────────────────────────────────────────

@@ -62,8 +62,10 @@ export const useAddProductVariantGroup = () => {
   return useMutation({
     mutationFn: (payload: ProductGroupPayload) =>
       addProductVariantGroup(payload),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: [PRODUCT_GROUP_KEY] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [PRODUCT_GROUP_KEY] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
   });
 };
 
@@ -77,8 +79,10 @@ export const useUpdateProductVariantGroup = () => {
       id: number;
       payload: ProductGroupPayload;
     }) => updateProductVariantGroup(id, payload),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: [PRODUCT_GROUP_KEY] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [PRODUCT_GROUP_KEY] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
   });
 };
 
@@ -86,7 +90,9 @@ export const useDeleteProductVariantGroup = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => deleteProductVariantGroup(id),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: [PRODUCT_GROUP_KEY] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [PRODUCT_GROUP_KEY] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
   });
 };

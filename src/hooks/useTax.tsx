@@ -10,11 +10,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const TAX_KEY = "taxes";
 
-export const useGetTax = (store_id: number | string | null) => {
+export const useGetTax = (store_id: number | string | null, opts?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: [TAX_KEY, store_id],
     queryFn: () => getTax(store_id!),
-    enabled: !!store_id,
+    enabled: !!store_id && (opts?.enabled !== false),
   });
 };
 

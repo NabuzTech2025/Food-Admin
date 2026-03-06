@@ -1,5 +1,5 @@
 // src/components/Forms/ProductForm.tsx
-import { useEffect, useState,  } from "react";
+import { useEffect, useState, } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
 import { Loader2, ImagePlus, X, Plus, Trash2 } from "lucide-react";
@@ -105,7 +105,7 @@ function ProductForm({
   const [imagePreview, setImagePreview] = useState<string>("");
 
   const { data: categoryList = [] } = useGetCategory(store_id);
-  const { data: taxList = [] } = useGetTax(store_id);
+  const { data: taxList = [] } = useGetTax(store_id, { enabled: open });
   const { mutateAsync: addProduct, isPending: isAdding } = useAddProduct();
   const { mutateAsync: updateProduct, isPending: isUpdating } =
     useUpdateProduct();
@@ -150,12 +150,12 @@ function ProductForm({
         variants:
           editData.type === "variable"
             ? (editData.variants ?? []).map((v) => ({
-                name: v.name,
-                price: String(v.price),
-                discount_price:
-                  v.discount_price > 0 ? String(v.discount_price) : "",
-                description: v.description ?? "",
-              }))
+              name: v.name,
+              price: String(v.price),
+              discount_price:
+                v.discount_price > 0 ? String(v.discount_price) : "",
+              description: v.description ?? "",
+            }))
             : [],
       });
       setImagePreview(
@@ -240,13 +240,13 @@ function ProductForm({
       variants:
         data.type === "variable"
           ? data.variants.map((v) => ({
-              name: v.name,
-              price: parseFloat(v.price) || 0,
-              discount_price: v.discount_price
-                ? parseFloat(v.discount_price)
-                : 0,
-              description: v.description,
-            }))
+            name: v.name,
+            price: parseFloat(v.price) || 0,
+            discount_price: v.discount_price
+              ? parseFloat(v.discount_price)
+              : 0,
+            description: v.description,
+          }))
           : [],
     };
 
