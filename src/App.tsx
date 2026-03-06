@@ -20,11 +20,13 @@ import StoreSettings from "./pages/Store-Settings";
 import Discount from "./pages/Discount";
 import PostCode from "./pages/PostCode";
 
+import Inventory from "./pages/Inventory";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false, // Don't refetch on window focus
-      staleTime: 5 * 60 * 1000,    // 5 minutes until data is considered "stale"
+      staleTime: 5 * 60 * 1000, // 5 minutes until data is considered "stale"
     },
   },
 });
@@ -66,6 +68,7 @@ function App() {
               <Route path="store-settings" element={<StoreSettings />} />
               <Route path="discount" element={<Discount />} />
               <Route path="postcode" element={<PostCode />} />
+              <Route path="inventory" element={<Inventory />} />
             </Route>
           </Routes>
         </BrowserRouter>

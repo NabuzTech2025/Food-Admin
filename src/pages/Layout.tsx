@@ -89,6 +89,11 @@ function AdminLayout() {
             icon: MapPin,
             link: "/admin/postcode",
           },
+          {
+            name: "Inventory",
+            icon: ShoppingCart,
+            link: "/admin/inventory",
+          },
         ];
 
   // Auto-open parent if a child route is active
