@@ -10,6 +10,7 @@ import {
   LayoutGrid,
   Settings2,
   Disc,
+  MapPin,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
@@ -82,6 +83,11 @@ function AdminLayout() {
             name: "Discount",
             icon: Disc,
             link: "/admin/discount",
+          },
+          {
+            name: "PostCode",
+            icon: MapPin,
+            link: "/admin/postcode",
           },
         ];
 

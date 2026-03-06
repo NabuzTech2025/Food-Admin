@@ -17,7 +17,8 @@ import AddAllergy from "./pages/Allergy/Add-Allergy";
 import ItemAllergy from "./pages/Allergy/Item-Allergy";
 import Categories from "./pages/Categories";
 import StoreSettings from "./pages/Store-Settings";
-import Discount from "./pages/Discount"; //
+import Discount from "./pages/Discount";
+import PostCode from "./pages/PostCode";
 
 function App() {
   const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ function App() {
               <Route path="category" element={<Categories />} />
               <Route path="store-settings" element={<StoreSettings />} />
               <Route path="discount" element={<Discount />} />
+              <Route path="postcode" element={<PostCode />} />
             </Route>
           </Routes>
         </BrowserRouter>
