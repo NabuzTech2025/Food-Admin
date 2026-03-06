@@ -11,10 +11,10 @@ import {
   Settings2,
   Disc,
   MapPin,
+  Package,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-
 interface NavChild {
   name: string;
   link: string;
@@ -91,7 +91,7 @@ function AdminLayout() {
           },
           {
             name: "Inventory",
-            icon: ShoppingCart,
+            icon: Package,
             link: "/admin/inventory",
           },
         ];
