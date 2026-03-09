@@ -5,8 +5,8 @@ import {
   addGroupItem,
   updateGroupItem,
   deleteGroupItem,
-} from "@/api/groupItem";
-import type { GroupItemPayload } from "@/api/groupItem";
+} from "@/api/groupitem";
+import type { GroupItemPayload } from "@/api/groupitem";
 
 const GROUP_ITEM_KEY = "group-items";
 

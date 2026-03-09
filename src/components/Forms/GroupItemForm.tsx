@@ -11,7 +11,7 @@ import { useAddGroupItem, useUpdateGroupItem } from "@/hooks/useGroupItem";
 import { useGetTopping } from "@/hooks/useTopping";
 import { useGetToppingGroup } from "@/hooks/useToppingGroup";
 import SearchableSelect from "@/components/SearchableSelect";
-import type { GroupItem } from "@/api/groupItem";
+import type { GroupItem } from "@/api/groupitem";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
