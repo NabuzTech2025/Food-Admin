@@ -9,12 +9,17 @@ import {
   Salad,
   LayoutGrid,
   Settings2,
-  Disc,
+  Tag,
   MapPin,
   Package,
+  Truck,
+  Monitor,
+  Users,
+  Map,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+
 interface NavChild {
   name: string;
   link: string;
@@ -73,25 +78,44 @@ function AdminLayout() {
             icon: LayoutGrid,
             link: "/admin/category",
           },
-
           {
             name: "Store Settings",
             icon: Settings2,
             link: "/admin/store-settings",
           },
           {
-            name: "Discount",
-            icon: Disc,
+            name: "Rabattverwaltung",
+            icon: Tag,
             link: "/admin/discount",
           },
           {
             name: "PostCode",
-            icon: MapPin,
+            icon: MapPin,         // 📍 Location pin — postcode ke liye perfect
             link: "/admin/postcode",
           },
           {
+            name: "Delivery Zone",
+            icon: Map,            // 🗺️ Map — zone/area ke liye
+            link: "/admin/delivery-zone",
+          },
+          {
+            name: "Delivery",
+            icon: Truck,          // 🚚 Truck — delivery ke liye perfect
+            link: "/admin/delivery",
+          },
+          {
+            name: "Device Status",
+            icon: Monitor,        // 🖥️ Monitor — device ke liye
+            link: "/admin/device-status",
+          },
+          {
+            name: "Customer",
+            icon: Users,          // 👥 Users — customer ke liye perfect
+            link: "/admin/customer",
+          },
+          {
             name: "Inventory",
-            icon: Package,
+            icon: Package,        // 📦 Package — inventory ke liye
             link: "/admin/inventory",
           },
         ];
