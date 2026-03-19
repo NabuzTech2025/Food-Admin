@@ -25,7 +25,7 @@ import { useAdminStore } from "@/context/store/useAdminStore";
 import { useGetGroupItem, useDeleteGroupItem } from "@/hooks/useGroupItem";
 import GroupItemForm from "@/components/Forms/GroupItemForm";
 import { toast } from "sonner";
-import type { GroupItem } from "@/api/groupItem";
+import type { GroupItem } from "@/api/groupitem";
 
 function GroupItemPage() {
   const { store_id } = useAdminStore();
