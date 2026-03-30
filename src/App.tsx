@@ -22,6 +22,7 @@ import PostCode from "./pages/PostCode";
 
 import Inventory from "./pages/Inventory";
 import Customer from "./pages/Customer";
+import CustomerDetail from "./pages/CustomerDetail";
 import DeliveryZone from "./pages/Delivery-Zone";
 import DeviceStatus from "./pages/Device-Status";
 import Delivery from "./pages/Delivery";
@@ -76,6 +77,7 @@ function App() {
               <Route path="delivery" element={<Delivery />} />
               <Route path="device-status" element={<DeviceStatus />} />
                <Route path="customer" element={<Customer />} />
+               <Route path="customer/:id" element={<CustomerDetail />} />
               <Route path="inventory" element={<Inventory />} />
             </Route>
           </Routes>
