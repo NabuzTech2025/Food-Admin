@@ -1,4 +1,4 @@
-// src/api/groupItem.ts
+// src/api/groupitem.ts
 import axiosInstance from "@/api/axiosConfig";
 
 // ─── Interfaces ───────────────────────────────────────────────────────────────
