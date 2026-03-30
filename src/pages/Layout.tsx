@@ -84,38 +84,38 @@ function AdminLayout() {
             link: "/admin/store-settings",
           },
           {
-            name: "Rabattverwaltung",
+            name: "Discount Management",
             icon: Tag,
             link: "/admin/discount",
           },
           {
             name: "PostCode",
-            icon: MapPin,         // 📍 Location pin — postcode ke liye perfect
+            icon: MapPin,
             link: "/admin/postcode",
           },
           {
             name: "Delivery Zone",
-            icon: Map,            // 🗺️ Map — zone/area ke liye
+            icon: Map, 
             link: "/admin/delivery-zone",
           },
           {
             name: "Delivery",
-            icon: Truck,          // 🚚 Truck — delivery ke liye perfect
+            icon: Truck, // 🚚 Truck — delivery ke liye perfect
             link: "/admin/delivery",
           },
           {
             name: "Device Status",
-            icon: Monitor,        // 🖥️ Monitor — device ke liye
+            icon: Monitor, // 🖥️ Monitor — device ke liye
             link: "/admin/device-status",
           },
           {
             name: "Customer",
-            icon: Users,          // 👥 Users — customer ke liye perfect
+            icon: Users, // 👥 Users — customer ke liye perfect
             link: "/admin/customer",
           },
           {
             name: "Inventory",
-            icon: Package,        // 📦 Package — inventory ke liye
+            icon: Package, // 📦 Package — inventory ke liye
             link: "/admin/inventory",
           },
         ];
