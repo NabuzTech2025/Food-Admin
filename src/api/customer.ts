@@ -64,3 +64,13 @@ export const getCustomers = async (
     throw error;
   }
 };
+
+export const getOrderDetail = async (orderId: number): Promise<any> => {
+  try {
+    const res = await axiosInstance.get(`orders/${orderId}`);
+    return res.data?.data ?? res.data;
+  } catch (error) {
+    console.error("Get Order Detail Error:", error);
+    throw error;
+  }
+};

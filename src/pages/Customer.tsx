@@ -1,5 +1,6 @@
 // src/pages/Admin/Customer.tsx
 import { useState, useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Users,
   Search,
@@ -157,6 +158,7 @@ const CustomerCard = ({ customer }: { customer: Customer }) => {
 
 export default function CustomerPage() {
   const { store_id } = useAdminStore();
+  const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
 
@@ -335,7 +337,8 @@ export default function CustomerPage() {
                   filtered.map((customer) => (
                     <TableRow
                       key={customer.id}
-                      className="hover:bg-primary/5 transition-colors cursor-default"
+                      onClick={() => navigate(`/admin/customer/${customer.id}`)}
+                      className="hover:bg-primary/5 transition-colors cursor-pointer"
                     >
                       <TableCell>
                         <div className="flex items-center gap-3">
@@ -432,8 +435,10 @@ export default function CustomerPage() {
             </div>
           ) : filtered.length > 0 ? (
             filtered.map((customer) => (
-              <CustomerCard key={customer.id} customer={customer} />
-            ))
+              <div key={customer.id} onClick={() => navigate(`/admin/customer/${customer.id}`)} className="cursor-pointer">
+                <CustomerCard customer={customer} />
+              </div>
+            ))  
           ) : (
             <div className="text-center py-12 text-neutral-400">
               <Users size={32} className="mx-auto mb-2 opacity-30" />

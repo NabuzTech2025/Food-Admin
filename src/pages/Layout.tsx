@@ -95,29 +95,30 @@ function AdminLayout() {
           },
           {
             name: "Delivery Zone",
-            icon: Map, 
+            icon: Map,
             link: "/admin/delivery-zone",
           },
           {
             name: "Delivery",
-            icon: Truck, // 🚚 Truck — delivery ke liye perfect
+            icon: Truck,
             link: "/admin/delivery",
           },
           {
             name: "Device Status",
-            icon: Monitor, // 🖥️ Monitor — device ke liye
+            icon: Monitor,
             link: "/admin/device-status",
           },
           {
             name: "Customer",
-            icon: Users, // 👥 Users — customer ke liye perfect
+            icon: Users,
             link: "/admin/customer",
           },
           {
             name: "Inventory",
-            icon: Package, // 📦 Package — inventory ke liye
+            icon: Package,
             link: "/admin/inventory",
           },
+          { name: "Store Details", icon: MapPin, link: "/admin/store-details" },
         ];
 
   // Auto-open parent if a child route is active
