@@ -26,8 +26,8 @@ import CustomerDetail from "./pages/CustomerDetail";
 import DeliveryZone from "./pages/Delivery-Zone";
 import DeviceStatus from "./pages/Device-Status";
 import Delivery from "./pages/Delivery";
-import StoreDetails from "./pages/StoreDetails/AllStore";
-import StoreProfile from "./pages/StoreDetails/AllStorProfile";
+import StoreDetails from "./pages/SuperAdmin/StoreDetails/AllStore";
+import StoreProfile from "./pages/SuperAdmin/StoreDetails/AllStorProfile";
 
 const queryClient = new QueryClient({
   defaultOptions: {

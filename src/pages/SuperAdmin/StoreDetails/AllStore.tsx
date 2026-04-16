@@ -13,12 +13,7 @@ function AllStorePage() {
   const { store_id } = useAdminStore();
   const [search, setSearch] = useState("");
 
-  const {
-    data: stores = [],
-    isLoading,
-    isError,
-    error,
-  } = useGetStores(store_id);
+  const { data: stores = [], isLoading, isError, error } = useGetStores(13);
 
   const filtered = stores.filter(
     (s) =>

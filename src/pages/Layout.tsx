@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import { useAdminStore } from "@/context/store/useAdminStore";
+import { useCurrentStore } from "@/hooks/useCurrentStore";
 import {
   Home,
   Landmark,
@@ -40,11 +41,16 @@ function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
-  const { role_id } = useAdminStore();
+  const { role_id, store_id, storeData } = useAdminStore();
+
+  useCurrentStore(store_id);
 
   const navItems: NavItem[] =
     role_id === 1
-      ? [{ name: "Dashboard", icon: Home, link: "/dashboard" }]
+      ? [
+          { name: "Dashboard", icon: Home, link: "/dashboard" },
+          { name: "Store Details", icon: MapPin, link: "/store-details" },
+        ]
       : [
           { name: "Dashboard", icon: Home, link: "/dashboard" },
           { name: "Tax", icon: Landmark, link: "/tax" },
@@ -118,7 +124,6 @@ function AdminLayout() {
             icon: Package,
             link: "/inventory",
           },
-          { name: "Store Details", icon: MapPin, link: "/store-details" },
         ];
 
   // Auto-open parent if a child route is active
@@ -187,9 +192,9 @@ function AdminLayout() {
         {/* Logo */}
         <div className="h-16 flex items-center justify-center relative flex-shrink-0 border-b border-gray-100">
           {role_id === 1 ? (
-            <img src="/super-admin-logo.png" alt="" className="w-36" />
+            <img src="/v1/admin/super-admin-logo.png" alt="" className="w-36" />
           ) : (
-            <h1 className="font-semibold text-primary">Store Name</h1>
+            <h1 className="font-semibold text-primary">{storeData?.name}</h1>
           )}
           <button
             className="absolute right-3 top-1/2 -translate-y-1/2 lg:hidden"

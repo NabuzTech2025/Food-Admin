@@ -1,6 +1,7 @@
 // src/store/useAdminStore.ts
 import { create } from "zustand";
 import type { AdminStorageData } from "@/types/Admin.types";
+import type { Store } from "@/api/Currentstore";
 import { getLocalStorage, removeLocalStorage } from "@/utils/storage";
 
 interface AdminState {
@@ -9,10 +10,12 @@ interface AdminState {
   store_id: number | string | null;
   store_type: string | null;
   isAuthenticated: boolean;
+  storeData: Store | null;
 
   setAdminData: (data: AdminStorageData) => void;
   loadFromStorage: () => void;
   clearAdminData: () => void;
+  setStoreData: (data: Store) => void;
 }
 
 export const useAdminStore = create<AdminState>((set) => ({
@@ -21,6 +24,7 @@ export const useAdminStore = create<AdminState>((set) => ({
   store_id: null,
   store_type: null,
   isAuthenticated: false,
+  storeData: null,
 
   setAdminData: (data) =>
     set({
@@ -52,6 +56,9 @@ export const useAdminStore = create<AdminState>((set) => ({
       store_id: null,
       store_type: null,
       isAuthenticated: false,
+      storeData: null,
     });
   },
+
+  setStoreData: (data) => set({ storeData: data }),
 }));
