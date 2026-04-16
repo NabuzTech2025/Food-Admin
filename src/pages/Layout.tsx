@@ -90,7 +90,7 @@ function AdminLayout() {
             link: "/store-settings",
           },
           {
-            name: "Discount Management",
+            name: "Discount Manage",
             icon: Tag,
             link: "/discount",
           },
@@ -105,25 +105,25 @@ function AdminLayout() {
             link: "/delivery-zone",
           },
           {
-            name: "Delivery",
+            name: "Delivery Time",
             icon: Truck,
             link: "/delivery",
           },
-          {
-            name: "Device Status",
-            icon: Monitor,
-            link: "/device-status",
-          },
+          // {
+          //   name: "Device Status",
+          //   icon: Monitor,
+          //   link: "/device-status",
+          // },
           {
             name: "Customer",
             icon: Users,
             link: "/customer",
           },
-          {
-            name: "Inventory",
-            icon: Package,
-            link: "/inventory",
-          },
+          // {
+          //   name: "Inventory",
+          //   icon: Package,
+          //   link: "/inventory",
+          // },
         ];
 
   // Auto-open parent if a child route is active
@@ -194,7 +194,9 @@ function AdminLayout() {
           {role_id === 1 ? (
             <img src="/v1/admin/super-admin-logo.png" alt="" className="w-36" />
           ) : (
-            <h1 className="font-semibold text-primary">{storeData?.name}</h1>
+            <h1 className="font-semibold text-primary pl-5">
+              {storeData?.name}
+            </h1>
           )}
           <button
             className="absolute right-3 top-1/2 -translate-y-1/2 lg:hidden"
