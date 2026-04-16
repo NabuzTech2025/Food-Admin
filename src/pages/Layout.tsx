@@ -44,81 +44,81 @@ function AdminLayout() {
 
   const navItems: NavItem[] =
     role_id === 1
-      ? [{ name: "Dashboard", icon: Home, link: "/admin/dashboard" }]
+      ? [{ name: "Dashboard", icon: Home, link: "/dashboard" }]
       : [
-          { name: "Dashboard", icon: Home, link: "/admin/dashboard" },
-          { name: "Tax", icon: Landmark, link: "/admin/tax" },
+          { name: "Dashboard", icon: Home, link: "/dashboard" },
+          { name: "Tax", icon: Landmark, link: "/tax" },
           {
             name: "Product",
             icon: ShoppingCart,
-            link: "/admin/product",
+            link: "/product",
             children: [
-              { name: "Category", link: "/admin/product/category" },
-              { name: "Product", link: "/admin/product/products" },
-              { name: "Toppings", link: "/admin/product/toppings" },
-              { name: "Topping Groups", link: "/admin/product/topping-groups" },
-              { name: "Group Item", link: "/admin/product/group-item" },
+              { name: "Category", link: "/product/category" },
+              { name: "Product", link: "/product/products" },
+              { name: "Toppings", link: "/product/toppings" },
+              { name: "Topping Groups", link: "/product/topping-groups" },
+              { name: "Group Item", link: "/product/group-item" },
               {
                 name: "Product-Variant Groups",
-                link: "/admin/product/variant-groups",
+                link: "/product/variant-groups",
               },
             ],
           },
           {
             name: "Allergy",
             icon: Salad,
-            link: "/admin/allergy",
+            link: "/allergy",
             children: [
-              { name: "Add Allergy", link: "/admin/allergy/add-allergy" },
-              { name: "Item Allergy", link: "/admin/allergy/item-allergy" },
+              { name: "Add Allergy", link: "/allergy/add-allergy" },
+              { name: "Item Allergy", link: "/allergy/item-allergy" },
             ],
           },
           {
             name: "Category",
             icon: LayoutGrid,
-            link: "/admin/category",
+            link: "/category",
           },
           {
             name: "Store Settings",
             icon: Settings2,
-            link: "/admin/store-settings",
+            link: "/store-settings",
           },
           {
             name: "Discount Management",
             icon: Tag,
-            link: "/admin/discount",
+            link: "/discount",
           },
           {
             name: "PostCode",
             icon: MapPin,
-            link: "/admin/postcode",
+            link: "/postcode",
           },
           {
             name: "Delivery Zone",
             icon: Map,
-            link: "/admin/delivery-zone",
+            link: "/delivery-zone",
           },
           {
             name: "Delivery",
             icon: Truck,
-            link: "/admin/delivery",
+            link: "/delivery",
           },
           {
             name: "Device Status",
             icon: Monitor,
-            link: "/admin/device-status",
+            link: "/device-status",
           },
           {
             name: "Customer",
             icon: Users,
-            link: "/admin/customer",
+            link: "/customer",
           },
           {
             name: "Inventory",
             icon: Package,
-            link: "/admin/inventory",
+            link: "/inventory",
           },
-          { name: "Store Details", icon: MapPin, link: "/admin/store-details" },
+          { name: "Store Details", icon: MapPin, link: "/store-details" },
         ];
 
   // Auto-open parent if a child route is active

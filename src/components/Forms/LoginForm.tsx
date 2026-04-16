@@ -39,7 +39,7 @@ function LoginForm() {
       // Save to Zustand store
       setAdminData(adminData);
       toast.success(result.message || "Login successful");
-      navigate("/admin/dashboard", { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (err: any) {
       const message =
         err.response?.data?.message || "Login failed. Please try again.";

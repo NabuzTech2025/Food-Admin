@@ -85,7 +85,7 @@ function StoreProfilePage() {
       });
 
       toast.success("Store profile updated successfully!");
-      navigate("/admin/store-details");
+      navigate("/store-details");
     } catch (err: any) {
       toast.error(
         err.response?.data?.message || "Failed to update store profile",

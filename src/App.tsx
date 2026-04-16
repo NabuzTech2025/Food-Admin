@@ -54,7 +54,7 @@ function App() {
             <Route path="/admin-login" element={<Login />} />
 
             {/* ✅ Sab routes ek hi AdminLayout ke andar */}
-            <Route path="/admin" element={<AdminLayout />}>
+            <Route path="/" element={<AdminLayout />}>
               <Route index path="dashboard" element={<Dashboard />} />
               <Route path="tax" element={<Tax />} />
               <Route path="product/category" element={<Category />} />

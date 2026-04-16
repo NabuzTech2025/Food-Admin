@@ -66,17 +66,32 @@ const ORDER_TYPE_MAP: Record<number, string> = {
 };
 
 const ORDER_STATUS_MAP: Record<number, { label: string; color: string }> = {
-  1: { label: "Pending", color: "border-yellow-200 text-yellow-700 bg-yellow-50" },
+  1: {
+    label: "Pending",
+    color: "border-yellow-200 text-yellow-700 bg-yellow-50",
+  },
   2: { label: "Confirmed", color: "border-blue-200 text-blue-700 bg-blue-50" },
-  3: { label: "Preparing", color: "border-orange-200 text-orange-700 bg-orange-50" },
+  3: {
+    label: "Preparing",
+    color: "border-orange-200 text-orange-700 bg-orange-50",
+  },
   4: { label: "Ready", color: "border-cyan-200 text-cyan-700 bg-cyan-50" },
-  5: { label: "Delivered", color: "border-green-200 text-green-700 bg-green-50" },
+  5: {
+    label: "Delivered",
+    color: "border-green-200 text-green-700 bg-green-50",
+  },
   6: { label: "Cancelled", color: "border-red-200 text-red-700 bg-red-50" },
 };
 
 const APPROVAL_STATUS_MAP: Record<number, { label: string; color: string }> = {
-  1: { label: "Pending", color: "border-yellow-200 text-yellow-700 bg-yellow-50" },
-  2: { label: "Approved", color: "border-green-200 text-green-700 bg-green-50" },
+  1: {
+    label: "Pending",
+    color: "border-yellow-200 text-yellow-700 bg-yellow-50",
+  },
+  2: {
+    label: "Approved",
+    color: "border-green-200 text-green-700 bg-green-50",
+  },
   3: { label: "Rejected", color: "border-red-200 text-red-700 bg-red-50" },
 };
 
@@ -121,7 +136,9 @@ const OrderDetailModal = ({
               <h3 className="font-bold text-neutral-800">Order Details</h3>
               <p className="text-xs text-neutral-500">
                 #{d?.order_number || order.order_number}
-                {d?.source && <span className="ml-2 text-neutral-400">• {d.source}</span>}
+                {d?.source && (
+                  <span className="ml-2 text-neutral-400">• {d.source}</span>
+                )}
               </p>
             </div>
           </div>
@@ -138,11 +155,12 @@ const OrderDetailModal = ({
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 gap-3">
               <Loader2 className="animate-spin text-primary" size={32} />
-              <p className="text-sm text-neutral-500">Loading order details...</p>
+              <p className="text-sm text-neutral-500">
+                Loading order details...
+              </p>
             </div>
           ) : d ? (
             <div className="space-y-5">
-
               {/* ── Status & Type Row ── */}
               <div className="flex flex-wrap gap-2">
                 {orderStatus && (
@@ -156,16 +174,22 @@ const OrderDetailModal = ({
                   </Badge>
                 )}
                 {d.order_type && (
-                  <Badge variant="outline" className="border-neutral-200 text-neutral-600 bg-neutral-50">
+                  <Badge
+                    variant="outline"
+                    className="border-neutral-200 text-neutral-600 bg-neutral-50"
+                  >
                     {ORDER_TYPE_MAP[d.order_type] || `Type ${d.order_type}`}
                   </Badge>
                 )}
                 {d.payment?.status && (
-                  <Badge variant="outline" className={
-                    d.payment.status === "paid"
-                      ? "border-green-200 text-green-700 bg-green-50"
-                      : "border-yellow-200 text-yellow-700 bg-yellow-50"
-                  }>
+                  <Badge
+                    variant="outline"
+                    className={
+                      d.payment.status === "paid"
+                        ? "border-green-200 text-green-700 bg-green-50"
+                        : "border-yellow-200 text-yellow-700 bg-yellow-50"
+                    }
+                  >
                     {d.payment.status}
                   </Badge>
                 )}
@@ -223,7 +247,9 @@ const OrderDetailModal = ({
                                 {item.product_name}
                               </p>
                               {item.variant_name && (
-                                <p className="text-xs text-neutral-500">{item.variant_name}</p>
+                                <p className="text-xs text-neutral-500">
+                                  {item.variant_name}
+                                </p>
                               )}
                             </div>
                           </div>
@@ -231,20 +257,27 @@ const OrderDetailModal = ({
                             <p className="text-sm font-semibold text-neutral-700">
                               €{Number(item.unit_price).toFixed(2)}
                             </p>
-                            <p className="text-xs text-neutral-400">Tax: {item.tax}%</p>
+                            <p className="text-xs text-neutral-400">
+                              Tax: {item.tax}%
+                            </p>
                           </div>
                         </div>
                         {item.toppings && item.toppings.length > 0 && (
                           <div className="mt-2 pl-10 flex flex-wrap gap-1">
                             {item.toppings.map((t: any, ti: number) => (
-                              <span key={ti} className="text-xs bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded-full">
+                              <span
+                                key={ti}
+                                className="text-xs bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded-full"
+                              >
                                 + {t.name || t.topping_name}
                               </span>
                             ))}
                           </div>
                         )}
                         {item.note && (
-                          <p className="mt-1 pl-10 text-xs text-neutral-500 italic">Note: {item.note}</p>
+                          <p className="mt-1 pl-10 text-xs text-neutral-500 italic">
+                            Note: {item.note}
+                          </p>
                         )}
                       </div>
                     ))}
@@ -262,18 +295,31 @@ const OrderDetailModal = ({
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between text-neutral-600">
                       <span>Subtotal</span>
-                      <span>€{(Number(d.invoice.total_amount) - Number(d.invoice.delivery_fee) + Number(d.invoice.discount_amount)).toFixed(2)}</span>
+                      <span>
+                        €
+                        {(
+                          Number(d.invoice.total_amount) -
+                          Number(d.invoice.delivery_fee) +
+                          Number(d.invoice.discount_amount)
+                        ).toFixed(2)}
+                      </span>
                     </div>
                     {d.invoice.delivery_fee > 0 && (
                       <div className="flex justify-between text-neutral-600">
                         <span>Delivery Fee</span>
-                        <span>€{Number(d.invoice.delivery_fee).toFixed(2)}</span>
+                        <span>
+                          €{Number(d.invoice.delivery_fee).toFixed(2)}
+                        </span>
                       </div>
                     )}
                     {d.invoice.discount_amount > 0 && (
                       <div className="flex justify-between text-green-600">
-                        <span>Discount {d.discount?.code && `(${d.discount.code})`}</span>
-                        <span>-€{Number(d.invoice.discount_amount).toFixed(2)}</span>
+                        <span>
+                          Discount {d.discount?.code && `(${d.discount.code})`}
+                        </span>
+                        <span>
+                          -€{Number(d.invoice.discount_amount).toFixed(2)}
+                        </span>
                       </div>
                     )}
                     <div className="border-t border-neutral-200 pt-2 flex justify-between font-bold text-neutral-800 text-base">
@@ -283,7 +329,10 @@ const OrderDetailModal = ({
                     {d.payment && (
                       <div className="flex justify-between text-xs text-neutral-500 pt-1">
                         <span>
-                          Paid via <span className="capitalize font-medium">{d.payment.payment_method}</span>
+                          Paid via{" "}
+                          <span className="capitalize font-medium">
+                            {d.payment.payment_method}
+                          </span>
                         </span>
                         <span>{formatDate(d.payment.paid_at)}</span>
                       </div>
@@ -310,7 +359,9 @@ const OrderDetailModal = ({
                     {d.shipping_address.city && `, ${d.shipping_address.city}`}
                     {d.shipping_address.zip && ` ${d.shipping_address.zip}`}
                   </p>
-                  <p className="text-sm text-neutral-600">{d.shipping_address.country}</p>
+                  <p className="text-sm text-neutral-600">
+                    {d.shipping_address.country}
+                  </p>
                   {d.shipping_address.phone && (
                     <div className="flex items-center gap-1.5 text-xs text-neutral-500 mt-2">
                       <Phone size={11} />
@@ -323,10 +374,15 @@ const OrderDetailModal = ({
               {/* ── Tax Summary ── */}
               {d.tax_summary && d.tax_summary.length > 0 && (
                 <div className="bg-neutral-50 rounded-xl p-4 border border-neutral-100">
-                  <h4 className="text-xs font-semibold text-neutral-600 mb-2">Tax Summary</h4>
+                  <h4 className="text-xs font-semibold text-neutral-600 mb-2">
+                    Tax Summary
+                  </h4>
                   <div className="space-y-1">
                     {d.tax_summary.map((t: any, idx: number) => (
-                      <div key={idx} className="flex justify-between text-sm text-neutral-700">
+                      <div
+                        key={idx}
+                        className="flex justify-between text-sm text-neutral-700"
+                      >
                         <span>Tax {t.tax_rate}%</span>
                         <span>€{Number(t.tax_amount).toFixed(2)}</span>
                       </div>
@@ -341,9 +397,13 @@ const OrderDetailModal = ({
                   <div className="flex items-center gap-2">
                     <Tag size={14} className="text-green-600" />
                     <div>
-                      <p className="text-sm font-semibold text-green-700">{d.discount.code}</p>
+                      <p className="text-sm font-semibold text-green-700">
+                        {d.discount.code}
+                      </p>
                       <p className="text-xs text-green-600">
-                        {d.discount.type === "percentage" ? `${d.discount.value}% off` : `€${d.discount.value} off`}
+                        {d.discount.type === "percentage"
+                          ? `${d.discount.value}% off`
+                          : `€${d.discount.value} off`}
                       </p>
                     </div>
                   </div>
@@ -352,7 +412,6 @@ const OrderDetailModal = ({
                   </p>
                 </div>
               )}
-
             </div>
           ) : (
             /* Fallback: API error */
@@ -407,7 +466,9 @@ export default function CustomerDetailPage() {
   const navigate = useNavigate();
   const { store_id } = useAdminStore();
 
-  const [selectedOrder, setSelectedOrder] = useState<CustomerOrder | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<CustomerOrder | null>(
+    null,
+  );
   const [orderDetail, setOrderDetail] = useState<any>(null);
   const [orderDetailLoading, setOrderDetailLoading] = useState(false);
 
@@ -436,12 +497,11 @@ export default function CustomerDetailPage() {
   const handleOrderScroll = useCallback(
     (e: React.UIEvent<HTMLDivElement>) => {
       const target = e.currentTarget;
-      if (
-        target.scrollHeight - target.scrollTop <=
-        target.clientHeight + 100
-      ) {
+      if (target.scrollHeight - target.scrollTop <= target.clientHeight + 100) {
         if (hasMoreOrders) {
-          setVisibleCount((prev) => Math.min(prev + ORDERS_PER_PAGE, allOrders.length));
+          setVisibleCount((prev) =>
+            Math.min(prev + ORDERS_PER_PAGE, allOrders.length),
+          );
         }
       }
     },
@@ -483,7 +543,7 @@ export default function CustomerDetailPage() {
         </p>
         <Button
           variant="outline"
-          onClick={() => navigate("/admin/customer")}
+          onClick={() => navigate("/customer")}
           className="cursor-pointer"
         >
           <ArrowLeft size={16} className="mr-2" />
@@ -500,7 +560,7 @@ export default function CustomerDetailPage() {
       {/* ── Back Button ── */}
       <Button
         variant="ghost"
-        onClick={() => navigate("/admin/customer")}
+        onClick={() => navigate("/customer")}
         className="text-neutral-600 hover:text-primary cursor-pointer -ml-2"
       >
         <ArrowLeft size={18} className="mr-2" />
@@ -623,9 +683,7 @@ export default function CustomerDetailPage() {
         <div className="flex-shrink-0 flex items-center justify-between px-5 py-4 border-b border-border">
           <div className="flex items-center gap-2">
             <ShoppingBag size={20} className="text-primary" />
-            <h2 className="text-base font-bold text-neutral-800">
-              Orders
-            </h2>
+            <h2 className="text-base font-bold text-neutral-800">Orders</h2>
             <span className="text-sm text-neutral-500">
               ({allOrders.length})
             </span>
@@ -633,10 +691,7 @@ export default function CustomerDetailPage() {
         </div>
 
         {/* Orders List - Scrollable */}
-        <div
-          className="flex-1 overflow-y-auto"
-          onScroll={handleOrderScroll}
-        >
+        <div className="flex-1 overflow-y-auto" onScroll={handleOrderScroll}>
           {allOrders.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-neutral-400">
               <ShoppingBag size={40} className="mb-3 opacity-20" />
@@ -697,8 +752,7 @@ export default function CustomerDetailPage() {
             <strong className="text-neutral-800">
               {Math.min(visibleCount, allOrders.length)}
             </strong>{" "}
-            of{" "}
-            <strong className="text-neutral-800">{allOrders.length}</strong>{" "}
+            of <strong className="text-neutral-800">{allOrders.length}</strong>{" "}
             orders
           </p>
         </div>

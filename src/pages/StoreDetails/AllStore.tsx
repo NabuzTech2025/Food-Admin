@@ -28,13 +28,13 @@ function AllStorePage() {
   );
 
   const handleCardClick = (store: StoreType) => {
-    navigate("/admin/store-profile", {
+    navigate("/store-profile", {
       state: { storeData: store, mode: "edit" },
     });
   };
 
   const handleCreateNew = () => {
-    navigate("/admin/store-profile", { state: { mode: "create" } });
+    navigate("/store-profile", { state: { mode: "create" } });
   };
 
   return (

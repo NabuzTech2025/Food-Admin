@@ -162,7 +162,15 @@ export default function CustomerPage() {
 
   const [search, setSearch] = useState("");
 
-  const { data, isLoading, isFetching, refetch, hasNextPage, fetchNextPage, isFetchingNextPage } = useInfiniteCustomers({
+  const {
+    data,
+    isLoading,
+    isFetching,
+    refetch,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteCustomers({
     store_id: store_id ?? "",
     limit: LIMIT,
   });
@@ -204,7 +212,7 @@ export default function CustomerPage() {
         }
       }
     },
-    [hasNextPage, isFetchingNextPage, fetchNextPage]
+    [hasNextPage, isFetchingNextPage, fetchNextPage],
   );
 
   return (
@@ -337,7 +345,7 @@ export default function CustomerPage() {
                   filtered.map((customer) => (
                     <TableRow
                       key={customer.id}
-                      onClick={() => navigate(`/admin/customer/${customer.id}`)}
+                      onClick={() => navigate(`/customer/${customer.id}`)}
                       className="hover:bg-primary/5 transition-colors cursor-pointer"
                     >
                       <TableCell>
@@ -428,17 +436,24 @@ export default function CustomerPage() {
         </div>
 
         {/* ── Mobile Cards ── */}
-        <div className="sm:hidden flex-1 overflow-y-auto p-4 space-y-3 bg-neutral-50/50" onScroll={handleScroll}>
+        <div
+          className="sm:hidden flex-1 overflow-y-auto p-4 space-y-3 bg-neutral-50/50"
+          onScroll={handleScroll}
+        >
           {isLoading ? (
             <div className="flex justify-center py-12">
               <Loader2 className="animate-spin text-primary" size={28} />
             </div>
           ) : filtered.length > 0 ? (
             filtered.map((customer) => (
-              <div key={customer.id} onClick={() => navigate(`/admin/customer/${customer.id}`)} className="cursor-pointer">
+              <div
+                key={customer.id}
+                onClick={() => navigate(`/customer/${customer.id}`)}
+                className="cursor-pointer"
+              >
                 <CustomerCard customer={customer} />
               </div>
-            ))  
+            ))
           ) : (
             <div className="text-center py-12 text-neutral-400">
               <Users size={32} className="mx-auto mb-2 opacity-30" />
