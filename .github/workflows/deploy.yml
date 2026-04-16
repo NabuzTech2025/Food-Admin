@@ -1,0 +1,88 @@
+name: Deploy Food Admin CMS Production
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.setenv.outputs.image_tag }}
+      server_ip: ${{ steps.setenv.outputs.server_ip }}
+      port: ${{ steps.setenv.outputs.port }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Docker Login
+        run: docker login -u jassnabuztech -p ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Set ENV
+        id: setenv
+        run: |
+          echo "image_tag=food-admin-cms" >> $GITHUB_OUTPUT
+          echo "server_ip=138.199.144.4" >> $GITHUB_OUTPUT
+          echo "port=3023" >> $GITHUB_OUTPUT
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+            --build-arg VITE_API_BASE_URL="${{ secrets.VITE_API_BASE_URL }}" \
+            -t jassnabuztech/food-admin-cms:${{ steps.setenv.outputs.image_tag }} .
+
+      - name: Push Docker Image
+        run: docker push jassnabuztech/food-admin-cms:${{ steps.setenv.outputs.image_tag }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup SSH Key
+        run: |
+          echo "${{ secrets.LIVE_SERVER_SSH_KEY }}" > server.pem
+          chmod 600 server.pem
+
+      - name: Deploy to Production Server
+        run: |
+          ssh -o StrictHostKeyChecking=no -i server.pem root@${{ needs.build-and-push.outputs.server_ip }} << 'EOF'
+            IMAGE_TAG=${{ needs.build-and-push.outputs.image_tag }}
+            CONTAINER_NAME=grocery-$IMAGE_TAG
+            PORT=${{ needs.build-and-push.outputs.port }}
+
+            echo "Deploying $IMAGE_TAG to production server..."
+
+            # Pull the latest image
+            docker pull jassnabuztech/food-admin-cms:$IMAGE_TAG
+
+            # Stop and remove existing container if it exists
+            if docker ps -a --format 'table {{.Names}}' | grep -q "^$CONTAINER_NAME$"; then
+              echo "Stopping existing container: $CONTAINER_NAME"
+              docker stop $CONTAINER_NAME
+              docker rm $CONTAINER_NAME
+            fi
+
+            # Run new container
+            echo "Starting new container: $CONTAINER_NAME on port $PORT"
+            docker run -d \
+              --name $CONTAINER_NAME \
+              --restart unless-stopped \
+              -p $PORT:80 \
+              jassnabuztech/food-admin-cms:$IMAGE_TAG
+
+            # Verify container is running
+            if docker ps | grep -q $CONTAINER_NAME; then
+              echo "Container $CONTAINER_NAME is running successfully"
+              docker ps | grep $CONTAINER_NAME
+            else
+              echo "Failed to start container $CONTAINER_NAME"
+              docker logs $CONTAINER_NAME
+              exit 1
+            fi
+
+            # Clean up unused images and containers
+            docker system prune -f
+
+            echo "Deployment completed successfully!"
+          EOF
