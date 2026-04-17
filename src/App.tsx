@@ -13,6 +13,7 @@ import Toppings from "./pages/Product/Toppings";
 import ToppingGroups from "./pages/Product/ToppingGroups";
 import GroupItem from "./pages/Product/GroupItem";
 import VariantGroups from "./pages/Product/Variant-groups";
+import Coupons from "./pages/Product/Coupons";
 import AddAllergy from "./pages/Allergy/Add-Allergy";
 import ItemAllergy from "./pages/Allergy/Item-Allergy";
 import Categories from "./pages/Categories";
@@ -59,6 +60,7 @@ function App() {
               <Route path="tax" element={<Tax />} />
               <Route path="product/category" element={<Category />} />
               <Route path="product/products" element={<Product />} />
+              <Route path="product/coupons" element={<Coupons />} />
               <Route path="product/toppings" element={<Toppings />} />
               <Route
                 path="product/topping-groups"

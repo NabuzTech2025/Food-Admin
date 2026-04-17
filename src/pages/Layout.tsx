@@ -57,6 +57,7 @@ function AdminLayout() {
               { name: "Product", link: "/admin/product/products" },
               { name: "Toppings", link: "/admin/product/toppings" },
               { name: "Topping Groups", link: "/admin/product/topping-groups" },
+              { name: "Coupons", link: "/admin/product/coupons" },
               { name: "Group Item", link: "/admin/product/group-item" },
               {
                 name: "Product-Variant Groups",
