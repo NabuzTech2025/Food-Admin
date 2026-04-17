@@ -121,15 +121,11 @@ function ToppingForm({ open, onClose, editData }: ToppingFormProps) {
                 Price <span className="text-destructive">*</span>
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-neutral-500">
-                  {currentCurrency.symbol}
-                </span>
                 <Input
                   type="number"
                   step="0.01"
                   min="0"
                   placeholder="0.00"
-                  className="pl-7"
                   {...register("price", { required: "Price is required" })}
                 />
               </div>

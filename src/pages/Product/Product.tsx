@@ -175,9 +175,9 @@ function ProductPage() {
                   <TableHead className="w-10 font-semibold text-neutral-700">
                     #
                   </TableHead>
-                  <TableHead className="w-20 font-semibold text-neutral-700">
+                  {/* <TableHead className="w-20 font-semibold text-neutral-700">
                     DISPLAY ORDER
-                  </TableHead>
+                  </TableHead> */}
                   <TableHead className="w-16 font-semibold text-neutral-700">
                     IMAGE
                   </TableHead>
@@ -226,9 +226,9 @@ function ProductPage() {
                       <TableCell className="text-neutral-500">
                         {index + 1}
                       </TableCell>
-                      <TableCell className="text-neutral-500">
+                      {/* <TableCell className="text-neutral-500">
                         {item.display_order ?? "-"}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell>
                         {item.image_url ? (
                           <img
@@ -420,8 +420,8 @@ function ProductPage() {
                       </p>
                       <p className="text-xs text-neutral-500 mt-0.5">
                         {item.category?.name || "No category"}
-                        {item.display_order != null &&
-                          ` · Order: ${item.display_order}`}
+                        {/* {item.display_order != null &&
+                          ` · Order: ${item.display_order}`} */}
                       </p>
                       <div className="flex items-center gap-1.5 mt-1">
                         <Badge variant="outline" className="text-xs capitalize">

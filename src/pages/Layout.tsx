@@ -74,7 +74,7 @@ function AdminLayout() {
             ],
           },
           {
-            name: "Category",
+            name: "Category Availability Time",
             icon: LayoutGrid,
             link: "/admin/category",
           },
