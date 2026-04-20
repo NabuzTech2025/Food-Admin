@@ -57,7 +57,6 @@ function AdminLayout() {
               { name: "Product", link: "/admin/product/products" },
               { name: "Toppings", link: "/admin/product/toppings" },
               { name: "Topping Groups", link: "/admin/product/topping-groups" },
-              { name: "Coupons", link: "/admin/product/coupons" },
               { name: "Group Item", link: "/admin/product/group-item" },
               {
                 name: "Product-Variant Groups",
@@ -73,6 +72,11 @@ function AdminLayout() {
               { name: "Add Allergy", link: "/admin/allergy/add-allergy" },
               { name: "Item Allergy", link: "/admin/allergy/item-allergy" },
             ],
+          },
+          {
+            name: "Coupons",
+            icon: Tag,
+            link: "/admin/coupons",
           },
           {
             name: "Category Availability Time",

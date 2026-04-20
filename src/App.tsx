@@ -60,7 +60,7 @@ function App() {
               <Route path="tax" element={<Tax />} />
               <Route path="product/category" element={<Category />} />
               <Route path="product/products" element={<Product />} />
-              <Route path="product/coupons" element={<Coupons />} />
+              <Route path="coupons" element={<Coupons />} />
               <Route path="product/toppings" element={<Toppings />} />
               <Route
                 path="product/topping-groups"
