@@ -29,6 +29,8 @@ import DeviceStatus from "./pages/Device-Status";
 import Delivery from "./pages/Delivery";
 import StoreDetails from "./pages/StoreDetails/AllStore";
 import StoreProfile from "./pages/StoreDetails/AllStorProfile";
+import OrderDetailPage from "./pages/Orders/OrderDetailPage";
+import OrderPage from "./pages/Orders/Orders";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -85,6 +87,8 @@ function App() {
               <Route path="inventory" element={<Inventory />} />
               <Route path="store-details" element={<StoreDetails />} />
               <Route path="store-profile" element={<StoreProfile />} />
+              <Route path="/admin/orders" element={<OrderPage />} />
+              <Route path="/admin/orders/:id" element={<OrderDetailPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

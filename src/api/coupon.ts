@@ -43,7 +43,7 @@ export const getCoupons = async (store_id: number | string): Promise<Coupon[]> =
 
 export const addCoupon = async (payload: CouponPayload): Promise<Coupon> => {
   try {
-    const res = await axiosInstance.post("coupons", payload);
+    const res = await axiosInstance.post("coupons/", payload);
     return res.data;
   } catch (error) {
     console.error("Add Coupon Error:", error);
@@ -63,7 +63,7 @@ export const updateCoupon = async (id: number, payload: CouponPayload): Promise<
 
 export const deleteCoupon = async (id: number): Promise<void> => {
   try {
-    await axiosInstance.delete(`coupons/${id}`);
+    await axiosInstance.delete(`coupons/${id}/`);
   } catch (error) {
     console.error("Delete Coupon Error:", error);
     throw error;

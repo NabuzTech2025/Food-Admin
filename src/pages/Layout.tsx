@@ -16,6 +16,7 @@ import {
   Monitor,
   Users,
   Map,
+  ListOrdered,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
@@ -47,7 +48,9 @@ function AdminLayout() {
       ? [{ name: "Dashboard", icon: Home, link: "/admin/dashboard" }]
       : [
           { name: "Dashboard", icon: Home, link: "/admin/dashboard" },
+          { name: "Orders", icon: ListOrdered, link: "/admin/orders" },
           { name: "Tax", icon: Landmark, link: "/admin/tax" },
+
           {
             name: "Product",
             icon: ShoppingCart,
