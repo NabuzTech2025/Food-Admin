@@ -13,6 +13,7 @@ import Toppings from "./pages/Product/Toppings";
 import ToppingGroups from "./pages/Product/ToppingGroups";
 import GroupItem from "./pages/Product/GroupItem";
 import VariantGroups from "./pages/Product/Variant-groups";
+import Coupons from "./pages/Product/Coupons";
 import AddAllergy from "./pages/Allergy/Add-Allergy";
 import ItemAllergy from "./pages/Allergy/Item-Allergy";
 import Categories from "./pages/Categories";
@@ -28,6 +29,8 @@ import DeviceStatus from "./pages/Device-Status";
 import Delivery from "./pages/Delivery";
 import StoreDetails from "./pages/SuperAdmin/StoreDetails/AllStore";
 import StoreProfile from "./pages/SuperAdmin/StoreDetails/AllStorProfile";
+import OrderDetailPage from "./pages/Orders/OrderDetailPage";
+import OrderPage from "./pages/Orders/Orders";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -59,6 +62,7 @@ function App() {
               <Route path="tax" element={<Tax />} />
               <Route path="product/category" element={<Category />} />
               <Route path="product/products" element={<Product />} />
+              <Route path="coupons" element={<Coupons />} />
               <Route path="product/toppings" element={<Toppings />} />
               <Route
                 path="product/topping-groups"
@@ -83,6 +87,8 @@ function App() {
               <Route path="inventory" element={<Inventory />} />
               <Route path="store-details" element={<StoreDetails />} />
               <Route path="store-profile" element={<StoreProfile />} />
+              <Route path="/admin/orders" element={<OrderPage />} />
+              <Route path="/admin/orders/:id" element={<OrderDetailPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

@@ -187,19 +187,6 @@ function ProductForm({
 
   // ── Submit ──
   const onSubmit = async (data: ProductFormData) => {
-    // 1. Check duplicate display_order
-    if (data.display_order) {
-      const isDuplicate = existingProducts.some(
-        (p) =>
-          p.display_order === parseInt(data.display_order) &&
-          p.id !== editData?.id,
-      );
-      if (isDuplicate) {
-        toast.warning("Display order already exists!");
-        return;
-      }
-    }
-
     // 2. Upload image if new file present
     let imageUrl = imagePreview;
     if (imageFile) {
@@ -402,8 +389,8 @@ function ProductForm({
               />
             </div>
 
-            {/* Row 3 — Type + Display Order + Status */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Row 3 — Type + Status */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <FormLabel>Type</FormLabel>
                 <select className={SELECT_CLS} {...register("type")}>
@@ -412,6 +399,7 @@ function ProductForm({
                 </select>
               </div>
 
+              {/* Display Order hidden from UI
               <div className="space-y-1.5">
                 <FormLabel>Display Order</FormLabel>
                 <Input
@@ -421,6 +409,7 @@ function ProductForm({
                   {...register("display_order")}
                 />
               </div>
+              */}
 
               <div className="space-y-1.5">
                 <FormLabel>Status</FormLabel>
@@ -437,38 +426,17 @@ function ProductForm({
                 <div className="space-y-1.5">
                   <FormLabel required>Price</FormLabel>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-neutral-500">
-                      {currentCurrency.symbol}
-                    </span>
                     <Input
                       type="number"
                       step="0.01"
                       min="0"
                       placeholder="0.00"
-                      className="pl-7"
                       {...register("price", {
                         required: "Price is required",
                       })}
                     />
                   </div>
                   <FieldError message={errors.price?.message} />
-                </div>
-
-                <div className="space-y-1.5">
-                  <FormLabel>Discount Price</FormLabel>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-neutral-500">
-                      {currentCurrency.symbol}
-                    </span>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      placeholder="Optional"
-                      className="pl-7"
-                      {...register("discount_price")}
-                    />
-                  </div>
                 </div>
               </div>
             )}
@@ -554,15 +522,12 @@ function ProductForm({
                         <div className="space-y-1">
                           <label className="text-xs font-medium">Price *</label>
                           <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500">
-                              {currentCurrency.symbol}
-                            </span>
                             <Input
                               type="number"
                               step="0.01"
                               min="0"
                               placeholder="0.00"
-                              className="pl-7 h-8 text-xs"
+                              className="h-8 text-xs"
                               {...register(`variants.${index}.price`, {
                                 required: "Required",
                               })}
@@ -571,25 +536,6 @@ function ProductForm({
                           <FieldError
                             message={errors.variants?.[index]?.price?.message}
                           />
-                        </div>
-
-                        <div className="space-y-1">
-                          <label className="text-xs font-medium">
-                            Discount Price
-                          </label>
-                          <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500">
-                              {currentCurrency.symbol}
-                            </span>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              placeholder="Optional"
-                              className="pl-7 h-8 text-xs"
-                              {...register(`variants.${index}.discount_price`)}
-                            />
-                          </div>
                         </div>
                       </div>
                     </div>

@@ -10,13 +10,13 @@ export interface Store {
   banner?: string;
   address?: string;
   country?: string;
-  is_manual_override?: boolean;
+ 
   manual_status?: "open" | "close";
 }
 
 export interface StoreUpdatePayload {
   name: string;
-  is_manual_override: boolean;
+
   manual_status: "open" | "close";
   image_url: string;
   banner_url: string;
