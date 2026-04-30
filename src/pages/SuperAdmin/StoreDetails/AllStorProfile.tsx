@@ -77,7 +77,6 @@ function StoreProfilePage() {
         id: storeData.id,
         payload: {
           name: storeData.name,
-          is_manual_override: storeData.is_manual_override ?? false,
           manual_status: storeData.manual_status ?? "close",
           image_url: updatedLogoUrl,
           banner_url: updatedBannerUrl,

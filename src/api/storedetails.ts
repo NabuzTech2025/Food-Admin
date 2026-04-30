@@ -10,13 +10,12 @@ export interface Store {
   banner?: string;
   address?: string;
   country?: string;
- 
+
   manual_status?: "open" | "close";
 }
 
 export interface StoreUpdatePayload {
   name: string;
-
   manual_status: "open" | "close";
   image_url: string;
   banner_url: string;
