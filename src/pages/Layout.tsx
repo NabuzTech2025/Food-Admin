@@ -53,9 +53,9 @@ function AdminLayout() {
           { name: "Store Details", icon: MapPin, link: "/store-details" },
         ]
       : [
-          { name: "Dashboard", icon: Home, link: "/admin/dashboard" },
-          { name: "Orders", icon: ListOrdered, link: "/admin/orders" },
-          { name: "Tax", icon: Landmark, link: "/admin/tax" },
+          { name: "Dashboard", icon: Home, link: "/dashboard" },
+          { name: "Orders", icon: ListOrdered, link: "/orders" },
+          { name: "Tax", icon: Landmark, link: "/tax" },
 
           {
             name: "Product",
