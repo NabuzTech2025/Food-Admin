@@ -85,7 +85,7 @@ function AdminLayout() {
           {
             name: "Coupons",
             icon: Tag,
-            link: "/admin/coupons",
+            link: "/coupons",
           },
           {
             name: "Category Availability Time",
