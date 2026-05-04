@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes, Outlet } from "react-router-dom";
 import { ThemeProvider } from "./context/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import AdminLayout from "./pages/Layout";
 import Login from "./pages/Login";
 import { useAdminStore } from "./context/store/useAdminStore";
