@@ -1,11 +1,12 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, Outlet } from "react-router-dom";
 import { ThemeProvider } from "./context/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import AdminLayout from "./pages/Layout";
 import Login from "./pages/Login";
 import { useAdminStore } from "./context/store/useAdminStore";
 import { useEffect } from "react";
+import { getSessionAdminToken } from "./utils/storage";
 import Tax from "./pages/Tax";
 import Category from "./pages/Product/Category";
 import Product from "./pages/Product/Product";
@@ -39,6 +40,16 @@ const queryClient = new QueryClient({
   },
 });
 
+const ProtectedRoute = () => {
+  const isAuthenticated = useAdminStore((state) => state.isAuthenticated);
+  const token = getSessionAdminToken();
+
+  if (!isAuthenticated && !token) {
+    return <Navigate to="/admin-login" replace />;
+  }
+  return <Outlet />;
+};
+
 function App() {
   const loadFromStorage = useAdminStore((state) => state.loadFromStorage);
 
@@ -55,37 +66,39 @@ function App() {
             <Route path="/admin-login" element={<Login />} />
 
             {/* ✅ Sab routes ek hi AdminLayout ke andar */}
-            <Route path="/" element={<AdminLayout />}>
-              <Route index path="dashboard" element={<Dashboard />} />
-              <Route path="tax" element={<Tax />} />
-              <Route path="product/category" element={<Category />} />
-              <Route path="product/products" element={<Product />} />
-              <Route path="coupons" element={<Coupons />} />
-              <Route path="product/toppings" element={<Toppings />} />
-              <Route
-                path="product/topping-groups"
-                element={<ToppingGroups />}
-              />
-              <Route path="product/group-item" element={<GroupItem />} />
-              <Route
-                path="product/variant-groups"
-                element={<VariantGroups />}
-              />
-              <Route path="allergy/add-allergy" element={<AddAllergy />} />
-              <Route path="allergy/item-allergy" element={<ItemAllergy />} />
-              <Route path="category" element={<Categories />} />
-              <Route path="store-settings" element={<StoreSettings />} />
-              <Route path="discount" element={<Discount />} />
-              <Route path="postcode" element={<PostCode />} />
-              <Route path="delivery-zone" element={<DeliveryZone />} />
-              <Route path="delivery" element={<Delivery />} />
-              <Route path="device-status" element={<DeviceStatus />} />
-              <Route path="customer" element={<Customer />} />
-              <Route path="customer/:id" element={<CustomerDetail />} />
-              <Route path="inventory" element={<Inventory />} />
-              <Route path="store-details" element={<StoreDetails />} />
-              <Route path="store-profile" element={<StoreProfile />} />
-              <Route path="orders" element={<OrderPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/" element={<AdminLayout />}>
+                <Route index path="dashboard" element={<Dashboard />} />
+                <Route path="tax" element={<Tax />} />
+                <Route path="product/category" element={<Category />} />
+                <Route path="product/products" element={<Product />} />
+                <Route path="coupons" element={<Coupons />} />
+                <Route path="product/toppings" element={<Toppings />} />
+                <Route
+                  path="product/topping-groups"
+                  element={<ToppingGroups />}
+                />
+                <Route path="product/group-item" element={<GroupItem />} />
+                <Route
+                  path="product/variant-groups"
+                  element={<VariantGroups />}
+                />
+                <Route path="allergy/add-allergy" element={<AddAllergy />} />
+                <Route path="allergy/item-allergy" element={<ItemAllergy />} />
+                <Route path="category" element={<Categories />} />
+                <Route path="store-settings" element={<StoreSettings />} />
+                <Route path="discount" element={<Discount />} />
+                <Route path="postcode" element={<PostCode />} />
+                <Route path="delivery-zone" element={<DeliveryZone />} />
+                <Route path="delivery" element={<Delivery />} />
+                <Route path="device-status" element={<DeviceStatus />} />
+                <Route path="customer" element={<Customer />} />
+                <Route path="customer/:id" element={<CustomerDetail />} />
+                <Route path="inventory" element={<Inventory />} />
+                <Route path="store-details" element={<StoreDetails />} />
+                <Route path="store-profile" element={<StoreProfile />} />
+                <Route path="orders" element={<OrderPage />} />
+              </Route>
             </Route>
           </Routes>
         </BrowserRouter>

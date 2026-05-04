@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { setLocalStorage } from "@/utils/storage";
+import { setSessionStorage } from "@/utils/storage";
 import { useAdminStore } from "@/context/store/useAdminStore";
 
 function LoginForm() {
@@ -33,8 +33,8 @@ function LoginForm() {
         store_type: result.store_type,
       };
 
-      // Save to localStorage
-      setLocalStorage({ key: "AdminData", data: adminData });
+      // Save to sessionStorage
+      setSessionStorage({ key: "AdminData", data: adminData });
 
       // Save to Zustand store
       setAdminData(adminData);
