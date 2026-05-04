@@ -30,59 +30,32 @@ export default function Dashboard() {
       {/* Header Area from Design */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Dashboard
-          </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Operational dashboard with key shop performance metrics and activity.
-          </p>
-        </div>
-
-        {/* Top Right Actions */}
-        <div className="flex flex-wrap items-center gap-3">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2 rounded-full px-4 border-gray-200 h-10">
-                <span className="w-2.5 h-2.5 rounded-full bg-green-500"></span>
-                Availability
-                <ChevronDown className="w-4 h-4 ml-1 text-gray-500" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Online</DropdownMenuItem>
-              <DropdownMenuItem>Offline</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2 rounded-full px-4 border-gray-200 h-10">
-                <Globe className="w-4 h-4 text-gray-600" />
-                EN
-                <ChevronDown className="w-4 h-4 ml-1 text-gray-500" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>EN - English</DropdownMenuItem>
-              <DropdownMenuItem>DE - German</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Button variant="outline" size="icon" className="rounded-full border-gray-200 h-10 w-10">
-            <Moon className="w-4 h-4 text-gray-600" />
-          </Button>
-          <Button variant="outline" size="icon" className="rounded-full border-gray-200 h-10 w-10">
-            <Globe className="w-4 h-4 text-gray-600" />
-          </Button>
-          <Button variant="outline" size="icon" className="rounded-full border-gray-200 h-10 w-10 relative">
-            <Bell className="w-4 h-4 text-gray-600" />
-            <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-              65
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Dashboard
+            </h1>
+            <span className="bg-amber-200 text-amber-900 text-xs font-medium px-3 py-1 rounded">
+              Development mode
             </span>
-          </Button>
-          <Button variant="outline" size="icon" className="rounded-full border-gray-200 h-10 w-10">
-            <User className="w-4 h-4 text-gray-600" />
-          </Button>
+          </div>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Operational dashboard with key shop performance metrics and
+            activity.
+          </p>
+
+          <div className="mt-4 bg-amber-50 border border-amber-200 border-l-4 border-l-amber-400 px-4 py-3 flex gap-3">
+            <svg className="w-4 h-4 text-amber-700 mt-0.5 shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-amber-900">
+                You're in development mode
+              </p>
+              <p className="text-sm text-amber-700 mt-0.5">
+                Data shown may be test data. Features and metrics may not
+                reflect production values. This mode is intended for testing and
+                development purposes only.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -151,7 +124,7 @@ export default function Dashboard() {
                 <p className="text-xs text-gray-400 mt-2">No previous data</p>
               </CardContent>
             </Card>
-            
+
             {/* AOV */}
             <Card className="shadow-sm border-gray-200 rounded-2xl">
               <CardHeader className="pb-2 pt-6 px-6">
@@ -197,28 +170,41 @@ export default function Dashboard() {
             {/* Delivery */}
             <Card className="shadow-sm border-gray-200 rounded-2xl flex flex-col items-center justify-center py-8">
               <Truck className="w-6 h-6 text-gray-700 mb-3" strokeWidth={1.5} />
-              <span className="text-sm font-medium text-gray-500">Delivery</span>
+              <span className="text-sm font-medium text-gray-500">
+                Delivery
+              </span>
               <span className="text-2xl font-bold text-gray-900 mt-1">0</span>
             </Card>
 
             {/* Pickup */}
             <Card className="shadow-sm border-gray-200 rounded-2xl flex flex-col items-center justify-center py-8">
-              <ShoppingBag className="w-6 h-6 text-gray-700 mb-3" strokeWidth={1.5} />
+              <ShoppingBag
+                className="w-6 h-6 text-gray-700 mb-3"
+                strokeWidth={1.5}
+              />
               <span className="text-sm font-medium text-gray-500">Pickup</span>
               <span className="text-2xl font-bold text-gray-900 mt-1">0</span>
             </Card>
 
             {/* Dine in */}
             <Card className="shadow-sm border-gray-200 rounded-2xl flex flex-col items-center justify-center py-8">
-              <UtensilsCrossed className="w-6 h-6 text-gray-700 mb-3" strokeWidth={1.5} />
+              <UtensilsCrossed
+                className="w-6 h-6 text-gray-700 mb-3"
+                strokeWidth={1.5}
+              />
               <span className="text-sm font-medium text-gray-500">Dine in</span>
               <span className="text-2xl font-bold text-gray-900 mt-1">0</span>
             </Card>
 
             {/* Reservation */}
             <Card className="shadow-sm border-gray-200 rounded-2xl flex flex-col items-center justify-center py-8">
-              <CalendarCheck className="w-6 h-6 text-gray-700 mb-3" strokeWidth={1.5} />
-              <span className="text-sm font-medium text-gray-500">Reservation</span>
+              <CalendarCheck
+                className="w-6 h-6 text-gray-700 mb-3"
+                strokeWidth={1.5}
+              />
+              <span className="text-sm font-medium text-gray-500">
+                Reservation
+              </span>
               <span className="text-2xl font-bold text-gray-900 mt-1">4</span>
             </Card>
           </div>
@@ -254,7 +240,9 @@ export default function Dashboard() {
                 </div>
               </CardHeader>
               <CardContent className="flex-1 flex items-center justify-center">
-                <p className="text-gray-400 text-sm font-medium">No data found</p>
+                <p className="text-gray-400 text-sm font-medium">
+                  No data found
+                </p>
               </CardContent>
             </Card>
           </div>
