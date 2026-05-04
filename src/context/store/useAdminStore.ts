@@ -2,7 +2,7 @@
 import { create } from "zustand";
 import type { AdminStorageData } from "@/types/Admin.types";
 import type { Store } from "@/api/Currentstore";
-import { getLocalStorage, removeLocalStorage } from "@/utils/storage";
+import { getSessionStorage, removeSessionStorage } from "@/utils/storage";
 
 interface AdminState {
   token: string | null;
@@ -36,7 +36,7 @@ export const useAdminStore = create<AdminState>((set) => ({
     }),
 
   loadFromStorage: () => {
-    const data = getLocalStorage("AdminData");
+    const data = getSessionStorage("AdminData");
     if (data) {
       set({
         token: data.token,
@@ -49,7 +49,7 @@ export const useAdminStore = create<AdminState>((set) => ({
   },
 
   clearAdminData: () => {
-    removeLocalStorage("AdminData");
+    removeSessionStorage("AdminData");
     set({
       token: null,
       role_id: null,

@@ -18,7 +18,7 @@ axiosInstance.interceptors.request.use(
     // ✅ Read token from AdminData (not userData)
     let token: string | null = null;
     try {
-      const adminDataStr = localStorage.getItem("AdminData");
+      const adminDataStr = sessionStorage.getItem("AdminData");
       if (adminDataStr) {
         const adminData: { token?: string } = JSON.parse(adminDataStr);
         token = adminData?.token ?? null;
@@ -45,7 +45,7 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401) {
       console.error("Unauthorized! Token expired or invalid.");
       // ✅ Remove AdminData (not userData)
-      localStorage.removeItem("AdminData");
+      sessionStorage.removeItem("AdminData");
       // ✅ Redirect to admin login (not /login)
       window.location.href = "/admin-login";
     }
