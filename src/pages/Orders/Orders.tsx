@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
 import {
   Search,
@@ -345,8 +346,17 @@ function OrderCard({ order, onClick }: { order: Order; onClick: () => void }) {
 // ─── Main Page ────────────────────────────────────────────────────
 function OrderPage() {
   const { store_id } = useAdminStore();
+  const [searchParams] = useSearchParams();
   const [search, setSearch] = useState("");
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(() => {
+    const d = searchParams.get("date");
+    if (d) {
+      const [y, m, day] = d.split("-").map(Number);
+      const parsed = new Date(y, m - 1, day);
+      if (!isNaN(parsed.getTime())) return parsed;
+    }
+    return new Date();
+  });
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [modalOpen, setModalOpen] = useState(false);

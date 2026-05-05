@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Player } from "@lottiefiles/react-lottie-player";
 import {
   Dialog,
@@ -7,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { History, X, CalendarDays } from "lucide-react";
+import { History, X, CalendarDays, ArrowRight } from "lucide-react";
 import { useGetDashboardReport } from "@/hooks/usegetTodayReport";
 import type { DailyReport, DashboardReport } from "@/api/dashboard_report";
 import loadingAnim from "@/assets/lottie/loading.json";
@@ -19,6 +20,7 @@ import { PaymentMethodsCard } from "./components/PaymentMethodsCard";
 import { SalesCalendar } from "./components/SalesCalendar";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { data: todayReport, isLoading } = useGetDashboardReport();
   const [selectedDay, setSelectedDay] = useState<DailyReport | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -97,26 +99,41 @@ export default function Dashboard() {
           )}
         </div>
 
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm cursor-pointer">
-              <History className="w-3.5 h-3.5" strokeWidth={1.5} />
-              History
+        <div className="flex items-center gap-2">
+          {selectedDateKey && (
+            <button
+              onClick={() => navigate(`/orders?date=${selectedDateKey}`)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-green-600 border border-green-700 rounded-lg hover:bg-green-700 transition-all shadow-sm cursor-pointer"
+            >
+              View Orders
+              <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} />
             </button>
-          </DialogTrigger>
-          <DialogContent className="max-w-lg p-4">
-            <DialogHeader className="mb-2">
-              <DialogTitle className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                <History className="w-4 h-4 text-gray-500" strokeWidth={1.5} />
-                Sales History
-              </DialogTitle>
-            </DialogHeader>
-            <SalesCalendar
-              onDaySelect={handleDaySelect}
-              selectedDateKey={selectedDateKey}
-            />
-          </DialogContent>
-        </Dialog>
+          )}
+
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm cursor-pointer">
+                <History className="w-3.5 h-3.5" strokeWidth={1.5} />
+                History
+              </button>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg p-4">
+              <DialogHeader className="mb-2">
+                <DialogTitle className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                  <History
+                    className="w-4 h-4 text-gray-500"
+                    strokeWidth={1.5}
+                  />
+                  Sales History
+                </DialogTitle>
+              </DialogHeader>
+              <SalesCalendar
+                onDaySelect={handleDaySelect}
+                selectedDateKey={selectedDateKey}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <SalesSummaryCard report={activeReport} fmt={fmt} />
