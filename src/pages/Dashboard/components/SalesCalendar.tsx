@@ -5,7 +5,13 @@ import { useGetAllReports } from "@/hooks/useGetAllReports";
 import type { DailyReport } from "@/api/dashboard_report";
 import loadingAnim from "@/assets/lottie/loading.json";
 
-export function SalesCalendar() {
+export function SalesCalendar({
+  onDaySelect,
+  selectedDateKey,
+}: {
+  onDaySelect: (report: DailyReport) => void;
+  selectedDateKey?: string;
+}) {
   const { data: reports = [], isLoading } = useGetAllReports();
 
   const today = new Date();
@@ -18,6 +24,15 @@ export function SalesCalendar() {
     reports.forEach((r: DailyReport) => {
       const key = r.start_date.slice(0, 10);
       map[key] = (map[key] ?? 0) + r.total_sales;
+    });
+    return map;
+  }, [reports]);
+
+  // dateKey → full DailyReport (used when a day is clicked)
+  const reportMap = useMemo(() => {
+    const map: Record<string, DailyReport> = {};
+    reports.forEach((r: DailyReport) => {
+      map[r.start_date.slice(0, 10)] = r;
     });
     return map;
   }, [reports]);
@@ -50,7 +65,6 @@ export function SalesCalendar() {
     const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
     cells.push({ day: d, current: true, dateKey });
   }
-  // Always fill to exactly 42 cells (6 rows × 7 cols) so height never changes
   let nextDay = 1;
   while (cells.length < 42) {
     cells.push({ day: nextDay++, current: false, dateKey: "" });
@@ -113,27 +127,44 @@ export function SalesCalendar() {
           {cells.map((cell, idx) => {
             const sales =
               cell.current && cell.dateKey ? salesMap[cell.dateKey] : undefined;
-            const hasSales = sales !== undefined;
+            const hasData = sales !== undefined && !!reportMap[cell.dateKey];
             const isToday = cell.dateKey === todayKey;
+            const isSelected = cell.dateKey === selectedDateKey;
+
             return (
               <div
                 key={idx}
-                className={`border-r border-b border-gray-100 p-1.5 flex flex-col items-center gap-0.5 overflow-hidden ${
-                  !cell.current ? "bg-gray-50/50" : ""
-                } ${isToday ? "bg-blue-50/60" : ""}`}
+                onClick={() => {
+                  if (hasData) onDaySelect(reportMap[cell.dateKey]);
+                }}
+                className={[
+                  "border-r border-b border-gray-100 p-1.5 flex flex-col items-center gap-0.5 overflow-hidden transition-colors",
+                  !cell.current ? "bg-gray-50/50" : "",
+                  isToday && !isSelected ? "bg-blue-50/60" : "",
+                  isSelected
+                    ? "bg-green-100 ring-2 ring-inset ring-green-400"
+                    : "",
+                  hasData
+                    ? "cursor-pointer hover:bg-green-50"
+                    : "cursor-default",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
               >
                 <span
                   className={`text-xs font-semibold ${
                     !cell.current
                       ? "text-gray-300"
-                      : isToday
-                        ? "text-blue-600"
-                        : "text-gray-700"
+                      : isSelected
+                        ? "text-green-700"
+                        : isToday
+                          ? "text-blue-600"
+                          : "text-gray-700"
                   }`}
                 >
                   {cell.day}
                 </span>
-                {hasSales && (
+                {sales !== undefined && (
                   <>
                     <TrendingUp
                       className="w-3 h-3 text-green-500"
@@ -155,7 +186,7 @@ export function SalesCalendar() {
       )}
 
       <p className="text-[10px] text-gray-400 text-center">
-        Showing auto-generated daily sales reports
+        Click a day with data to view its report
       </p>
     </div>
   );
