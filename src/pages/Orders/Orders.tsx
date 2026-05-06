@@ -130,7 +130,8 @@ function OrderDetailModal({
                   {item.unit_price.toFixed(2)}]
                 </span>
                 <span className="text-base font-semibold text-neutral-800">
-                  £ {(item.unit_price * item.quantity).toFixed(2)}
+                  {currentCurrency.symbol}{" "}
+                  {(item.unit_price * item.quantity).toFixed(2)}
                 </span>
               </div>
               {(item.toppings?.length ?? 0) > 0 && (
@@ -180,7 +181,10 @@ function OrderDetailModal({
           {/* Grand Total */}
           <div className="flex justify-between text-lg font-bold text-neutral-800 pt-1">
             <span>Grand Total</span>
-            <span>£ {order.invoice?.total_amount?.toFixed(2) ?? "-"}</span>
+            <span>
+              {currentCurrency.symbol}
+              {order.invoice?.total_amount?.toFixed(2) ?? "-"}
+            </span>
           </div>
         </div>
 
