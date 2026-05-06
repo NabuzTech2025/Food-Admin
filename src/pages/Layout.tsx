@@ -127,11 +127,11 @@ function AdminLayout() {
             icon: Users,
             link: "/customer",
           },
-          // {
-          //   name: "Inventory",
-          //   icon: Package,
-          //   link: "/inventory",
-          // },
+          {
+            name: "Change Password",
+            icon: Package,
+            link: "/change-password",
+          },
         ];
 
   // Auto-open parent if a child route is active
