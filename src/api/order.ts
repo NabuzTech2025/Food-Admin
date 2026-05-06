@@ -23,6 +23,7 @@ export interface Order {
   order_number: number;
   source: string;
   order_type: number;
+  coupon_code: string | null;
   order_status: number;
   approval_status: number;
   note: string;

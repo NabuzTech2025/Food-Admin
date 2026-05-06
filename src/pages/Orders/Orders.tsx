@@ -28,29 +28,15 @@ import {
 import { useAdminStore } from "@/context/store/useAdminStore";
 import { useGetOrders } from "@/hooks/useOrder";
 import type { Order } from "@/api/order";
+import { currentCurrency } from "@/utils/helper/currency_type";
+import delivery_icon from "@/assets/delivery-icon.svg";
+import pickup_icon from "@/assets/pickup-icon.svg";
 
 // ─── Maps ─────────────────────────────────────────────────────────
 const ORDER_STATUS_MAP: Record<number, { label: string; className: string }> = {
   1: { label: "Pending", className: "bg-yellow-100 text-yellow-700" },
-  2: { label: "Confirmed", className: "bg-blue-100 text-blue-700" },
-  3: { label: "Preparing", className: "bg-orange-100 text-orange-700" },
-  4: { label: "Ready", className: "bg-purple-100 text-purple-700" },
-  5: { label: "Delivered", className: "bg-green-100 text-green-700" },
-  6: { label: "Cancelled", className: "bg-red-100 text-red-700" },
-};
-
-const PAYMENT_STATUS_MAP: Record<string, { label: string; className: string }> =
-  {
-    pending: { label: "Pending", className: "bg-yellow-100 text-yellow-700" },
-    paid: { label: "Paid", className: "bg-green-100 text-green-700" },
-    failed: { label: "Failed", className: "bg-red-100 text-red-700" },
-    refunded: { label: "Refunded", className: "bg-gray-100 text-gray-600" },
-  };
-
-const ORDER_TYPE_MAP: Record<number, string> = {
-  1: "Dine In",
-  2: "Takeaway",
-  3: "Delivery",
+  2: { label: "Accepted", className: "bg-green-100 text-green-700" },
+  3: { label: "Declined", className: "bg-red-100 text-red-700" },
 };
 
 // ─── Order Detail Modal ───────────────────────────────────────────
@@ -80,7 +66,7 @@ function OrderDetailModal({
     order.approval_status === 2
       ? { label: "Accepted", className: "border-green-500 text-green-600" }
       : order.approval_status === 3
-        ? { label: "Rejected", className: "border-red-500 text-red-600" }
+        ? { label: "Decline", className: "border-red-500 text-red-600" }
         : { label: "Pending", className: "border-yellow-500 text-yellow-600" };
 
   const items = order.items ?? [];
@@ -150,7 +136,10 @@ function OrderDetailModal({
               {(item.toppings?.length ?? 0) > 0 && (
                 <div className="ml-3 mt-0.5 space-y-0.5">
                   {item.toppings!.map((t) => (
-                    <p key={t.topping_id} className="text-base text-neutral-400">
+                    <p
+                      key={t.topping_id}
+                      className="text-base text-neutral-400"
+                    >
                       {item.quantity} × {t.name} [{t.price.toFixed(2)}]
                     </p>
                   ))}
@@ -212,7 +201,7 @@ function OrderDetailModal({
             </p>
           )}
           <p className="text-base text-neutral-600">
-            Coupon Applied: {order.discount?.code ?? "null"}
+            Coupon Applied: {order.coupon_code ?? "null"}
           </p>
         </div>
 
@@ -260,17 +249,10 @@ function OrderCard({ order, onClick }: { order: Order; onClick: () => void }) {
     order.user?.username ||
     "Guest";
 
-  const orderStatus = ORDER_STATUS_MAP[order.order_status] ?? {
+  const orderStatus = ORDER_STATUS_MAP[order.approval_status] ?? {
     label: "Unknown",
     className: "bg-gray-100 text-gray-500",
   };
-
-  const paymentStatus = order.payment?.status
-    ? (PAYMENT_STATUS_MAP[order.payment.status] ?? {
-        label: order.payment.status,
-        className: "bg-gray-100 text-gray-500",
-      })
-    : null;
 
   return (
     <div
@@ -279,9 +261,27 @@ function OrderCard({ order, onClick }: { order: Order; onClick: () => void }) {
     >
       {/* Top Row */}
       <div className="flex items-center justify-between">
-        <span className="text-base font-bold text-neutral-800">
-          #{order.order_number}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="bg-green-600 text-white px-3 py-1.5 rounded-full">
+            {order.order_type === 1 ? (
+              <img
+                src={delivery_icon}
+                alt="Delivery"
+                className="w-4 h-4 inline-block"
+              />
+            ) : order.order_type === 2 ? (
+              <img
+                src={pickup_icon}
+                alt="Pickup"
+                className="w-4 h-4 inline-block"
+              />
+            ) : null}
+          </span>
+          <span className="text-base font-bold text-neutral-800">
+            Order Number: {order.order_number}
+          </span>
+        </div>
+
         <Badge className={`text-sm ${orderStatus.className}`}>
           {orderStatus.label}
         </Badge>
@@ -315,30 +315,10 @@ function OrderCard({ order, onClick }: { order: Order; onClick: () => void }) {
             : "-"}
         </span>
       </div>
-
-      <div className="border-t border-border" />
-
-      {/* Bottom Row */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-sm text-neutral-400">
-            {ORDER_TYPE_MAP[order.order_type] ?? "-"}
-          </span>
-          <span className="text-neutral-300">·</span>
-          <span className="text-sm text-neutral-400">{order.source}</span>
-          {paymentStatus && (
-            <>
-              <span className="text-neutral-300">·</span>
-              <Badge className={`text-sm ${paymentStatus.className}`}>
-                {paymentStatus.label}
-              </Badge>
-            </>
-          )}
-        </div>
-        <span className="text-base font-bold text-neutral-800">
-          €{order.invoice?.total_amount?.toFixed(2) ?? "-"}
-        </span>
-      </div>
+      <span className="text-base font-bold text-neutral-800">
+        {currentCurrency.symbol}
+        {order.invoice?.total_amount?.toFixed(2) ?? "-"}
+      </span>
     </div>
   );
 }
