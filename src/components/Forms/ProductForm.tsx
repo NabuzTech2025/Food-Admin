@@ -404,7 +404,6 @@ function ProductForm({
                 <Input
                   type="number"
                   placeholder="e.g. 1"
-                  min="1"
                   {...register("display_order")}
                 />
               </div>
