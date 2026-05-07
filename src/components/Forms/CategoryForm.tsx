@@ -10,7 +10,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import SearchableSelect from "@/components/SearchableSelect";
 import { useAdminStore } from "@/context/store/useAdminStore";
@@ -31,7 +30,6 @@ interface CategoryFormProps {
   open: boolean;
   onClose: () => void;
   existingCategories: Category[];
-  // ✅ If editData is provided → Edit mode, otherwise → Add mode
   editData?: Category | null;
 }
 
@@ -59,11 +57,8 @@ function CategoryForm({
     control,
     reset,
     formState: { errors },
-  } = useForm<CategoryFormData>({
-    mode: "onBlur",
-  });
+  } = useForm<CategoryFormData>({ mode: "onBlur" });
 
-  // ✅ Populate form when editData changes
   useEffect(() => {
     if (editData) {
       reset({
@@ -113,12 +108,11 @@ function CategoryForm({
   };
 
   const onSubmit = async (data: CategoryFormData) => {
-    // Duplicate display order check (skip current item in edit mode)
     if (data.display_order) {
       const isDuplicate = existingCategories.some(
         (cat) =>
           cat.display_order === parseInt(data.display_order) &&
-          cat.id !== editData?.id, // ✅ skip self in edit mode
+          cat.id !== editData?.id,
       );
       if (isDuplicate) {
         toast.warning("Display order already exists!");
@@ -126,14 +120,13 @@ function CategoryForm({
       }
     }
 
-    // Upload new image if selected
-    let imageUrl = imagePreview; // default: keep existing image
+    let imageUrl = imagePreview;
     if (imageFile) {
       try {
         const res = await uploadImage({ file: imageFile });
         imageUrl = res.url || res.image_url || "";
       } catch {
-        return; // error already toasted in hook
+        return;
       }
     }
 
@@ -165,14 +158,15 @@ function CategoryForm({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-lg mx-4 sm:mx-auto rounded-xl">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-lg w-[calc(100%-2rem)] rounded-xl p-0 flex flex-col overflow-hidden gap-0 max-h-[90dvh] sm:max-h-[85vh]">
+        {/* Sticky Header */}
+        <DialogHeader className="flex-shrink-0 px-6 py-5 border-b bg-white rounded-t-xl">
           <div className="flex items-center justify-between">
-            <DialogTitle>
+            <DialogTitle className="text-xl font-semibold">
               {isEditMode ? "Edit Category" : "Add New Category"}
             </DialogTitle>
 
-            {/* Image upload */}
+            {/* Image Upload */}
             <div className="mr-6">
               {imagePreview ? (
                 <div className="relative w-12 h-12">
@@ -221,76 +215,86 @@ function CategoryForm({
           </div>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-1">
-          {/* Category Name */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium">
-              Category Name <span className="text-destructive">*</span>
-            </label>
-            <Input
-              placeholder="e.g. Tandoori"
-              aria-invalid={errors.name ? "true" : "false"}
-              {...register("name", { required: "Category name is required" })}
-            />
-            {errors.name && (
-              <p className="text-xs text-destructive">{errors.name.message}</p>
-            )}
-          </div>
-
-          {/* Tax */}
-          <Controller
-            name="tax_id"
-            control={control}
-            render={({ field }) => (
-              <SearchableSelect
-                label="Tax"
-                placeholder="Select Tax (optional)"
-                options={taxList}
-                value={field.value}
-                onChange={field.onChange}
-                getOptionLabel={(opt: any) =>
-                  `${opt.name} (${opt.percentage}%)`
-                }
-                getOptionValue={(opt: any) => opt.id}
-                clearable
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col flex-1 min-h-0"
+        >
+          {/* Scrollable Body */}
+          <div className="flex-1 dialog-scroll overflow-y-auto px-6 py-5 space-y-4">
+            {/* Category Name */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">
+                Category Name <span className="text-destructive">*</span>
+              </label>
+              <Input
+                placeholder="e.g. Tandoori"
+                aria-invalid={errors.name ? "true" : "false"}
+                {...register("name", { required: "Category name is required" })}
               />
-            )}
-          />
+              {errors.name && (
+                <p className="text-xs text-destructive">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
 
-          {/* Display Order */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium">Display Order</label>
-            <Input
-              type="number"
-              placeholder="e.g. 1"
-              min="0"
-              {...register("display_order")}
+            {/* Tax */}
+            <Controller
+              name="tax_id"
+              control={control}
+              render={({ field }) => (
+                <SearchableSelect
+                  label="Tax"
+                  placeholder="Select Tax (optional)"
+                  options={taxList}
+                  value={field.value}
+                  onChange={field.onChange}
+                  getOptionLabel={(opt: any) =>
+                    `${opt.name} (${opt.percentage}%)`
+                  }
+                  getOptionValue={(opt: any) => opt.id}
+                  clearable
+                />
+              )}
             />
+
+            {/* Display Order */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Display Order</label>
+              <Input
+                type="number"
+                placeholder="e.g. 1"
+                min="0"
+                {...register("display_order")}
+              />
+            </div>
+
+            {/* Description */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Description</label>
+              <Textarea
+                placeholder="Enter description (optional)"
+                rows={3}
+                {...register("description")}
+              />
+            </div>
+
+            {/* Status */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Status</label>
+              <select
+                className="w-full h-10 px-3 text-sm rounded-md border border-input bg-white outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                {...register("isActive")}
+              >
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+              </select>
+            </div>
           </div>
 
-          {/* Description */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium">Description</label>
-            <Textarea
-              placeholder="Enter description (optional)"
-              rows={3}
-              {...register("description")}
-            />
-          </div>
-
-          {/* Status */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium">Status</label>
-            <select
-              className="w-full h-10 px-3 text-sm rounded-md border border-input bg-white outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-              {...register("isActive")}
-            >
-              <option value="true">Active</option>
-              <option value="false">Inactive</option>
-            </select>
-          </div>
-
-          <DialogFooter className="pt-2 flex-col-reverse sm:flex-row gap-2">
+          {/* Sticky Footer */}
+          <div className="flex-shrink-0 flex flex-col-reverse sm:flex-row justify-end gap-2 px-6 py-4 border-t bg-white rounded-b-xl">
             <Button
               type="button"
               variant="outline"
@@ -319,7 +323,7 @@ function CategoryForm({
                 "Save Category"
               )}
             </Button>
-          </DialogFooter>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
