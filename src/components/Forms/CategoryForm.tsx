@@ -108,18 +108,6 @@ function CategoryForm({
   };
 
   const onSubmit = async (data: CategoryFormData) => {
-    if (data.display_order) {
-      const isDuplicate = existingCategories.some(
-        (cat) =>
-          cat.display_order === parseInt(data.display_order) &&
-          cat.id !== editData?.id,
-      );
-      if (isDuplicate) {
-        toast.warning("Display order already exists!");
-        return;
-      }
-    }
-
     let imageUrl = imagePreview;
     if (imageFile) {
       try {
