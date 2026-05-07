@@ -173,7 +173,7 @@ function ProductPage() {
               <TableHeader className="sticky top-0 z-10 bg-white shadow-sm">
                 <TableRow className="bg-muted/50">
                   <TableHead className="w-10 font-semibold text-neutral-700">
-                    #
+                    Display Order
                   </TableHead>
                   {/* <TableHead className="w-20 font-semibold text-neutral-700">
                     DISPLAY ORDER
@@ -224,7 +224,7 @@ function ProductPage() {
                   filtered.map((item, index) => (
                     <TableRow key={item.id} className="hover:bg-muted/30">
                       <TableCell className="text-neutral-500">
-                        {index + 1}
+                        {item.display_order}
                       </TableCell>
                       {/* <TableCell className="text-neutral-500">
                         {item.display_order ?? "-"}
