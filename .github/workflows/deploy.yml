@@ -3,7 +3,7 @@ name: Deploy Food Admin CMS Production
 on:
   push:
     tags:
-      - "v*"
+      - "main2-v*"
 
 jobs:
   build-and-push:
