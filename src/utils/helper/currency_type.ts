@@ -1,4 +1,4 @@
 export const currentCurrency = {
-    symbol: "₹",
-    code: "INR",
+  symbol: "€",
+  code: "EUR",
 };

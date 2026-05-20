@@ -1,5 +1,5 @@
 // src/components/Forms/ProductForm.tsx
-import { useEffect, useState, } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
 import { Loader2, ImagePlus, X, Plus, Trash2 } from "lucide-react";
@@ -150,12 +150,12 @@ function ProductForm({
         variants:
           editData.type === "variable"
             ? (editData.variants ?? []).map((v) => ({
-              name: v.name,
-              price: String(v.price),
-              discount_price:
-                v.discount_price > 0 ? String(v.discount_price) : "",
-              description: v.description ?? "",
-            }))
+                name: v.name,
+                price: String(v.price),
+                discount_price:
+                  v.discount_price > 0 ? String(v.discount_price) : "",
+                description: v.description ?? "",
+              }))
             : [],
       });
       setImagePreview(
@@ -227,13 +227,13 @@ function ProductForm({
       variants:
         data.type === "variable"
           ? data.variants.map((v) => ({
-            name: v.name,
-            price: parseFloat(v.price) || 0,
-            discount_price: v.discount_price
-              ? parseFloat(v.discount_price)
-              : 0,
-            description: v.description,
-          }))
+              name: v.name,
+              price: parseFloat(v.price) || 0,
+              discount_price: v.discount_price
+                ? parseFloat(v.discount_price)
+                : 0,
+              description: v.description,
+            }))
           : [],
     };
 
@@ -398,19 +398,15 @@ function ProductForm({
                   <option value="variable">Variable</option>
                 </select>
               </div>
-
-              {/* Display Order hidden from UI
+              {/* Display Order hidden from UI */}
               <div className="space-y-1.5">
-                <FormLabel>Display Order</FormLabel>
+                <FormLabel>Dspliay Order</FormLabel>
                 <Input
                   type="number"
                   placeholder="e.g. 1"
-                  min="1"
                   {...register("display_order")}
                 />
               </div>
-              */}
-
               <div className="space-y-1.5">
                 <FormLabel>Status</FormLabel>
                 <select className={SELECT_CLS} {...register("isActive")}>

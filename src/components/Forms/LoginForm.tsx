@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { setSessionStorage } from "@/utils/storage";
 import { useAdminStore } from "@/context/store/useAdminStore";
+import type { AxiosError } from "axios";
 
 function LoginForm() {
   const {
@@ -22,35 +23,37 @@ function LoginForm() {
   const navigate = useNavigate();
   const setAdminData = useAdminStore((state) => state.setAdminData);
 
-  const onSubmit = async (data: LoginFormData) => {
-    try {
-      const result = await mutateAsync(data);
-
-      const adminData = {
-        token: result.access_token,
-        role_id: result.role_id,
-        store_id: result.store_id,
-        store_type: result.store_type,
-      };
-
-      // Save to sessionStorage
-      setSessionStorage({ key: "AdminData", data: adminData });
-
-      // Save to Zustand store
-      setAdminData(adminData);
-      toast.success(result.message || "Login successful");
-      if (result.role_id === 1) {
-        navigate("/super/dashboard", { replace: true });
-      } else {
-        navigate("/dashboard", { replace: true });
-      }
-    } catch (err: any) {
-      const message =
-        err.response?.data?.message || "Login failed. Please try again.";
-      toast.error(message);
-    }
+  const onSubmit = (data: LoginFormData) => {
+    mutateAsync(data, {
+      onSuccess: (result) => {
+        const adminData = {
+          token: result.access_token,
+          role_id: result.role_id,
+          store_id: result.store_id,
+          store_type: result.store_type,
+        };
+        setSessionStorage({ key: "AdminData", data: adminData });
+        setAdminData(adminData);
+        toast.success(result.message || "Login successful");
+        if (result.role_id === 1) {
+          navigate("/super/dashboard", { replace: true });
+        } else {
+          navigate("/dashboard", { replace: true });
+        }
+      },
+      onError: (error) => {
+        const axiosError = error as AxiosError<{
+          detail?: string;
+          message?: string;
+        }>;
+        const errMsg =
+          axiosError?.response?.data?.detail ||
+          axiosError?.response?.data?.message ||
+          "Login failed";
+        toast.error(errMsg);
+      },
+    });
   };
-
   return (
     <div className="w-full max-w-md mx-auto space-y-6 shadow-lg p-8 rounded-lg bg-card border border-border z-20">
       <div className="flex flex-col items-center">

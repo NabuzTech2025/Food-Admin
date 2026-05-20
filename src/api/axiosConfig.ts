@@ -1,5 +1,6 @@
 // src/api/axiosConfig.ts
 import axios from "axios";
+import { navigateTo } from "@/utils/navigateHelper";
 
 const axiosInstance = axios.create({
   baseURL: `${import.meta.env.VITE_API_BASE_URL}/`,
@@ -47,7 +48,7 @@ axiosInstance.interceptors.response.use(
       // ✅ Remove AdminData (not userData)
       sessionStorage.removeItem("AdminData");
       // ✅ Redirect to admin login (not /login)
-      window.location.href = "/admin-login";
+      navigateTo("/admin-login", { replace: true });
     }
     return Promise.reject(error);
   },
