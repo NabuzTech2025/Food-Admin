@@ -49,8 +49,8 @@ function AdminLayout() {
   const navItems: NavItem[] =
     role_id === 1
       ? [
-          { name: "Dashboard", icon: Home, link: "/dashboard" },
-          { name: "Store Details", icon: MapPin, link: "/store-details" },
+          { name: "Dashboard", icon: Home, link: "/super/dashboard" },
+          { name: "Store Details", icon: MapPin, link: "/super/store-details" },
         ]
       : [
           { name: "Dashboard", icon: Home, link: "/dashboard" },

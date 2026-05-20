@@ -1,4 +1,10 @@
-import { BrowserRouter, Navigate, Route, Routes, Outlet } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  Outlet,
+} from "react-router-dom";
 import { ThemeProvider } from "./context/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Dashboard from "./pages/Dashboard/Dashboard";
@@ -31,6 +37,8 @@ import Delivery from "./pages/Delivery";
 import StoreDetails from "./pages/SuperAdmin/StoreDetails/AllStore";
 import StoreProfile from "./pages/SuperAdmin/StoreDetails/AllStorProfile";
 import OrderPage from "./pages/Orders/Orders";
+import ChangePasswordPage from "./pages/Change_Password";
+import SuperAdminDashboard from "./pages/SuperAdmin/DashBoard/Dashboard";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -95,9 +103,19 @@ function App() {
                 <Route path="customer" element={<Customer />} />
                 <Route path="customer/:id" element={<CustomerDetail />} />
                 <Route path="inventory" element={<Inventory />} />
-                <Route path="store-details" element={<StoreDetails />} />
                 <Route path="store-profile" element={<StoreProfile />} />
                 <Route path="orders" element={<OrderPage />} />
+                <Route
+                  path="change-password"
+                  element={<ChangePasswordPage />}
+                />
+                {/* Super Admin Routes */}
+                <Route path="super/store-details" element={<StoreDetails />} />
+                <Route
+                  index
+                  path="super/dashboard"
+                  element={<SuperAdminDashboard />}
+                />
               </Route>
             </Route>
           </Routes>
