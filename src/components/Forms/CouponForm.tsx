@@ -82,22 +82,22 @@ function CouponForm({ open, onClose, editData }: CouponFormProps) {
       reset(
         editData
           ? {
-              code: editData.code,
-              name: editData.name || "",
-              coupon_type: editData.coupon_type || "percent",
-              value: editData.value ? String(editData.value) : "",
-              min_cart_amount: editData.min_cart_amount
-                ? String(editData.min_cart_amount)
-                : "",
-              max_discount_amount: editData.max_discount_amount
-                ? String(editData.max_discount_amount)
-                : "",
-              start_at: editData.start_at ? editData.start_at.split("T")[0] : "",
-              end_at: editData.end_at ? editData.end_at.split("T")[0] : "",
-              usage_limit: editData.usage_limit ? String(editData.usage_limit) : "",
-              usage_per_user: editData.usage_per_user ? String(editData.usage_per_user) : "",
-              is_active: String(editData.is_active ?? true),
-            }
+            code: editData.code,
+            name: editData.name || "",
+            coupon_type: editData.coupon_type || "percent",
+            value: editData.value ? String(editData.value) : "",
+            min_cart_amount: editData.min_cart_amount
+              ? String(editData.min_cart_amount)
+              : "",
+            max_discount_amount: editData.max_discount_amount
+              ? String(editData.max_discount_amount)
+              : "",
+            start_at: editData.start_at ? editData.start_at.split("T")[0] : "",
+            end_at: editData.end_at ? editData.end_at.split("T")[0] : "",
+            usage_limit: editData.usage_limit ? String(editData.usage_limit) : "",
+            usage_per_user: editData.usage_per_user ? String(editData.usage_per_user) : "",
+            is_active: String(editData.is_active ?? true),
+          }
           : DEFAULT_VALUES
       );
     }
@@ -159,7 +159,7 @@ function CouponForm({ open, onClose, editData }: CouponFormProps) {
         {/* BODY */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
           <form id="coupon-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            
+
             <div className="space-y-1.5">
               <FormLabel required>Coupon Type</FormLabel>
               <select className={SELECT_CLS} {...register("coupon_type")}>
@@ -226,24 +226,24 @@ function CouponForm({ open, onClose, editData }: CouponFormProps) {
                 />
               </div>
             </div>
-            
+
           </form>
         </div>
 
         {/* FOOTER */}
         <div className="flex-shrink-0 flex flex-col-reverse sm:flex-row justify-end gap-2 px-6 py-4 border-t bg-background">
-          <Button 
-            type="button" 
+          <Button
+            type="button"
             variant="outline"
-            onClick={handleClose} 
+            onClick={handleClose}
             className="w-full sm:w-auto"
           >
             Cancel
           </Button>
-          <Button 
-            type="submit" 
-            form="coupon-form" 
-            disabled={isLoading} 
+          <Button
+            type="submit"
+            form="coupon-form"
+            disabled={isLoading}
             className="w-full sm:w-auto"
           >
             {isLoading ? (
