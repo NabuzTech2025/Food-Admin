@@ -45,9 +45,9 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       console.error("Unauthorized! Token expired or invalid.");
-      // ✅ Remove AdminData (not userData)
+      //  Remove AdminData (not userData)
       sessionStorage.removeItem("AdminData");
-      // ✅ Redirect to admin login (not /login)
+      //  Redirect to admin login (not /login)
       navigateTo("/admin-login", { replace: true });
     }
     return Promise.reject(error);
