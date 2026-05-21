@@ -12,7 +12,19 @@ export interface Store {
   country?: string;
 
   is_manual_override?: boolean;
-  manual_status?: "open" | "close";
+  manual_status?: "open" | "close" | null;
+  phone_numbers?: any[];
+  number_of_tables?: number;
+  use_distance_delivery?: boolean;
+  created_at?: string;
+  postcodes?: any[];
+  store_hours?: any[];
+  delivery_time_plans?: any[];
+  collection_time_plans?: any[];
+  printers?: any[];
+  holidays?: any[];
+  stripe_service_fee?: any;
+  lieferung_enabled?: any;
 }
 
 export interface StoreUpdatePayload {
@@ -25,12 +37,11 @@ export interface StoreUpdatePayload {
 }
 
 export const getStores = async (
-  store_id: number | string,
+  store_id?: number | string | null,
 ): Promise<Store[]> => {
   try {
-    const res = await axiosInstance.get(`stores/`, {
-      params: { store_id },
-    });
+    const params = store_id ? { store_id } : {};
+    const res = await axiosInstance.get(`stores/`, { params });
     return Array.isArray(res.data) ? res.data : (res.data.data ?? []);
   } catch (error) {
     console.error("Get Stores Error:", error);

@@ -4,11 +4,10 @@ import type { StoreUpdatePayload } from "@/api/storedetails";
 
 const STORE_KEY = "stores";
 
-export const useGetStores = (store_id: number | string | null) => {
+export const useGetStores = (store_id?: number | string | null) => {
   return useQuery({
-    queryKey: [STORE_KEY, store_id],
-    queryFn: () => getStores(store_id!),
-    enabled: !!store_id,
+    queryKey: store_id ? [STORE_KEY, store_id] : [STORE_KEY],
+    queryFn: () => getStores(store_id),
     staleTime: 5 * 60 * 1000,
   });
 };

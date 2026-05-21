@@ -35,7 +35,11 @@ function LoginForm() {
         setSessionStorage({ key: "AdminData", data: adminData });
         setAdminData(adminData);
         toast.success(result.message || "Login successful");
-        navigate("/dashboard", { replace: true });
+        if (result.role_id === 1) {
+          navigate("/super/dashboard", { replace: true });
+        } else {
+          navigate("/dashboard", { replace: true });
+        }
       },
       onError: (error) => {
         const axiosError = error as AxiosError<{
