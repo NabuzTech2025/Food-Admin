@@ -1,14 +1,10 @@
 import { useGetStores } from "@/hooks/useStoreDetails";
-import {
-  Store,
-  MapPin,
-  Activity,
-  ShieldCheck,
-  Loader2,
-  Calendar,
-} from "lucide-react";
+import { Store, MapPin, Activity, ShieldCheck, Loader2 } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import StatCard from "../../../components/SuperAdmin/DashBoard/StatCard";
+import RecentStoresPanel from "../../../components/SuperAdmin/DashBoard/RecentStoresPanel";
+import QuickActionsPanel from "../../../components/SuperAdmin/DashBoard/QuickActionsPanel";
 
 function SuperAdminDashboard() {
   const { data: stores = [], isLoading, isError } = useGetStores();
@@ -22,10 +18,9 @@ function SuperAdminDashboard() {
     const closedStores = stores.filter(
       (s) => s.manual_status === "close",
     ).length;
-
-    const countries = new Set(stores.map((s) => s.country).filter(Boolean));
-    const uniqueCountries = countries.size;
-
+    const uniqueCountries = new Set(
+      stores.map((s) => s.country).filter(Boolean),
+    ).size;
     const recentStores = [...stores]
       .sort(
         (a, b) =>
@@ -70,151 +65,46 @@ function SuperAdminDashboard() {
         </p>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-border shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
-            <Store size={24} />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-neutral-500">Total Stores</p>
-            <h3 className="text-2xl font-bold text-neutral-800">
-              {stats.totalStores}
-            </h3>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl border border-border shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
-            <ShieldCheck size={24} />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-neutral-500">
-              Active Stores
-            </p>
-            <h3 className="text-2xl font-bold text-neutral-800">
-              {stats.activeStores}
-            </h3>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl border border-border shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center">
-            <Activity size={24} />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-neutral-500">
-              Closed Stores
-            </p>
-            <h3 className="text-2xl font-bold text-neutral-800">
-              {stats.closedStores}
-            </h3>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl border border-border shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center">
-            <MapPin size={24} />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-neutral-500">
-              Countries Served
-            </p>
-            <h3 className="text-2xl font-bold text-neutral-800">
-              {stats.uniqueCountries}
-            </h3>
-          </div>
-        </div>
+        <StatCard
+          icon={Store}
+          iconBg="bg-blue-100"
+          iconColor="text-blue-600"
+          label="Total Stores"
+          value={stats.totalStores}
+        />
+        <StatCard
+          icon={ShieldCheck}
+          iconBg="bg-green-100"
+          iconColor="text-green-600"
+          label="Active Stores"
+          value={stats.activeStores}
+        />
+        <StatCard
+          icon={Activity}
+          iconBg="bg-red-100"
+          iconColor="text-red-600"
+          label="Closed Stores"
+          value={stats.closedStores}
+        />
+        <StatCard
+          icon={MapPin}
+          iconBg="bg-purple-100"
+          iconColor="text-purple-600"
+          label="Countries Served"
+          value={stats.uniqueCountries}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recently Added Stores */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-border shadow-sm overflow-hidden">
-          <div className="flex items-center justify-between p-5 border-b border-border">
-            <h3 className="font-semibold text-neutral-800">
-              Recently Added Stores
-            </h3>
-            <button
-              onClick={() => navigate("/super/store-details")}
-              className="text-sm text-primary font-medium hover:underline"
-            >
-              View All
-            </button>
-          </div>
-          <div className="divide-y divide-border">
-            {stats.recentStores.map((store) => (
-              <div
-                key={store.id}
-                className="p-4 flex items-center justify-between hover:bg-neutral-50/50 transition-colors"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-muted border border-border overflow-hidden flex items-center justify-center shrink-0">
-                    {store.logo || store.image_url ? (
-                      <img
-                        src={(store.logo || store.image_url)!.split("?")[0]}
-                        alt=""
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <Store size={18} className="text-neutral-400" />
-                    )}
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-sm text-neutral-800">
-                      {store.name || "Unnamed"}
-                    </h4>
-                    <p className="text-xs text-neutral-500 flex items-center gap-1 mt-0.5">
-                      <MapPin size={12} /> {store.address || "No Address"}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  <span
-                    className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full ${
-                      store.manual_status === "open"
-                        ? "bg-green-100 text-green-700"
-                        : store.manual_status === "close"
-                          ? "bg-red-100 text-red-700"
-                          : "bg-gray-100 text-gray-700"
-                    }`}
-                  >
-                    {store.manual_status || "UNKNOWN"}
-                  </span>
-                  <span className="text-xs text-neutral-400 flex items-center gap-1">
-                    <Calendar size={12} />
-                    {store.created_at
-                      ? new Date(store.created_at).toLocaleDateString()
-                      : "N/A"}
-                  </span>
-                </div>
-              </div>
-            ))}
-            {stats.recentStores.length === 0 && (
-              <div className="p-8 text-center text-sm text-neutral-500">
-                No stores found.
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Quick Actions */}
+        <RecentStoresPanel
+          stores={stats.recentStores}
+          onViewAll={() => navigate("/super/store-details")}
+        />
         <div className="space-y-6">
-          <div className="bg-white rounded-xl border border-border shadow-sm p-5">
-            <h3 className="font-semibold text-neutral-800 mb-4">
-              Quick Actions
-            </h3>
-            <div className="space-y-3">
-              <button
-                onClick={() => navigate("/super/store-details")}
-                className="w-full flex items-center justify-between p-3 rounded-lg border border-border hover:bg-primary-light hover:border-primary/30 transition-colors text-sm font-medium text-neutral-700"
-              >
-                <div className="flex items-center gap-3">
-                  <Store size={18} className="text-primary" />
-                  Manage Stores
-                </div>
-              </button>
-            </div>
-          </div>
+          <QuickActionsPanel
+            onManageStores={() => navigate("/super/store-details")}
+          />
         </div>
       </div>
     </div>
