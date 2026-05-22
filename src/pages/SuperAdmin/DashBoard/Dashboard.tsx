@@ -1,44 +1,85 @@
 import { useGetStores } from "@/hooks/useStoreDetails";
+import { useGetAdminTodayReports } from "@/hooks/useAdminReports";
+
 import { Store, MapPin, Activity, ShieldCheck, Loader2 } from "lucide-react";
+
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+
 import StatCard from "../../../components/SuperAdmin/DashBoard/StatCard";
-import RecentStoresPanel from "../../../components/SuperAdmin/DashBoard/RecentStoresPanel";
-import QuickActionsPanel from "../../../components/SuperAdmin/DashBoard/QuickActionsPanel";
+import AllStoresPanel from "../../../components/SuperAdmin/DashBoard/AllStoresPanel";
 
 function SuperAdminDashboard() {
   const { data: stores = [], isLoading, isError } = useGetStores();
+
+  const {
+    data: reportsData,
+    isLoading: isLoadingReports,
+    isError: isErrorReports,
+  } = useGetAdminTodayReports();
+
   const navigate = useNavigate();
+
+  // ================= STATS =================
 
   const stats = useMemo(() => {
     const totalStores = stores.length;
+
     const activeStores = stores.filter(
       (s) => s.manual_status === "open",
     ).length;
+
     const closedStores = stores.filter(
       (s) => s.manual_status === "close",
     ).length;
+
     const uniqueCountries = new Set(
       stores.map((s) => s.country).filter(Boolean),
     ).size;
-    const recentStores = [...stores]
-      .sort(
-        (a, b) =>
-          new Date(b.created_at || 0).getTime() -
-          new Date(a.created_at || 0).getTime(),
-      )
-      .slice(0, 5);
 
     return {
       totalStores,
       activeStores,
       closedStores,
       uniqueCountries,
-      recentStores,
     };
   }, [stores]);
 
-  if (isLoading) {
+  // ================= STORE PANEL DATA =================
+
+  const allStoresPanelData = useMemo(() => {
+    if (!reportsData?.reports) return [];
+
+    return (
+      reportsData.reports
+        .map((reportItem) => ({
+          id: reportItem.store_id,
+
+          name: reportItem.store_name,
+
+          order: reportItem.report?.total_orders ?? 0,
+
+          sales: reportItem.report?.total_sales ?? 0,
+
+          status:
+            stores.find((store) => store.id === reportItem.store_id)
+              ?.manual_status ?? "close",
+        }))
+
+        // OPEN STORES FIRST
+        .sort((a, b) => {
+          if (a.status === "open" && b.status !== "open") return -1;
+
+          if (a.status !== "open" && b.status === "open") return 1;
+
+          return 0;
+        })
+    );
+  }, [reportsData, stores]);
+
+  // ================= LOADING =================
+
+  if (isLoading || isLoadingReports) {
     return (
       <div className="flex h-[80vh] items-center justify-center">
         <Loader2 className="animate-spin text-primary" size={40} />
@@ -46,7 +87,9 @@ function SuperAdminDashboard() {
     );
   }
 
-  if (isError) {
+  // ================= ERROR =================
+
+  if (isError || isErrorReports) {
     return (
       <div className="flex h-[80vh] items-center justify-center text-red-500">
         Failed to load dashboard data.
@@ -54,18 +97,23 @@ function SuperAdminDashboard() {
     );
   }
 
+  // ================= UI =================
+
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-neutral-800">
           Super Admin Dashboard
         </h1>
-        <p className="text-sm text-neutral-500 mt-1">
+
+        <p className="mt-1 text-sm text-neutral-500">
           Overview of all restaurant stores and activities.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stats */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           icon={Store}
           iconBg="bg-blue-100"
@@ -73,6 +121,7 @@ function SuperAdminDashboard() {
           label="Total Stores"
           value={stats.totalStores}
         />
+
         <StatCard
           icon={ShieldCheck}
           iconBg="bg-green-100"
@@ -80,6 +129,7 @@ function SuperAdminDashboard() {
           label="Active Stores"
           value={stats.activeStores}
         />
+
         <StatCard
           icon={Activity}
           iconBg="bg-red-100"
@@ -87,6 +137,7 @@ function SuperAdminDashboard() {
           label="Closed Stores"
           value={stats.closedStores}
         />
+
         <StatCard
           icon={MapPin}
           iconBg="bg-purple-100"
@@ -96,17 +147,11 @@ function SuperAdminDashboard() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <RecentStoresPanel
-          stores={stats.recentStores}
-          onViewAll={() => navigate("/super/store-details")}
-        />
-        <div className="space-y-6">
-          <QuickActionsPanel
-            onManageStores={() => navigate("/super/store-details")}
-          />
-        </div>
-      </div>
+      {/* Stores Panel */}
+      <AllStoresPanel
+        stores={allStoresPanelData}
+        onViewAll={() => navigate("/super/store-details")}
+      />
     </div>
   );
 }
