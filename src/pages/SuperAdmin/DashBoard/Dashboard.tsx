@@ -1,17 +1,34 @@
+import { useMemo, useState } from "react";
+import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
+import {
+  Store,
+  MapPin,
+  Activity,
+  ShieldCheck,
+  Loader2,
+  CalendarIcon,
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+
 import { useGetStores } from "@/hooks/useStoreDetails";
 import { useGetAdminTodayReports } from "@/hooks/useAdminReports";
-
-import { Store, MapPin, Activity, ShieldCheck, Loader2 } from "lucide-react";
-
-import { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useGetAdminOrders } from "@/hooks/useAdminOrders";
+import type { Order } from "@/api/order";
 
 import StatCard from "../../../components/SuperAdmin/DashBoard/StatCard";
 import AllStoresPanel from "../../../components/SuperAdmin/DashBoard/AllStoresPanel";
+import { OrderCard, OrderDetailModal } from "@/pages/Orders/Orders";
 
 function SuperAdminDashboard() {
   const { data: stores = [], isLoading, isError } = useGetStores();
-
   const {
     data: reportsData,
     isLoading: isLoadingReports,
@@ -19,6 +36,28 @@ function SuperAdminDashboard() {
   } = useGetAdminTodayReports();
 
   const navigate = useNavigate();
+
+  // ================= DATE STATE =================
+
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [startCalOpen, setStartCalOpen] = useState(false);
+  const [endCalOpen, setEndCalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  // ================= ORDERS =================
+
+  const today = format(new Date(), "yyyy-MM-dd");
+  const formattedStart = format(startDate, "yyyy-MM-dd");
+  const formattedEnd = format(endDate, "yyyy-MM-dd");
+  const isCustomRange = formattedStart !== today || formattedEnd !== today;
+
+  const { data: orders = [], isLoading: isLoadingOrders } = useGetAdminOrders({
+    start_date: formattedStart,
+    end_date: formattedEnd,
+    include_past: isCustomRange,
+  });
 
   // ================= STATS =================
 
@@ -151,6 +190,118 @@ function SuperAdminDashboard() {
       <AllStoresPanel
         stores={allStoresPanelData}
         onViewAll={() => navigate("/super/store-details")}
+      />
+
+      {/* Orders Section */}
+      <div className="rounded-3xl border border-neutral-200 bg-white shadow-sm overflow-hidden">
+        {/* Header with date pickers */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-neutral-100 px-6 py-4">
+          <div>
+            <h2 className="text-xl font-bold text-neutral-900">Orders</h2>
+            <p className="text-sm text-neutral-500">
+              All store orders for the selected date range.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Start Date */}
+            <Popover open={startCalOpen} onOpenChange={setStartCalOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 text-sm"
+                >
+                  <CalendarIcon size={15} className="text-neutral-400" />
+                  <span className="text-neutral-500 text-xs mr-1">From:</span>
+                  {format(startDate, "dd MMM yyyy")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <Calendar
+                  mode="single"
+                  selected={startDate}
+                  onSelect={(date) => {
+                    if (date) {
+                      setStartDate(date);
+                      setStartCalOpen(false);
+                    }
+                  }}
+                />
+              </PopoverContent>
+            </Popover>
+
+            {/* End Date */}
+            <Popover open={endCalOpen} onOpenChange={setEndCalOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 text-sm"
+                >
+                  <CalendarIcon size={15} className="text-neutral-400" />
+                  <span className="text-neutral-500 text-xs mr-1">To:</span>
+                  {format(endDate, "dd MMM yyyy")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <Calendar
+                  mode="single"
+                  selected={endDate}
+                  onSelect={(date) => {
+                    if (date) {
+                      setEndDate(date);
+                      setEndCalOpen(false);
+                    }
+                  }}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+
+        {/* Order Cards */}
+        <div className="p-6">
+          {isLoadingOrders ? (
+            <div className="flex justify-center items-center py-16">
+              <Loader2 className="animate-spin text-primary" size={28} />
+            </div>
+          ) : orders.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {orders.map((order) => (
+                <OrderCard
+                  key={order.id}
+                  order={order}
+                  storeName={order.store_name}
+                  onClick={() => {
+                    setSelectedOrder(order);
+                    setModalOpen(true);
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 text-neutral-400 text-sm">
+              No orders found for {format(startDate, "dd MMM yyyy")} –{" "}
+              {format(endDate, "dd MMM yyyy")}.
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-2 border-t bg-muted/30">
+          <p className="text-xs text-neutral-500">
+            Total: <strong>{orders.length}</strong> orders
+          </p>
+        </div>
+      </div>
+
+      {/* Order Detail Modal */}
+      <OrderDetailModal
+        order={selectedOrder}
+        open={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setSelectedOrder(null);
+        }}
       />
     </div>
   );

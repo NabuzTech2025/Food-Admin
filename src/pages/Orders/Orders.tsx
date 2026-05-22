@@ -8,6 +8,7 @@ import {
   ShoppingBag,
   Clock,
   User,
+  Store,
 } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
@@ -33,14 +34,14 @@ import delivery_icon from "@/assets/delivery-icon.svg";
 import pickup_icon from "@/assets/pickup-icon.svg";
 
 // ─── Maps ─────────────────────────────────────────────────────────
-const ORDER_STATUS_MAP: Record<number, { label: string; className: string }> = {
+export const ORDER_STATUS_MAP: Record<number, { label: string; className: string }> = {
   1: { label: "Pending", className: "bg-yellow-100 text-yellow-700" },
   2: { label: "Accepted", className: "bg-green-100 text-green-700" },
   3: { label: "Declined", className: "bg-red-100 text-red-700" },
 };
 
 // ─── Order Detail Modal ───────────────────────────────────────────
-function OrderDetailModal({
+export function OrderDetailModal({
   order,
   open,
   onClose,
@@ -246,7 +247,15 @@ function OrderDetailModal({
 }
 
 // ─── Order Card ───────────────────────────────────────────────────
-function OrderCard({ order, onClick }: { order: Order; onClick: () => void }) {
+export function OrderCard({
+  order,
+  onClick,
+  storeName,
+}: {
+  order: Order;
+  onClick: () => void;
+  storeName?: string;
+}) {
   const customerName =
     order.shipping_address?.customer_name ||
     order.guest_shipping_json?.customer_name ||
@@ -263,6 +272,14 @@ function OrderCard({ order, onClick }: { order: Order; onClick: () => void }) {
       onClick={onClick}
       className="bg-white border border-border rounded-xl p-5 min-h-[168px] cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 space-y-4"
     >
+      {/* Store Name — shown only when provided (e.g. SuperAdmin view) */}
+      {storeName && (
+        <div className="flex items-center gap-1.5 text-xs font-medium text-orange-600 bg-orange-50 rounded-full px-3 py-1 w-fit">
+          <Store size={12} />
+          <span>{storeName}</span>
+        </div>
+      )}
+
       {/* Top Row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">

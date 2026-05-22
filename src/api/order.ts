@@ -100,6 +100,20 @@ export interface OrderFilterParams {
   offset: number;
 }
 
+export interface AdminOrder extends Order {
+  store_name?: string;
+}
+
+export interface AdminOrdersParams {
+  limit?: number;
+
+  include_past?: boolean;
+
+  start_date?: string;
+
+  end_date?: string;
+}
+
 export const getOrders = async (
   params: OrderFilterParams,
 ): Promise<Order[]> => {
@@ -108,6 +122,30 @@ export const getOrders = async (
     return Array.isArray(res.data) ? res.data : (res.data.data ?? []);
   } catch (error) {
     console.error("Get Orders Error:", error);
+    throw error;
+  }
+};
+
+export const getAdminOrders = async ({
+  limit = 60,
+  include_past = false,
+  start_date,
+  end_date,
+}: AdminOrdersParams): Promise<AdminOrder[]> => {
+  try {
+    const res = await axiosInstance.get(`orders/admin/list`, {
+      params: {
+        limit,
+        include_past,
+        start_date,
+        end_date,
+      },
+    });
+
+    return Array.isArray(res.data) ? res.data : (res.data.data ?? []);
+  } catch (error) {
+    console.error("Get Admin Orders Error:", error);
+
     throw error;
   }
 };
