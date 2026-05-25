@@ -48,6 +48,7 @@ import StoreDetails from "./pages/SuperAdmin/StoreDetails/AllStore";
 import StoreProfile from "./pages/SuperAdmin/StoreDetails/AllStorProfile";
 import OrderPage from "./pages/Orders/Orders";
 import ChangePasswordPage from "./pages/Change_Password";
+import PaymentSettings from "./pages/Payment-Settings";
 import SuperAdminDashboard from "./pages/SuperAdmin/DashBoard/Dashboard";
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -119,6 +120,10 @@ function App() {
                 <Route
                   path="change-password"
                   element={<ChangePasswordPage />}
+                />
+                <Route
+                  path="payment-settings"
+                  element={<PaymentSettings />}
                 />
                 {/* Super Admin Routes */}
                 <Route path="super/store-details" element={<StoreDetails />} />

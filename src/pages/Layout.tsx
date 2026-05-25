@@ -14,10 +14,10 @@ import {
   MapPin,
   Package,
   Truck,
-  Monitor,
   Users,
   Map,
   ListOrdered,
+  CreditCard,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
@@ -126,6 +126,11 @@ function AdminLayout() {
             name: "Customer",
             icon: Users,
             link: "/customer",
+          },
+          {
+            name: "Payment Settings",
+            icon: CreditCard,
+            link: "/payment-settings",
           },
           {
             name: "Change Password",
