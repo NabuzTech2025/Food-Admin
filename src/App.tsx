@@ -79,7 +79,7 @@ function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter basename="/v1/admin">
+        <BrowserRouter basename="/admin">
           <NavigateSetter />
           <Routes>
             <Route path="/" element={<Navigate to="/admin-login" replace />} />
@@ -121,10 +121,7 @@ function App() {
                   path="change-password"
                   element={<ChangePasswordPage />}
                 />
-                <Route
-                  path="payment-settings"
-                  element={<PaymentSettings />}
-                />
+                <Route path="payment-settings" element={<PaymentSettings />} />
                 {/* Super Admin Routes */}
                 <Route path="super/store-details" element={<StoreDetails />} />
                 <Route
