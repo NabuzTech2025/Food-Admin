@@ -3,7 +3,7 @@ name: Deploy Food Admin CMS Production
 on:
   push:
     tags:
-      - "v*"
+      - "main2-v*"
 
 jobs:
   build-and-push:
@@ -22,18 +22,18 @@ jobs:
       - name: Set ENV
         id: setenv
         run: |
-          echo "image_tag=food-admin-cms" >> $GITHUB_OUTPUT
+          echo "image_tag=food-admin-cmsv2" >> $GITHUB_OUTPUT
           echo "server_ip=138.199.144.4" >> $GITHUB_OUTPUT
-          echo "port=3023" >> $GITHUB_OUTPUT
+          echo "port=3011" >> $GITHUB_OUTPUT
 
       - name: Build Docker Image
         run: |
           docker build \
             --build-arg VITE_API_BASE_URL="${{ secrets.VITE_API_BASE_URL }}" \
-            -t jassnabuztech/food-admin-cms:${{ steps.setenv.outputs.image_tag }} .
+            -t jassnabuztech/food-admin-cmsv2:${{ steps.setenv.outputs.image_tag }} .
 
       - name: Push Docker Image
-        run: docker push jassnabuztech/food-admin-cms:${{ steps.setenv.outputs.image_tag }}
+        run: docker push jassnabuztech/food-admin-cmsv2:${{ steps.setenv.outputs.image_tag }}
 
   deploy:
     needs: build-and-push
@@ -54,7 +54,7 @@ jobs:
             echo "Deploying $IMAGE_TAG to production server..."
 
             # Pull the latest image
-            docker pull jassnabuztech/food-admin-cms:$IMAGE_TAG
+            docker pull jassnabuztech/food-admin-cmsv2:$IMAGE_TAG
 
             # Stop and remove existing container if it exists
             if docker ps -a --format 'table {{.Names}}' | grep -q "^$CONTAINER_NAME$"; then
@@ -69,7 +69,7 @@ jobs:
               --name $CONTAINER_NAME \
               --restart unless-stopped \
               -p $PORT:80 \
-              jassnabuztech/food-admin-cms:$IMAGE_TAG
+              jassnabuztech/food-admin-cmsv2:$IMAGE_TAG
 
             # Verify container is running
             if docker ps | grep -q $CONTAINER_NAME; then
