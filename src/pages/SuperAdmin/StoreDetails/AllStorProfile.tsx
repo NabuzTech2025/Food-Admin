@@ -84,7 +84,7 @@ function StoreProfilePage() {
       });
 
       toast.success("Store profile updated successfully!");
-      navigate("/store-details");
+      navigate("/super/store-details");
     } catch (err: any) {
       toast.error(
         err.response?.data?.message || "Failed to update store profile",
@@ -124,12 +124,12 @@ function StoreProfilePage() {
           <div className="p-5 flex items-center gap-5">
             {/* Preview */}
             <div className="relative flex-shrink-0">
-              <div className="w-28 h-28 rounded-full border-2 border-border overflow-hidden bg-muted flex items-center justify-center">
+              <div className="w-28 h-28 rounded-full border-2 border-border overflow-hidden bg-white flex items-center justify-center shadow-sm">
                 {profilePreview ? (
                   <img
                     src={profilePreview}
                     alt="Logo Preview"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain p-2"
                   />
                 ) : (
                   <Store size={36} className="text-neutral-400" />

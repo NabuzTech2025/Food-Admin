@@ -108,12 +108,12 @@ function AllStorePage() {
                   >
                     <div className="flex flex-col items-center text-center p-5">
                       {/* Logo */}
-                      <div className="w-20 h-20 rounded-full border border-border overflow-hidden bg-muted flex items-center justify-center mb-3">
+                      <div className="w-24 h-24 rounded-full border border-border bg-white flex items-center justify-center mb-3 overflow-hidden shadow-sm">
                         {store.logo || store.image_url ? (
                           <img
                             src={(store.logo || store.image_url)!.split("?")[0]}
                             alt={store.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain p-2"
                           />
                         ) : (
                           <Store size={32} className="text-neutral-400" />
