@@ -22,7 +22,7 @@ jobs:
       - name: Set ENV
         id: setenv
         run: |
-          echo "image_tag=food-admin-cms-test" >> $GITHUB_OUTPUT
+          echo "image_tag=food-admin-cmstest" >> $GITHUB_OUTPUT
           echo "server_ip=138.199.144.4" >> $GITHUB_OUTPUT
           echo "port=3013" >> $GITHUB_OUTPUT
 
