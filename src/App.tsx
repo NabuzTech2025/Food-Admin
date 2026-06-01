@@ -81,7 +81,7 @@ function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter basename="/admin">
+        <BrowserRouter basename="/test">
           <NavigateSetter />
           <Routes>
             <Route path="/" element={<Navigate to="/admin-login" replace />} />
