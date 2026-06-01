@@ -50,6 +50,8 @@ import OrderPage from "./pages/Orders/Orders";
 import ChangePasswordPage from "./pages/Change_Password";
 import PaymentSettings from "./pages/Payment-Settings";
 import SuperAdminDashboard from "./pages/SuperAdmin/DashBoard/Dashboard";
+import StoreConfigPage from "./pages/SuperAdmin/StoreConfig/StoreConfig";
+import StoreConfigFormPage from "./pages/SuperAdmin/StoreConfig/StoreConfigForm";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -128,6 +130,14 @@ function App() {
                   index
                   path="super/dashboard"
                   element={<SuperAdminDashboard />}
+                />
+                <Route
+                  path="super/store-config"
+                  element={<StoreConfigPage />}
+                />
+                <Route
+                  path="super/store-config/form"
+                  element={<StoreConfigFormPage />}
                 />
               </Route>
             </Route>

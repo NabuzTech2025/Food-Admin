@@ -51,6 +51,7 @@ function AdminLayout() {
       ? [
           { name: "Dashboard", icon: Home, link: "/super/dashboard" },
           { name: "Store Details", icon: MapPin, link: "/super/store-details" },
+          { name: "Store Config", icon: Settings2, link: "/super/store-config" },
         ]
       : [
           { name: "Dashboard", icon: Home, link: "/dashboard" },
