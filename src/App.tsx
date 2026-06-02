@@ -34,7 +34,7 @@ import Coupons from "./pages/Product/Coupons";
 import AddAllergy from "./pages/Allergy/Add-Allergy";
 import ItemAllergy from "./pages/Allergy/Item-Allergy";
 import Categories from "./pages/Categories";
-import StoreSettings from "./pages/Store-Settings";
+import StoreTiming from "./pages/storeTiming";
 import Discount from "./pages/Discount";
 import PostCode from "./pages/PostCode";
 
@@ -52,6 +52,7 @@ import PaymentSettings from "./pages/Payment-Settings";
 import SuperAdminDashboard from "./pages/SuperAdmin/DashBoard/Dashboard";
 import StoreConfigPage from "./pages/SuperAdmin/StoreConfig/StoreConfig";
 import StoreConfigFormPage from "./pages/SuperAdmin/StoreConfig/StoreConfigForm";
+import StoreSetting from "./pages/StoreSetting";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -108,7 +109,8 @@ function App() {
                 <Route path="allergy/add-allergy" element={<AddAllergy />} />
                 <Route path="allergy/item-allergy" element={<ItemAllergy />} />
                 <Route path="category" element={<Categories />} />
-                <Route path="store-settings" element={<StoreSettings />} />
+                <Route path="store-timing" element={<StoreTiming />} />
+                <Route path="store-settings" element={<StoreSetting />} />
                 <Route path="discount" element={<Discount />} />
                 <Route path="postcode" element={<PostCode />} />
                 <Route path="delivery-zone" element={<DeliveryZone />} />

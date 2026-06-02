@@ -1,85 +1,49 @@
-// src/hooks/useStoreSettings.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  getStoreHours,
-  addStoreHour,
-  deleteStoreHour,
-  getHolidays,
-  addHoliday,
-  updateHoliday,
-  deleteHoliday,
+  getStoreSettings,
+  addStoreSettings,
+  updateStoreSettings,
 } from "@/api/storeSettings";
-import type { StoreHourPayload, HolidayPayload } from "@/api/storeSettings";
+import type { StoreSettings, StoreSettingsPayload } from "@/api/storeSettings";
 
-const STORE_HOURS_KEY = "store-hours";
-const HOLIDAYS_KEY = "holidays";
+const STORE_SETTINGS_KEY = "store-settings";
 
-// ─── Store Hours ──────────────────────────────────────────────────────────────
-
-export const useGetStoreHours = (store_id: number | string | null) =>
-  useQuery({
-    queryKey: [STORE_HOURS_KEY, store_id],
-    queryFn: () => getStoreHours(store_id!),
-    enabled: !!store_id,
-  });
-
-export const useAddStoreHour = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({
-      store_id,
-      payload,
-    }: {
-      store_id: number | string;
-      payload: StoreHourPayload;
-    }) => addStoreHour(store_id, payload),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: [STORE_HOURS_KEY] }),
+// Get
+export const useGetStoreSettings = (storeId: number | string | null) => {
+  return useQuery({
+    queryKey: [STORE_SETTINGS_KEY, storeId],
+    queryFn: () => getStoreSettings(storeId!),
+    enabled: !!storeId,
   });
 };
 
-export const useDeleteStoreHour = () => {
+// Create
+export const useAddStoreSettings = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: (id: number) => deleteStoreHour(id),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: [STORE_HOURS_KEY] }),
+    mutationFn: (payload: StoreSettingsPayload) => addStoreSettings(payload),
+
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [STORE_SETTINGS_KEY, variables.store_id],
+      });
+    },
   });
 };
 
-// ─── Holidays ─────────────────────────────────────────────────────────────────
-
-export const useGetHolidays = (store_id: number | string | null) =>
-  useQuery({
-    queryKey: [HOLIDAYS_KEY, store_id],
-    queryFn: () => getHolidays(store_id!),
-    enabled: !!store_id,
-  });
-
-export const useAddHoliday = () => {
+// Update
+export const useUpdateStoreSettings = () => {
   const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (payload: HolidayPayload) => addHoliday(payload),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: [HOLIDAYS_KEY] }),
-  });
-};
 
-export const useUpdateHoliday = () => {
-  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, payload }: { id: number; payload: HolidayPayload }) =>
-      updateHoliday(id, payload),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: [HOLIDAYS_KEY] }),
-  });
-};
+    mutationFn: ({ id, payload }: { id: number; payload: StoreSettings }) =>
+      updateStoreSettings(id, payload),
 
-export const useDeleteHoliday = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (id: number) => deleteHoliday(id),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: [HOLIDAYS_KEY] }),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [STORE_SETTINGS_KEY, variables.payload.store_id],
+      });
+    },
   });
 };

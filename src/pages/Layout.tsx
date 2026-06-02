@@ -18,6 +18,7 @@ import {
   Map,
   ListOrdered,
   CreditCard,
+  Clock,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
@@ -51,7 +52,11 @@ function AdminLayout() {
       ? [
           { name: "Dashboard", icon: Home, link: "/super/dashboard" },
           { name: "Store Details", icon: MapPin, link: "/super/store-details" },
-          { name: "Store Config", icon: Settings2, link: "/super/store-config" },
+          {
+            name: "Store Config",
+            icon: Settings2,
+            link: "/super/store-config",
+          },
         ]
       : [
           { name: "Dashboard", icon: Home, link: "/dashboard" },
@@ -94,6 +99,11 @@ function AdminLayout() {
             link: "/category",
           },
           {
+            name: "Store Timing",
+            icon: Clock,
+            link: "/store-timing",
+          },
+          {
             name: "Store Settings",
             icon: Settings2,
             link: "/store-settings",
@@ -118,11 +128,6 @@ function AdminLayout() {
             icon: Truck,
             link: "/delivery",
           },
-          // {
-          //   name: "Device Status",
-          //   icon: Monitor,
-          //   link: "/device-status",
-          // },
           {
             name: "Customer",
             icon: Users,
@@ -195,7 +200,7 @@ function AdminLayout() {
       <div
         className={`
           fixed lg:static inset-y-0 left-0
-          w-56 h-full z-40
+          w-72 h-full z-40
           shadow-[8px_0_12px_-2px_rgba(0,0,0,0.2)]
           flex flex-col bg-white
           transition-transform duration-300 ease-in-out

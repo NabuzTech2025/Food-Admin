@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useAdminStore } from "@/context/store/useAdminStore";
-import { useAddStoreHour, useDeleteStoreHour } from "@/hooks/useStoreSettings";
-import type { GroupedStoreHour } from "@/api/storeSettings";
+import { useAddStoreHour, useDeleteStoreHour } from "@/hooks/usestoreTiming";
+import type { GroupedStoreHour } from "@/api/storeTiming";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

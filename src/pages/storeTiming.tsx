@@ -1,4 +1,4 @@
-// src/pages/Admin/StoreSettings.tsx
+// src/pages/Admin/storeTiming.tsx
 import { useState, useMemo } from "react";
 import { Search, Loader2, Pencil, Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,11 +28,11 @@ import {
   useDeleteStoreHour,
   useGetHolidays,
   useDeleteHoliday,
-} from "@/hooks/useStoreSettings";
+} from "@/hooks/usestoreTiming";
 import StoreHoursForm from "@/components/Forms/StoreHoursForm";
 import HolidayForm from "@/components/Forms/HolidayForm";
 import { toast } from "sonner";
-import type { GroupedStoreHour, Holiday } from "@/api/storeSettings";
+import type { GroupedStoreHour, Holiday } from "@/api/storeTiming";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -68,7 +68,7 @@ const formatHolidayTime = (dateStr: string) => {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-function StoreSettingsPage() {
+function StoreTimingPage() {
   const { store_id } = useAdminStore();
 
   const [tab, setTab] = useState<TabType>("timings");
@@ -197,7 +197,7 @@ function StoreSettingsPage() {
         <div className="flex-shrink-0 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-5 py-4 border-b border-border">
           <div className="flex items-center gap-4">
             <h2 className="text-base font-semibold text-neutral-800">
-              Store Settings
+              Store Timings & Holidays
             </h2>
             <Tabs value={tab} onValueChange={handleTabChange}>
               <TabsList className="h-9">
@@ -659,4 +659,4 @@ function StoreSettingsPage() {
   );
 }
 
-export default StoreSettingsPage;
+export default StoreTimingPage;

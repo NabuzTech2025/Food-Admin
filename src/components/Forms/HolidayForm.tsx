@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useAdminStore } from "@/context/store/useAdminStore";
-import { useAddHoliday, useUpdateHoliday } from "@/hooks/useStoreSettings";
-import type { Holiday } from "@/api/storeSettings";
+import { useAddHoliday, useUpdateHoliday } from "@/hooks/usestoreTiming";
+import type { Holiday } from "@/api/storeTiming";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
