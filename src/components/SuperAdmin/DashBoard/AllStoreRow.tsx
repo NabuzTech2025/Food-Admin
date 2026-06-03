@@ -4,6 +4,7 @@ import {
   DollarSign,
   ArrowUpRight,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export interface StoreRowData {
   id: string | number;
@@ -19,9 +20,12 @@ interface AllStoreRowProps {
 
 function AllStoreRow({ store }: AllStoreRowProps) {
   const isOpen = store.status === "open";
-
+  const navigate = useNavigate();
   return (
-    <div className="group h-full rounded-3xl border border-neutral-200 bg-white p-5 transition-all hover:-translate-y-1 hover:border-orange-200 hover:shadow-xl">
+    <div
+      onClick={() => navigate(`/super/stores/${store.id}/store-profile`)}
+      className="group h-full rounded-3xl border border-neutral-200 bg-white p-5 transition-all hover:-translate-y-1 hover:border-orange-200 hover:shadow-xl cursor-pointer"
+    >
       {/* Top */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">

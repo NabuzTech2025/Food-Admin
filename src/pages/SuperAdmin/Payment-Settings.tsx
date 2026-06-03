@@ -8,6 +8,7 @@ import {
   useUpdatePaymentSettings,
 } from "@/hooks/usePaymentSettings";
 import { toast } from "sonner";
+import { useParams } from "react-router-dom";
 
 interface PaymentMethod {
   key: "cash_enabled" | "card_enabled" | "stripe_enabled" | "paypal_enabled";
@@ -44,7 +45,9 @@ const PAYMENT_METHODS: PaymentMethod[] = [
 ];
 
 function PaymentSettingsPage() {
-  const { store_id } = useAdminStore();
+  const { storeId } = useParams();
+
+  const store_id = Number(storeId);
 
   const { data, isLoading } = useGetPaymentSettings(store_id);
   const { mutate: create, isPending: isCreating } = useCreatePaymentSettings();

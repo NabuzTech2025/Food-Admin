@@ -1,31 +1,40 @@
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { Loader2, ImagePlus, X, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUpdateStore } from "@/hooks/useStoreDetails";
 import { useUploadImage } from "@/hooks/Common/useUploadImage";
+import { useGetStore } from "@/hooks/useStore";
 
 function StoreProfilePage() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { storeData } = location.state || {};
+  const { storeId } = useParams();
+
+  const { data: storeData, isLoading: isFetching } = useGetStore(storeId);
 
   const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [profilePreview, setProfilePreview] = useState<string>(
-    storeData?.image_url?.split("?")[0] || storeData?.logo || "",
-  );
+  const [profilePreview, setProfilePreview] = useState<string>("");
 
   const [bannerImage, setBannerImage] = useState<File | null>(null);
-  const [bannerPreview, setBannerPreview] = useState<string>(
-    storeData?.banner_url?.split("?")[0] || storeData?.banner || "",
-  );
+  const [bannerPreview, setBannerPreview] = useState<string>("");
 
   const { mutateAsync: updateStore, isPending: isUpdating } = useUpdateStore();
   const { mutateAsync: uploadImage, isPending: isUploading } = useUploadImage();
 
   const isLoading = isUpdating || isUploading;
+
+  // ✅ Set previews once storeData loads
+  useEffect(() => {
+    if (storeData) {
+      setProfilePreview(
+        storeData.image_url?.split("?")[0] || storeData.logo || "",
+      );
+      setBannerPreview(
+        storeData.banner_url?.split("?")[0] || storeData.banner || "",
+      );
+    }
+  }, [storeData]);
 
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -54,19 +63,17 @@ function StoreProfilePage() {
     }
 
     let updatedLogoUrl =
-      storeData?.image_url?.split("?")[0] || storeData?.logo || "";
+      storeData.image_url?.split("?")[0] || storeData.logo || "";
     let updatedBannerUrl =
-      storeData?.banner_url?.split("?")[0] || storeData?.banner || "";
+      storeData.banner_url?.split("?")[0] || storeData.banner || "";
 
     try {
-      // Upload profile image
       if (profileImage) {
         const res = await uploadImage({ file: profileImage });
         updatedLogoUrl =
           res.url?.split("?")[0] || res.image_url?.split("?")[0] || "";
       }
 
-      // Upload banner image
       if (bannerImage) {
         const res = await uploadImage({ file: bannerImage });
         updatedBannerUrl =
@@ -84,13 +91,21 @@ function StoreProfilePage() {
       });
 
       toast.success("Store profile updated successfully!");
-      navigate("/super/store-details");
     } catch (err: any) {
       toast.error(
         err.response?.data?.message || "Failed to update store profile",
       );
     }
   };
+
+  // ✅ Loading skeleton while fetching store
+  if (isFetching) {
+    return (
+      <div className="flex items-center justify-center h-40">
+        <Loader2 className="animate-spin text-primary" size={28} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -122,7 +137,6 @@ function StoreProfilePage() {
             </h3>
           </div>
           <div className="p-5 flex items-center gap-5">
-            {/* Preview */}
             <div className="relative flex-shrink-0">
               <div className="w-28 h-28 rounded-full border-2 border-border overflow-hidden bg-white flex items-center justify-center shadow-sm">
                 {profilePreview ? (
@@ -149,7 +163,6 @@ function StoreProfilePage() {
               )}
             </div>
 
-            {/* Upload */}
             <div className="space-y-2">
               <p className="text-sm font-medium text-neutral-700">
                 Upload Store Logo
@@ -179,7 +192,6 @@ function StoreProfilePage() {
             </h3>
           </div>
           <div className="p-5 space-y-3">
-            {/* Banner Preview */}
             {bannerPreview ? (
               <div className="relative">
                 <img

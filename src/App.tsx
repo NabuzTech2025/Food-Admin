@@ -22,6 +22,7 @@ const NavigateSetter = () => {
   }, [navigate]);
   return null;
 };
+
 import { getSessionAdminToken } from "./utils/storage";
 import Tax from "./pages/Tax";
 import Category from "./pages/Product/Category";
@@ -37,7 +38,6 @@ import Categories from "./pages/Categories";
 import StoreTiming from "./pages/storeTiming";
 import Discount from "./pages/Discount";
 import PostCode from "./pages/PostCode";
-
 import Inventory from "./pages/Inventory";
 import Customer from "./pages/Customer";
 import CustomerDetail from "./pages/CustomerDetail";
@@ -45,19 +45,23 @@ import DeliveryZone from "./pages/Delivery-Zone";
 import DeviceStatus from "./pages/Device-Status";
 import Delivery from "./pages/Delivery";
 import StoreDetails from "./pages/SuperAdmin/StoreDetails/AllStore";
-import StoreProfile from "./pages/SuperAdmin/StoreDetails/AllStorProfile";
+import StoreProfile from "./pages/SuperAdmin/StoreDetails/StoreProfile";
 import OrderPage from "./pages/Orders/Orders";
 import ChangePasswordPage from "./pages/Change_Password";
-import PaymentSettings from "./pages/Payment-Settings";
+import PaymentSettings from "./pages/SuperAdmin/Payment-Settings";
 import SuperAdminDashboard from "./pages/SuperAdmin/DashBoard/Dashboard";
 import StoreConfigPage from "./pages/SuperAdmin/StoreConfig/StoreConfig";
 import StoreConfigFormPage from "./pages/SuperAdmin/StoreConfig/StoreConfigForm";
 import StoreSetting from "./pages/StoreSetting";
+import StoreLayout from "./pages/SuperAdmin/StoreLayout";
+
+// ✅ Store-scoped page imports (create these pages as needed)
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false, // Don't refetch on window focus
-      staleTime: 5 * 60 * 1000, // 5 minutes until data is considered "stale"
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000,
     },
   },
 });
@@ -88,8 +92,8 @@ function App() {
             <Route path="/" element={<Navigate to="/admin-login" replace />} />
             <Route path="/admin-login" element={<Login />} />
 
-            {/* ✅ Sab routes ek hi AdminLayout ke andar */}
             <Route element={<ProtectedRoute />}>
+              {/* ─── Existing AdminLayout — completely unchanged ─── */}
               <Route path="/" element={<AdminLayout />}>
                 <Route index path="dashboard" element={<Dashboard />} />
                 <Route path="tax" element={<Tax />} />
@@ -119,7 +123,6 @@ function App() {
                 <Route path="customer" element={<Customer />} />
                 <Route path="customer/:id" element={<CustomerDetail />} />
                 <Route path="inventory" element={<Inventory />} />
-                <Route path="store-profile" element={<StoreProfile />} />
                 <Route path="orders" element={<OrderPage />} />
                 <Route
                   path="change-password"
@@ -141,6 +144,13 @@ function App() {
                   path="super/store-config/form"
                   element={<StoreConfigFormPage />}
                 />
+              </Route>
+
+              {/* ─── ✅ NEW: StoreLayout — only when clicking a store ─── */}
+              <Route path="super/stores/:storeId" element={<StoreLayout />}>
+                <Route index element={<Navigate to="dashboard" replace />} />
+                <Route path="payments" element={<PaymentSettings />} />
+                <Route path="store-profile" element={<StoreProfile />} />
               </Route>
             </Route>
           </Routes>
