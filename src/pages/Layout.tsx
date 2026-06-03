@@ -200,7 +200,7 @@ function AdminLayout() {
       <div
         className={`
           fixed lg:static inset-y-0 left-0
-          w-72 h-full z-40
+          ${role_id === 1 ? "w-48" : "w-72"} h-full z-40
           shadow-[8px_0_12px_-2px_rgba(0,0,0,0.2)]
           flex flex-col bg-white
           transition-transform duration-300 ease-in-out
@@ -211,7 +211,11 @@ function AdminLayout() {
         {/* Logo */}
         <div className="h-16 flex items-center justify-center relative flex-shrink-0 border-b border-gray-100">
           {role_id === 1 ? (
-            <img src="/v1/admin/super-admin-logo.png" alt="" className="w-36" />
+            <img
+              src="https://magskrimages.s3.amazonaws.com/8f571a772d28460aa66fd448f47eb55f.png"
+              alt=""
+              className="w-36"
+            />
           ) : (
             <h1 className="font-semibold text-primary pl-5">
               {storeData?.name}
