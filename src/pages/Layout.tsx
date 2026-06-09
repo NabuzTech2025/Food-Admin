@@ -47,6 +47,40 @@ function AdminLayout() {
 
   useCurrentStore(store_id);
 
+  // ─── Resizable sidebar ───────────────────────────────────────────
+  const DEFAULT_WIDTH = role_id === 1 ? 192 : 288;
+  const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_WIDTH);
+  const isResizing = useRef(false);
+
+  const handleMouseDown = () => {
+    isResizing.current = true;
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing.current) return;
+      const newWidth = Math.min(Math.max(e.clientX, 160), 400);
+      setSidebarWidth(newWidth);
+    };
+
+    const handleMouseUp = () => {
+      if (!isResizing.current) return;
+      isResizing.current = false;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+  // ────────────────────────────────────────────────────────────────
+
   const navItems: NavItem[] =
     role_id === 1
       ? [
@@ -62,7 +96,6 @@ function AdminLayout() {
           { name: "Dashboard", icon: Home, link: "/dashboard" },
           { name: "Orders", icon: ListOrdered, link: "/orders" },
           { name: "Tax", icon: Landmark, link: "/tax" },
-
           {
             name: "Product",
             icon: ShoppingCart,
@@ -198,11 +231,12 @@ function AdminLayout() {
     <div className="h-screen w-screen flex dark:bg-primary overflow-hidden relative">
       {/* Sidebar */}
       <div
+        style={{ width: sidebarWidth }}
         className={`
           fixed lg:static inset-y-0 left-0
-          ${role_id === 1 ? "w-48" : "w-72"} h-full z-40
+          h-full z-40 relative
           shadow-[8px_0_12px_-2px_rgba(0,0,0,0.2)]
-          flex flex-col bg-white
+          flex flex-col bg-white flex-shrink-0
           transition-transform duration-300 ease-in-out
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
@@ -217,9 +251,14 @@ function AdminLayout() {
               className="w-36"
             />
           ) : (
-            <h1 className="font-semibold text-primary pl-5">
-              {storeData?.name}
-            </h1>
+            <>
+              <img src={storeData?.image_url} alt="" className="w-24" />
+              {!storeData?.image_url && (
+                <h1 className="font-semibold text-primary pl-5 truncate px-4">
+                  {storeData?.name}
+                </h1>
+              )}
+            </>
           )}
           <button
             className="absolute right-3 top-1/2 -translate-y-1/2 lg:hidden"
@@ -244,14 +283,14 @@ function AdminLayout() {
                     : "text-neutral-600 hover:bg-gray-100"
                 }`}
               >
-                <div className="flex gap-3 items-center">
-                  <item.icon size={20} />
-                  <span className="text-[15px]">{item.name}</span>
+                <div className="flex gap-3 items-center min-w-0">
+                  <item.icon size={20} className="flex-shrink-0" />
+                  <span className="text-[15px] truncate">{item.name}</span>
                 </div>
                 {item.children && (
                   <ChevronDown
                     size={16}
-                    className={`transition-transform duration-200 ${
+                    className={`flex-shrink-0 transition-transform duration-200 ${
                       openMenus[item.name] ? "rotate-180" : ""
                     }`}
                   />
@@ -273,7 +312,7 @@ function AdminLayout() {
                       }`}
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-current flex-shrink-0" />
-                      <span>{child.name}</span>
+                      <span className="truncate">{child.name}</span>
                     </div>
                   ))}
                 </div>
@@ -281,6 +320,14 @@ function AdminLayout() {
             </div>
           ))}
         </nav>
+
+        {/* Drag Handle */}
+        <div
+          onMouseDown={handleMouseDown}
+          className="absolute right-0 top-0 h-full w-1.5 cursor-col-resize group z-50 hidden lg:block"
+        >
+          <div className="h-full w-full bg-transparent group-hover:bg-primary/30 transition-colors duration-150" />
+        </div>
       </div>
 
       {/* Mobile overlay */}
