@@ -34,7 +34,10 @@ import delivery_icon from "@/assets/delivery-icon.svg";
 import pickup_icon from "@/assets/pickup-icon.svg";
 
 // ─── Maps ─────────────────────────────────────────────────────────
-export const ORDER_STATUS_MAP: Record<number, { label: string; className: string }> = {
+export const ORDER_STATUS_MAP: Record<
+  number,
+  { label: string; className: string }
+> = {
   1: { label: "Pending", className: "bg-yellow-100 text-yellow-700" },
   2: { label: "Accepted", className: "bg-green-100 text-green-700" },
   3: { label: "Declined", className: "bg-red-100 text-red-700" },
@@ -132,7 +135,12 @@ export function OrderDetailModal({
                 </span>
                 <span className="text-base font-semibold text-neutral-800">
                   {currentCurrency.symbol}{" "}
-                  {(item.unit_price * item.quantity).toFixed(2)}
+                  {(
+                    (item.unit_price +
+                      (item.toppings?.reduce((sum, t) => sum + t.price, 0) ??
+                        0)) *
+                    item.quantity
+                  ).toFixed(2)}
                 </span>
               </div>
               {(item.toppings?.length ?? 0) > 0 && (
@@ -163,7 +171,14 @@ export function OrderDetailModal({
             <span>Subtotal</span>
             <span>
               {items
-                .reduce((acc, i) => acc + i.unit_price * i.quantity, 0)
+                .reduce(
+                  (acc, i) =>
+                    acc +
+                    (i.unit_price +
+                      (i.toppings?.reduce((sum, t) => sum + t.price, 0) ?? 0)) *
+                      i.quantity,
+                  0,
+                )
                 .toFixed(2)}
             </span>
           </div>
@@ -175,6 +190,17 @@ export function OrderDetailModal({
                 <span>Discount</span>
                 <span className="text-red-500">
                   -{order.invoice.discount_amount.toFixed(2)}
+                </span>
+              </div>
+            )}
+
+          {/* Delivery Fee */}
+          {order.invoice?.delivery_fee !== undefined &&
+            order.invoice.delivery_fee > 0 && (
+              <div className="flex justify-between text-base text-neutral-600">
+                <span>Delivery Fee</span>
+                <span className="text-green-700">
+                  +{order.invoice.delivery_fee.toFixed(2)}
                 </span>
               </div>
             )}
