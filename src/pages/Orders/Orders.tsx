@@ -362,10 +362,29 @@ export function OrderCard({
             : "-"}
         </span>
       </div>
-      <span className="text-base font-bold text-neutral-800">
-        {currentCurrency.symbol}
-        {order.invoice?.total_amount?.toFixed(2) ?? "-"}
-      </span>
+      <div className="w-full flex items-center justify-between">
+        <span className="text-base font-bold text-neutral-800">
+          {currentCurrency.symbol}
+          {order.invoice?.total_amount?.toFixed(2) ??
+            order.payment?.amount?.toFixed(2) ??
+            "-"}
+        </span>
+        <h1
+          className={`font-semibold text-white px-3 py-1 rounded-lg ${
+            order.source === "online"
+              ? "bg-yellow-500"
+              : order.source === "Mobile User App"
+                ? "bg-green-800"
+                : "bg-blue-700"
+          }`}
+        >
+          {order.source === "online"
+            ? "Website"
+            : order.source === "Mobile User App"
+              ? "Magskr"
+              : order.source}
+        </h1>
+      </div>
     </div>
   );
 }
