@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useParams } from "react-router-dom";
 import { format } from "date-fns";
 import {
   Search,
@@ -391,7 +391,10 @@ export function OrderCard({
 
 // ─── Main Page ────────────────────────────────────────────────────
 function OrderPage() {
-  const { store_id } = useAdminStore();
+  const { store_id: adminStoreId } = useAdminStore();
+  const { storeId: paramStoreId } = useParams<{ storeId: string }>();
+  const activeStoreId = paramStoreId ? parseInt(paramStoreId, 10) : adminStoreId;
+
   const [searchParams] = useSearchParams();
   const [search, setSearch] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
@@ -408,7 +411,7 @@ function OrderPage() {
   const [modalOpen, setModalOpen] = useState(false);
 
   const { data: orders = [], isLoading } = useGetOrders({
-    store_id: store_id!,
+    store_id: activeStoreId!,
     target_date: format(selectedDate, "yyyy-MM-dd"),
     offset: 0,
   });
