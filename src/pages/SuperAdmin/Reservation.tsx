@@ -12,6 +12,12 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Card, CardContent } from "../../components/ui/card";
 
+interface FlattenedReservation {
+  storeName: string;
+  storeId: number;
+  res: ReservationItem;
+}
+
 const Reservation = () => {
   const [date, setDate] = useState<string>(format(new Date(), "yyyy-MM-dd"));
   const [data, setData] = useState<ReservationsResponse | null>(null);
@@ -55,7 +61,7 @@ const Reservation = () => {
   // Flatten all reservations from stores to show in a single list
   const allReservations = React.useMemo(() => {
     if (!data) return [];
-    let list: Array<{storeName: string, storeId: number, res: ReservationItem}> = [];
+    const list: FlattenedReservation[] = [];
     data.stores.forEach(store => {
       if (selectedStoreId === null || selectedStoreId === store.store_id) {
         store.reservations.forEach(res => {
