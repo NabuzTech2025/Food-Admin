@@ -55,6 +55,7 @@ import StoreConfigFormPage from "./pages/SuperAdmin/StoreConfig/StoreConfigForm"
 import StoreSetting from "./pages/StoreSetting";
 import StoreLayout from "./pages/SuperAdmin/StoreLayout";
 import Orders from "./pages/Orders/Orders";
+import Reservation from "./pages/SuperAdmin/Reservation";
 
 // ✅ Store-scoped page imports (create these pages as needed)
 
@@ -130,7 +131,7 @@ function App() {
                   element={<ChangePasswordPage />}
                 />
                 <Route path="payment-settings" element={<PaymentSettings />} />
-               
+
                 {/* Super Admin Routes */}
                 <Route path="super/store-details" element={<StoreDetails />} />
                 <Route
@@ -146,6 +147,7 @@ function App() {
                   path="super/store-config/form"
                   element={<StoreConfigFormPage />}
                 />
+                <Route path="super/reservations" element={<Reservation />} />
               </Route>
 
               {/* ─── ✅ NEW: StoreLayout — only when clicking a store ─── */}

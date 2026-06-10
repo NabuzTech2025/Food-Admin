@@ -91,6 +91,11 @@ function AdminLayout() {
             icon: Settings2,
             link: "/super/store-config",
           },
+           {
+            name: "Reservations",
+            icon: ListOrdered,
+            link: "/super/reservations",
+          },
         ]
       : [
           { name: "Dashboard", icon: Home, link: "/dashboard" },
