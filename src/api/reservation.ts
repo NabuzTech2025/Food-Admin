@@ -6,8 +6,8 @@ export interface ReservationItem {
   guest_count: number;
   reserved_for: string;
   created_at: string;
-  customer_name: strng;
-  customer_phone: striing;
+  customer_name: string;
+  customer_phone: string;
   customer_email: string;
   note: string;
 }
