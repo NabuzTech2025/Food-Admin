@@ -8,6 +8,7 @@ import {
   X,
   Image,
   ListOrdered,
+  Settings,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
@@ -56,6 +57,12 @@ function StoreLayout() {
       name: "Payment Settings",
       icon: CreditCard,
       link: `${base}/payments`,
+      section: "Operations",
+    },
+    {
+      name: "Settings",
+      icon: Settings,
+      link: `${base}/settings`,
       section: "Operations",
     },
   ];

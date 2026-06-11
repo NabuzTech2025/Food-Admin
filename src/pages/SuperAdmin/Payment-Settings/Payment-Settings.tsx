@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Loader2, CreditCard, Banknote, Landmark, Wallet } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-import { useAdminStore } from "@/context/store/useAdminStore";
 import {
   useGetPaymentSettings,
   useCreatePaymentSettings,

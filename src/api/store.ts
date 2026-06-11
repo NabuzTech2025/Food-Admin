@@ -83,3 +83,16 @@ export const getStoreById = async (
     throw error;
   }
 };
+
+export const updateStore = async (
+  storeId: number | string,
+  payload: Partial<StoreDetail>,
+): Promise<StoreDetail> => {
+  try {
+    const res = await axiosInstance.put(`stores/${storeId}`, payload);
+    return res.data?.data ?? res.data;
+  } catch (error) {
+    console.error("Update Store Error:", error);
+    throw error;
+  }
+};

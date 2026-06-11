@@ -23,7 +23,7 @@ function AllStoreRow({ store }: AllStoreRowProps) {
   const navigate = useNavigate();
   return (
     <div
-      onClick={() => navigate(`/super/stores/${store.id}/store-profile`)}
+      onClick={() => navigate(`/super/stores/${store.id}/orders`)}
       className="group h-full rounded-3xl border border-neutral-200 bg-white p-5 transition-all hover:-translate-y-1 hover:border-orange-200 hover:shadow-xl cursor-pointer"
     >
       {/* Top */}

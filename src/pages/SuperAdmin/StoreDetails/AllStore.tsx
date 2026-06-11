@@ -72,7 +72,7 @@ function AllStorePage() {
   );
 
   const handleEdit = (store: StoreType) => {
-    navigate(`/super/stores/${store.id}/store-profile`);
+    navigate(`/super/stores/${store.id}/orders`);
   };
 
   const handleCreateNew = () => {
