@@ -48,12 +48,15 @@ import StoreDetails from "./pages/SuperAdmin/StoreDetails/AllStore";
 import StoreProfile from "./pages/SuperAdmin/StoreDetails/StoreProfile";
 import OrderPage from "./pages/Orders/Orders";
 import ChangePasswordPage from "./pages/Change_Password";
-import PaymentSettings from "./pages/SuperAdmin/Payment-Settings";
+import PaymentSettings from "./pages/SuperAdmin/Payment-Settings/Payment-Settings";
 import SuperAdminDashboard from "./pages/SuperAdmin/DashBoard/Dashboard";
 import StoreConfigPage from "./pages/SuperAdmin/StoreConfig/StoreConfig";
 import StoreConfigFormPage from "./pages/SuperAdmin/StoreConfig/StoreConfigForm";
 import StoreSetting from "./pages/StoreSetting";
 import StoreLayout from "./pages/SuperAdmin/StoreLayout";
+import Orders from "./pages/Orders/Orders";
+import Reservation from "./pages/Reservation/Reservation";
+import Settings from "./pages/SuperAdmin/Settings/Settings";
 
 // ✅ Store-scoped page imports (create these pages as needed)
 
@@ -129,6 +132,7 @@ function App() {
                   element={<ChangePasswordPage />}
                 />
                 <Route path="payment-settings" element={<PaymentSettings />} />
+
                 {/* Super Admin Routes */}
                 <Route path="super/store-details" element={<StoreDetails />} />
                 <Route
@@ -144,13 +148,16 @@ function App() {
                   path="super/store-config/form"
                   element={<StoreConfigFormPage />}
                 />
+                <Route path="super/reservations" element={<Reservation />} />
               </Route>
 
               {/* ─── ✅ NEW: StoreLayout — only when clicking a store ─── */}
               <Route path="super/stores/:storeId" element={<StoreLayout />}>
-                <Route index element={<Navigate to="dashboard" replace />} />
+                <Route index element={<Navigate to="orders" replace />} />
+                <Route path="orders" element={<Orders />} />
                 <Route path="payments" element={<PaymentSettings />} />
                 <Route path="store-profile" element={<StoreProfile />} />
+                <Route path="settings" element={<Settings />} />
               </Route>
             </Route>
           </Routes>

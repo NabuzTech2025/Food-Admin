@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useParams } from "react-router-dom";
 import { format } from "date-fns";
 import {
   Search,
@@ -362,17 +362,39 @@ export function OrderCard({
             : "-"}
         </span>
       </div>
-      <span className="text-base font-bold text-neutral-800">
-        {currentCurrency.symbol}
-        {order.invoice?.total_amount?.toFixed(2) ?? "-"}
-      </span>
+      <div className="w-full flex items-center justify-between">
+        <span className="text-base font-bold text-neutral-800">
+          {currentCurrency.symbol}
+          {order.invoice?.total_amount?.toFixed(2) ??
+            order.payment?.amount?.toFixed(2) ??
+            "-"}
+        </span>
+        <h1
+          className={`font-semibold text-white px-3 py-1 rounded-lg ${
+            order.source === "online"
+              ? "bg-yellow-500"
+              : order.source === "Mobile User App"
+                ? "bg-green-800"
+                : "bg-blue-700"
+          }`}
+        >
+          {order.source === "online"
+            ? "Website"
+            : order.source === "Mobile User App"
+              ? "Magskr"
+              : order.source}
+        </h1>
+      </div>
     </div>
   );
 }
 
 // ─── Main Page ────────────────────────────────────────────────────
 function OrderPage() {
-  const { store_id } = useAdminStore();
+  const { store_id: adminStoreId } = useAdminStore();
+  const { storeId: paramStoreId } = useParams<{ storeId: string }>();
+  const activeStoreId = paramStoreId ? parseInt(paramStoreId, 10) : adminStoreId;
+
   const [searchParams] = useSearchParams();
   const [search, setSearch] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
@@ -389,7 +411,7 @@ function OrderPage() {
   const [modalOpen, setModalOpen] = useState(false);
 
   const { data: orders = [], isLoading } = useGetOrders({
-    store_id: store_id!,
+    store_id: activeStoreId!,
     target_date: format(selectedDate, "yyyy-MM-dd"),
     offset: 0,
   });

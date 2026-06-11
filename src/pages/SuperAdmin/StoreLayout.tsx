@@ -1,7 +1,15 @@
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { useGetStore } from "@/hooks/useStore";
-import { CreditCard, ChevronLeft, ChevronDown, X, Image } from "lucide-react";
+import {
+  CreditCard,
+  ChevronLeft,
+  ChevronDown,
+  X,
+  Image,
+  ListOrdered,
+  Settings,
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
 
@@ -34,6 +42,12 @@ function StoreLayout() {
 
   const navItems: NavItem[] = [
     {
+      name: "Orders",
+      icon: ListOrdered,
+      link: `${base}/orders`,
+      section: "Operations",
+    },
+    {
       name: "Store Profile",
       icon: Image,
       link: `${base}/store-profile`,
@@ -43,6 +57,12 @@ function StoreLayout() {
       name: "Payment Settings",
       icon: CreditCard,
       link: `${base}/payments`,
+      section: "Operations",
+    },
+    {
+      name: "Settings",
+      icon: Settings,
+      link: `${base}/settings`,
       section: "Operations",
     },
   ];
