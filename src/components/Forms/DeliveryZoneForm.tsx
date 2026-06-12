@@ -177,7 +177,7 @@ function DeliveryZoneForm({ open, onClose, editData }: DeliveryZoneFormProps) {
                 <Input
                   type="number"
                   placeholder="0.0"
-                  step="0.1"
+                  step="0.01"
                   min={0}
                   {...register("delivery_fee", { required: "Required" })}
                 />
