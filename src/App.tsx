@@ -56,6 +56,7 @@ import StoreSetting from "./pages/StoreSetting";
 import StoreLayout from "./pages/SuperAdmin/StoreLayout";
 import Orders from "./pages/Orders/Orders";
 import Reservation from "./pages/SuperAdmin/Reservation";
+import AdminReservation from "./pages/AdminReservation";
 
 // ✅ Store-scoped page imports (create these pages as needed)
 
@@ -126,6 +127,7 @@ function App() {
                 <Route path="customer/:id" element={<CustomerDetail />} />
                 <Route path="inventory" element={<Inventory />} />
                 <Route path="orders" element={<OrderPage />} />
+                <Route path="reservations" element={<AdminReservation />} />
                 <Route
                   path="change-password"
                   element={<ChangePasswordPage />}

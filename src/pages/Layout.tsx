@@ -91,7 +91,7 @@ function AdminLayout() {
             icon: Settings2,
             link: "/super/store-config",
           },
-           {
+          {
             name: "Reservations",
             icon: ListOrdered,
             link: "/super/reservations",
@@ -100,6 +100,7 @@ function AdminLayout() {
       : [
           { name: "Dashboard", icon: Home, link: "/dashboard" },
           { name: "Orders", icon: ListOrdered, link: "/orders" },
+          { name: "Reservations", icon: ListOrdered, link: "/reservations" },
           { name: "Tax", icon: Landmark, link: "/tax" },
           {
             name: "Product",
