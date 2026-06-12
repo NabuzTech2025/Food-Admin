@@ -1,7 +1,7 @@
 import React from "react";
 
 const AdminReservation = () => {
-  return <div>hello admin reservation</div>;
+  return <div>hello  reservation</div>;
 };
 
 export default AdminReservation;
