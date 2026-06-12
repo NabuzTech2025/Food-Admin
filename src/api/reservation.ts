@@ -60,3 +60,15 @@ export const getReservationDetails = async (id: number): Promise<ReservationDeta
   const response = await axiosInstance.get(`/reservations/${id}`);
   return response.data;
 };
+
+export interface FilterStoreReservationsPayload {
+  store_id: number;
+  target_date: string;
+  limit?: number;
+  offset?: number;
+}
+
+export const filterStoreReservations = async (payload: FilterStoreReservationsPayload): Promise<ReservationDetail[]> => {
+  const response = await axiosInstance.post('/reservations/store/filter', payload);
+  return response.data;
+};
