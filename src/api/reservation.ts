@@ -69,6 +69,12 @@ export interface FilterStoreReservationsPayload {
 }
 
 export const filterStoreReservations = async (payload: FilterStoreReservationsPayload): Promise<ReservationDetail[]> => {
-  const response = await axiosInstance.post('/reservations/store/filter', payload);
+  const response = await axiosInstance.get('/reservations/', { params: payload });
   return response.data;
 };
+
+export const getTodayReceivedBookings = async (payload: FilterStoreReservationsPayload): Promise<ReservationDetail[]> => {
+  const response = await axiosInstance.get('/reservations/store/today', { params: payload });
+  return response.data;
+};
+
