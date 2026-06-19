@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   getStoreConfigs,
   createStoreConfig,
@@ -16,6 +21,18 @@ export const useGetStoreConfigs = (params: {
   return useQuery({
     queryKey: [STORE_CONFIG_KEY, params],
     queryFn: () => getStoreConfigs(params),
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useGetStoreConfigsInfinite = (limit: number = 20) => {
+  return useInfiniteQuery({
+    queryKey: [STORE_CONFIG_KEY, "infinite", limit],
+    queryFn: ({ pageParam = 0 }) =>
+      getStoreConfigs({ limit, offset: pageParam }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, _allPages, lastPageParam) =>
+      lastPage.length === limit ? lastPageParam + limit : undefined,
     staleTime: 5 * 60 * 1000,
   });
 };

@@ -9,6 +9,7 @@ export type Language = "en" | "de";
 
 export interface StoreConfig {
   domain: string;
+  subdomain: string;
   store_id: number;
   app_name: string;
   app_base_route: string;
@@ -21,6 +22,7 @@ export interface StoreConfig {
 
 export interface StoreConfigCreatePayload {
   domain: string;
+  subdomain?: string;
   store_id: number;
   app_name: string;
   app_base_route: string;
@@ -31,6 +33,7 @@ export interface StoreConfigCreatePayload {
 
 export interface StoreConfigUpdatePayload {
   domain: string;
+  subdomain?: string;
   store_id: number;
   app_name: string;
   app_base_route: string;

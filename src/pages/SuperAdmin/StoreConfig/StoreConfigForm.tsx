@@ -25,7 +25,14 @@ function StoreConfigFormPage() {
   const { configData, mode } = location.state || {};
   const isEdit = mode === "edit";
 
-  const [domain, setDomain] = useState(configData?.domain ?? "");
+  const [domain, setDomain] = useState(() => {
+    const raw = configData?.domain ?? "";
+    return raw.includes("/") ? raw.split("/")[0] : raw;
+  });
+  const [subdomain, setSubdomain] = useState(() => {
+    const raw = configData?.domain ?? "";
+    return raw.includes("/") ? raw.split("/").slice(1).join("/") : "";
+  });
   const [storeId, setStoreId] = useState<string>(
     String(configData?.store_id ?? ""),
   );
@@ -79,12 +86,17 @@ function StoreConfigFormPage() {
       return;
     }
 
+    const fullDomain = subdomain.trim()
+      ? `${domain.trim()}/${subdomain.trim()}`
+      : domain.trim();
+
     if (isEdit) {
       try {
         await updateConfig({
-          domain: domain.trim(),
+          domain: configData?.domain ?? fullDomain,
           payload: {
-            domain: domain.trim(),
+            domain: fullDomain,
+            subdomain: subdomain.trim(),
             store_id: Number(storeId),
             app_name: appName,
             app_base_route: appBaseRoute,
@@ -103,7 +115,8 @@ function StoreConfigFormPage() {
     } else {
       try {
         await createConfig({
-          domain: domain.trim(),
+          domain: fullDomain,
+          subdomain: subdomain.trim(),
           store_id: Number(storeId),
           app_name: appName,
           app_base_route: appBaseRoute,
@@ -181,6 +194,16 @@ function StoreConfigFormPage() {
                   request.
                 </p>
               )}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="subdomain">Subdomain</Label>
+              <Input
+                id="subdomain"
+                placeholder="e.g. shop.rapidopizza.de"
+                value={subdomain}
+                onChange={(e) => setSubdomain(e.target.value)}
+              />
             </div>
 
             <div className="space-y-1.5">

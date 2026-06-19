@@ -1,10 +1,20 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Plus, RefreshCw, Edit, Globe, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Search,
+  Plus,
+  RefreshCw,
+  Edit,
+  Globe,
+  Loader2,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useGetStoreConfigs } from "@/hooks/useStoreConfig";
+import { useGetStoreConfigsInfinite } from "@/hooks/useStoreConfig";
 import type { StoreConfig } from "@/api/storeConfig";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -19,10 +29,13 @@ import {
 
 const LIMIT = 20;
 
+type SortField = "store_id" | "domain";
+type SortDir = "asc" | "desc";
+
 function TableRowSkeleton() {
   return (
     <TableRow>
-      {Array.from({ length: 6 }).map((_, i) => (
+      {Array.from({ length: 8 }).map((_, i) => (
         <TableCell key={i}>
           <Skeleton height={16} />
         </TableCell>
@@ -34,27 +47,75 @@ function TableRowSkeleton() {
 function StoreConfigPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [offset, setOffset] = useState(0);
+  const [sortField, setSortField] = useState<SortField | null>(null);
+  const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const sentinelRef = useRef<HTMLTableRowElement>(null);
+
+  const toggleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+  };
 
   const {
-    data: configs = [],
+    data,
     isLoading,
     isError,
     error,
     refetch,
     isFetching,
-  } = useGetStoreConfigs({ limit: LIMIT, offset });
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetStoreConfigsInfinite(LIMIT);
 
-  const filtered = useMemo(
-    () =>
-      configs.filter(
-        (c) =>
-          c.app_name?.toLowerCase().includes(search.toLowerCase()) ||
-          c.country?.toLowerCase().includes(search.toLowerCase()) ||
-          c.app_base_route?.toLowerCase().includes(search.toLowerCase()),
-      ),
-    [configs, search],
+  const configs = useMemo(
+    () => data?.pages.flatMap((page) => page) ?? [],
+    [data],
   );
+
+  const filtered = useMemo(() => {
+    const list = configs.filter(
+      (c) =>
+        c.app_name?.toLowerCase().includes(search.toLowerCase()) ||
+        c.country?.toLowerCase().includes(search.toLowerCase()) ||
+        c.app_base_route?.toLowerCase().includes(search.toLowerCase()),
+    );
+    if (!sortField) return list;
+    return [...list].sort((a, b) => {
+      let cmp = 0;
+      if (sortField === "store_id") {
+        cmp = a.store_id - b.store_id;
+      } else {
+        const domainA = a.domain?.split("/")[0] ?? "";
+        const domainB = b.domain?.split("/")[0] ?? "";
+        cmp = domainA.localeCompare(domainB);
+      }
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+  }, [configs, search, sortField, sortDir]);
+
+  const handleLoadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) handleLoadMore();
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [handleLoadMore]);
 
   const handleEdit = (config: StoreConfig) => {
     navigate("/super/store-config/form", {
@@ -65,9 +126,6 @@ function StoreConfigPage() {
   const handleCreate = () => {
     navigate("/super/store-config/form", { state: { mode: "create" } });
   };
-
-  const canGoPrev = offset > 0;
-  const canGoNext = configs.length === LIMIT;
 
   return (
     <div className="space-y-4">
@@ -119,8 +177,42 @@ function StoreConfigPage() {
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/30">
-                <TableHead className="w-16">Store ID</TableHead>
+                <TableHead
+                  className="w-16 cursor-pointer select-none"
+                  onClick={() => toggleSort("store_id")}
+                >
+                  <span className="inline-flex items-center gap-1">
+                    Store ID
+                    {sortField === "store_id" ? (
+                      sortDir === "asc" ? (
+                        <ArrowUp size={13} />
+                      ) : (
+                        <ArrowDown size={13} />
+                      )
+                    ) : (
+                      <ArrowUpDown size={13} className="text-neutral-300" />
+                    )}
+                  </span>
+                </TableHead>
                 <TableHead>App Name</TableHead>
+                <TableHead
+                  className="cursor-pointer select-none"
+                  onClick={() => toggleSort("domain")}
+                >
+                  <span className="inline-flex items-center gap-1">
+                    Domain
+                    {sortField === "domain" ? (
+                      sortDir === "asc" ? (
+                        <ArrowUp size={13} />
+                      ) : (
+                        <ArrowDown size={13} />
+                      )
+                    ) : (
+                      <ArrowUpDown size={13} className="text-neutral-300" />
+                    )}
+                  </span>
+                </TableHead>
+                <TableHead>Subdomain</TableHead>
                 <TableHead>Base Route</TableHead>
                 <TableHead>Country</TableHead>
                 <TableHead>PayPal Client ID</TableHead>
@@ -136,7 +228,7 @@ function StoreConfigPage() {
               ) : isError ? (
                 <TableRow>
                   <TableCell
-                    colSpan={7}
+                    colSpan={9}
                     className="text-center py-10 text-destructive text-sm"
                   >
                     Error:{" "}
@@ -154,6 +246,16 @@ function StoreConfigPage() {
                     </TableCell>
                     <TableCell className="font-medium">
                       {config.app_name || "—"}
+                    </TableCell>
+                    <TableCell className="text-sm text-neutral-500">
+                      {config.domain?.includes("/")
+                        ? config.domain.split("/")[0]
+                        : config.domain || "—"}
+                    </TableCell>
+                    <TableCell className="text-sm text-neutral-500">
+                      {config.domain?.includes("/")
+                        ? config.domain.split("/").slice(1).join("/")
+                        : "—"}
                     </TableCell>
                     <TableCell className="text-sm text-neutral-500">
                       <span className="inline-flex items-center gap-1">
@@ -200,7 +302,7 @@ function StoreConfigPage() {
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={7}
+                    colSpan={9}
                     className="text-center py-10 text-neutral-400 text-sm"
                   >
                     No store configs found.{" "}
@@ -213,40 +315,29 @@ function StoreConfigPage() {
                   </TableCell>
                 </TableRow>
               )}
+              {!search && hasNextPage && (
+                <TableRow ref={sentinelRef}>
+                  <TableCell colSpan={9} className="text-center py-4">
+                    {isFetchingNextPage ? (
+                      <Loader2
+                        size={18}
+                        className="animate-spin mx-auto text-neutral-400"
+                      />
+                    ) : null}
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </div>
 
-        {/* Footer with pagination */}
-        <div className="px-4 py-3 border-t border-border flex items-center justify-between">
+        {/* Footer */}
+        <div className="px-4 py-3 border-t border-border">
           <p className="text-xs text-neutral-500">
             Showing <strong>{filtered.length}</strong> config
             {filtered.length !== 1 ? "s" : ""}
             {search && ` (filtered from ${configs.length} total)`}
           </p>
-          {!search && (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setOffset((o) => Math.max(0, o - LIMIT))}
-                disabled={!canGoPrev || isFetching}
-              >
-                <ChevronLeft size={15} />
-              </Button>
-              <span className="text-xs text-neutral-500">
-                Page {Math.floor(offset / LIMIT) + 1}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setOffset((o) => o + LIMIT)}
-                disabled={!canGoNext || isFetching}
-              >
-                <ChevronRight size={15} />
-              </Button>
-            </div>
-          )}
         </div>
       </div>
     </div>
