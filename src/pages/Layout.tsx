@@ -91,7 +91,7 @@ function AdminLayout() {
             icon: Settings2,
             link: "/super/store-config",
           },
-           {
+          {
             name: "Reservations",
             icon: ListOrdered,
             link: "/super/reservations",
@@ -239,7 +239,7 @@ function AdminLayout() {
         style={{ width: sidebarWidth }}
         className={`
           fixed lg:static inset-y-0 left-0
-          h-full z-40 relative
+          h-full z-40
           shadow-[8px_0_12px_-2px_rgba(0,0,0,0.2)]
           flex flex-col bg-white flex-shrink-0
           transition-transform duration-300 ease-in-out
