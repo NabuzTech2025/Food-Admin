@@ -1,9 +1,9 @@
-name: Deploy Food Admin CMS Production
+name: Deploy Food Admin CMS Testing
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - test
 
 jobs:
   build-and-push:
@@ -22,14 +22,14 @@ jobs:
       - name: Set ENV
         id: setenv
         run: |
-          echo "image_tag=food-admin-cms" >> $GITHUB_OUTPUT
+          echo "image_tag=food-admin-cmstest" >> $GITHUB_OUTPUT
           echo "server_ip=138.199.144.4" >> $GITHUB_OUTPUT
-          echo "port=3011" >> $GITHUB_OUTPUT
+          echo "port=3013" >> $GITHUB_OUTPUT
 
       - name: Build Docker Image
         run: |
           docker build \
-            --build-arg VITE_API_BASE_URL="${{ secrets.VITE_API_BASE_URL }}" \
+            --build-arg VITE_API_BASE_URL="${{ secrets.VITE_API_TEST_BASE_URL }}" \
             -t jassnabuztech/food-admin-cms:${{ steps.setenv.outputs.image_tag }} .
 
       - name: Push Docker Image
@@ -44,14 +44,14 @@ jobs:
           echo "${{ secrets.LIVE_SERVER_SSH_KEY }}" > server.pem
           chmod 600 server.pem
 
-      - name: Deploy to Production Server
+      - name: Deploy to Testing Server
         run: |
           ssh -o StrictHostKeyChecking=no -i server.pem root@${{ needs.build-and-push.outputs.server_ip }} << 'EOF'
             IMAGE_TAG=${{ needs.build-and-push.outputs.image_tag }}
             CONTAINER_NAME=grocery-$IMAGE_TAG
             PORT=${{ needs.build-and-push.outputs.port }}
 
-            echo "Deploying $IMAGE_TAG to production server..."
+            echo "Deploying $IMAGE_TAG to testing server..."
 
             # Pull the latest image
             docker pull jassnabuztech/food-admin-cms:$IMAGE_TAG
