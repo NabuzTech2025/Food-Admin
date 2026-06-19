@@ -10,11 +10,26 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
+  Trash2,
 } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useGetStoreConfigsInfinite } from "@/hooks/useStoreConfig";
+import {
+  useGetStoreConfigsInfinite,
+  useDeleteStoreConfig,
+} from "@/hooks/useStoreConfig";
 import type { StoreConfig } from "@/api/storeConfig";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -42,6 +57,7 @@ function TableRowSkeleton() {
       ))}
     </TableRow>
   );
+  ``;
 }
 
 function StoreConfigPage() {
@@ -50,6 +66,8 @@ function StoreConfigPage() {
   const [sortField, setSortField] = useState<SortField | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const sentinelRef = useRef<HTMLTableRowElement>(null);
+  const [deleteTarget, setDeleteTarget] = useState<StoreConfig | null>(null);
+  const deleteMutation = useDeleteStoreConfig();
 
   const toggleSort = (field: SortField) => {
     if (sortField === field) {
@@ -127,9 +145,56 @@ function StoreConfigPage() {
     navigate("/super/store-config/form", { state: { mode: "create" } });
   };
 
+  const handleDelete = () => {
+    if (!deleteTarget) return;
+    deleteMutation.mutate(deleteTarget.domain, {
+      onSuccess: () => {
+        toast.success(
+          `Deleted config for "${deleteTarget.app_name || deleteTarget.domain}"`,
+        );
+        setDeleteTarget(null);
+      },
+      onError: (err: any) => {
+        toast.error(err?.message || "Failed to delete store config");
+        setDeleteTarget(null);
+      },
+    });
+  };
+
   return (
     <div className="space-y-4">
       <Toaster />
+
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Store Config</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete the config for{" "}
+              <strong>{deleteTarget?.app_name || deleteTarget?.domain}</strong>?
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deleteMutation.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending ? (
+                <Loader2 size={16} className="animate-spin mr-1" />
+              ) : null}
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <div className="bg-white rounded-xl border border-border shadow-sm">
         {/* Header */}
@@ -288,14 +353,24 @@ function StoreConfigPage() {
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEdit(config)}
-                        className="h-8 w-8 p-0"
-                      >
-                        <Edit size={15} />
-                      </Button>
+                      <div className="inline-flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEdit(config)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Edit size={15} />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setDeleteTarget(config)}
+                          className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <Trash2 size={15} />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

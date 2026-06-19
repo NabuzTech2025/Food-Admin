@@ -8,6 +8,7 @@ import {
   getStoreConfigs,
   createStoreConfig,
   updateStoreConfig,
+  deleteStoreConfig,
   type StoreConfigCreatePayload,
   type StoreConfigUpdatePayload,
 } from "@/api/storeConfig";
@@ -58,6 +59,16 @@ export const useUpdateStoreConfig = () => {
       domain: string;
       payload: StoreConfigUpdatePayload;
     }) => updateStoreConfig(domain, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [STORE_CONFIG_KEY] });
+    },
+  });
+};
+
+export const useDeleteStoreConfig = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (domain: string) => deleteStoreConfig(domain),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [STORE_CONFIG_KEY] });
     },

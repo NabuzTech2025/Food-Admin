@@ -86,16 +86,14 @@ function StoreConfigFormPage() {
       return;
     }
 
-    const fullDomain = subdomain.trim()
-      ? `${domain.trim()}/${subdomain.trim()}`
-      : domain.trim();
+    const trimmedDomain = domain.trim();
 
     if (isEdit) {
       try {
         await updateConfig({
-          domain: configData?.domain ?? fullDomain,
+          domain: configData?.domain ?? trimmedDomain,
           payload: {
-            domain: fullDomain,
+            domain: trimmedDomain,
             subdomain: subdomain.trim(),
             store_id: Number(storeId),
             app_name: appName,
@@ -115,7 +113,7 @@ function StoreConfigFormPage() {
     } else {
       try {
         await createConfig({
-          domain: fullDomain,
+          domain: trimmedDomain,
           subdomain: subdomain.trim(),
           store_id: Number(storeId),
           app_name: appName,

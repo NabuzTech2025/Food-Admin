@@ -82,3 +82,12 @@ export const updateStoreConfig = async (
     throw error;
   }
 };
+
+export const deleteStoreConfig = async (domain: string): Promise<void> => {
+  try {
+    await axiosInstance.delete(`store-domain-config/${domain}`);
+  } catch (error) {
+    console.error("Delete StoreConfig Error:", error);
+    throw error;
+  }
+};
