@@ -25,6 +25,23 @@ export interface DeviceStatusSummary {
   };
 }
 
+export interface WindowsDeviceDetail {
+  store_id: number;
+  store_name: string;
+  online: boolean;
+  since: string | null;
+}
+
+export interface WindowsDeviceStatusResponse {
+  summary: {
+    total: number;
+    online: number;
+    offline: number;
+  };
+  online: WindowsDeviceDetail[];
+  offline: WindowsDeviceDetail[];
+}
+
 // ─── API Functions ────────────────────────────────────────────────────────────
 
 // role_id === 1 → GET /devices/status
@@ -34,6 +51,16 @@ export const getAllDevicesStatus = async (): Promise<DeviceStatusSummary> => {
     return res.data;
   } catch (error) {
     console.error("Get All Devices Status Error:", error);
+    throw error;
+  }
+};
+
+export const getWindowsDeviceStatus = async (): Promise<WindowsDeviceStatusResponse> => {
+  try {
+    const res = await axiosInstance.get("/stores/online/windows/all");
+    return res.data;
+  } catch (error) {
+    console.error("Get Windows Device Status Error:", error);
     throw error;
   }
 };

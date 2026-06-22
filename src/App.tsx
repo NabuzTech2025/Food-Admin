@@ -42,7 +42,7 @@ import Inventory from "./pages/Inventory";
 import Customer from "./pages/Customer";
 import CustomerDetail from "./pages/CustomerDetail";
 import DeliveryZone from "./pages/Delivery-Zone";
-import DeviceStatus from "./pages/Device-Status";
+import DeviceStatus from "./pages/SuperAdmin/Device-Status";
 import Delivery from "./pages/Delivery";
 import StoreDetails from "./pages/SuperAdmin/StoreDetails/AllStore";
 import StoreProfile from "./pages/SuperAdmin/StoreDetails/StoreProfile";
@@ -150,6 +150,7 @@ function App() {
                   element={<StoreConfigFormPage />}
                 />
                 <Route path="super/reservations" element={<Reservation />} />
+                <Route path="super/device-status" element={<DeviceStatus />} />
               </Route>
 
               {/* ─── ✅ NEW: StoreLayout — only when clicking a store ─── */}
