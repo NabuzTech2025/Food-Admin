@@ -151,6 +151,7 @@ function App() {
                 />
                 <Route path="super/reservations" element={<Reservation />} />
                 <Route path="super/device-status" element={<DeviceStatus />} />
+                <Route path="super/store-profile" element={<StoreProfile />} />
               </Route>
 
               {/* ─── ✅ NEW: StoreLayout — only when clicking a store ─── */}
