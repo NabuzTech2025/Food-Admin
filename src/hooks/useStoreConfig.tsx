@@ -12,6 +12,7 @@ import {
   type StoreConfigCreatePayload,
   type StoreConfigUpdatePayload,
 } from "@/api/storeConfig";
+import { addBasicStoreSettings } from "@/api/storeSettings";
 
 const STORE_CONFIG_KEY = "storeConfigs";
 
@@ -43,7 +44,15 @@ export const useCreateStoreConfig = () => {
   return useMutation({
     mutationFn: (payload: StoreConfigCreatePayload) =>
       createStoreConfig(payload),
-    onSuccess: () => {
+    onSuccess: (_, payload) => {
+      addBasicStoreSettings({
+        store_id: payload.store_id,
+        auto_accept_orders_remote: true,
+        auto_print_orders_remote: false,
+        auto_accept_orders_local: false,
+        auto_print_orders_local: true,
+        auto_accept_reservations: true,
+      });
       queryClient.invalidateQueries({ queryKey: [STORE_CONFIG_KEY] });
     },
   });

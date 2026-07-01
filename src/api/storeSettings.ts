@@ -38,6 +38,28 @@ export const getStoreSettings = async (
   }
 };
 
+export interface BasicStoreSettingsPayload {
+  store_id: number;
+  auto_accept_orders_remote: boolean;
+  auto_print_orders_remote: boolean;
+  auto_accept_orders_local: boolean;
+  auto_print_orders_local: boolean;
+  auto_accept_reservations: boolean;
+}
+
+// Create Basic Store Settings (called after store config creation)
+export const addBasicStoreSettings = async (
+  payload: BasicStoreSettingsPayload,
+): Promise<StoreSettings> => {
+  try {
+    const res = await axiosInstance.post(`store-settings/`, payload);
+    return res.data;
+  } catch (error) {
+    console.error("Add Basic Store Settings Error:", error);
+    throw error;
+  }
+};
+
 // Create Store Settings
 export const addStoreSettings = async (
   payload: StoreSettingsPayload,
