@@ -19,6 +19,7 @@ import {
   ListOrdered,
   CreditCard,
   Clock,
+  MonitorSmartphone,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
@@ -96,10 +97,16 @@ function AdminLayout() {
             icon: ListOrdered,
             link: "/super/reservations",
           },
+          {
+            name: "Device Status",
+            icon: MonitorSmartphone,
+            link: "/super/device-status",
+          },
         ]
       : [
           { name: "Dashboard", icon: Home, link: "/dashboard" },
           { name: "Orders", icon: ListOrdered, link: "/orders" },
+          { name: "Reservations", icon: ListOrdered, link: "/reservations" },
           { name: "Tax", icon: Landmark, link: "/tax" },
           {
             name: "Product",

@@ -76,7 +76,7 @@ function AllStorePage() {
   };
 
   const handleCreateNew = () => {
-    navigate("/store-profile", { state: { mode: "create" } });
+    navigate("/super/store-profile", { state: { mode: "create" } });
   };
 
   const canGoPrev = offset > 0;

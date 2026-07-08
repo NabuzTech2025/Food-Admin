@@ -42,7 +42,7 @@ import Inventory from "./pages/Inventory";
 import Customer from "./pages/Customer";
 import CustomerDetail from "./pages/CustomerDetail";
 import DeliveryZone from "./pages/Delivery-Zone";
-import DeviceStatus from "./pages/Device-Status";
+import DeviceStatus from "./pages/SuperAdmin/Device-Status";
 import Delivery from "./pages/Delivery";
 import StoreDetails from "./pages/SuperAdmin/StoreDetails/AllStore";
 import StoreProfile from "./pages/SuperAdmin/StoreDetails/StoreProfile";
@@ -57,6 +57,8 @@ import StoreLayout from "./pages/SuperAdmin/StoreLayout";
 import Orders from "./pages/Orders/Orders";
 import Reservation from "./pages/Reservation/Reservation";
 import Settings from "./pages/SuperAdmin/Settings/Settings";
+// import Reservation from "./pages/SuperAdmin/Reservation";
+import AdminReservation from "./pages/AdminReservation";
 
 // ✅ Store-scoped page imports (create these pages as needed)
 
@@ -127,6 +129,7 @@ function App() {
                 <Route path="customer/:id" element={<CustomerDetail />} />
                 <Route path="inventory" element={<Inventory />} />
                 <Route path="orders" element={<OrderPage />} />
+                <Route path="reservations" element={<AdminReservation />} />
                 <Route
                   path="change-password"
                   element={<ChangePasswordPage />}
@@ -149,6 +152,8 @@ function App() {
                   element={<StoreConfigFormPage />}
                 />
                 <Route path="super/reservations" element={<Reservation />} />
+                <Route path="super/device-status" element={<DeviceStatus />} />
+                <Route path="super/store-profile" element={<StoreProfile />} />
               </Route>
 
               {/* ─── ✅ NEW: StoreLayout — only when clicking a store ─── */}
