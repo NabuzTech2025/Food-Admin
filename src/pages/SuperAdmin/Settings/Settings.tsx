@@ -4,6 +4,7 @@ import { Switch } from "@/components/ui/switch";
 import { useGetStore, useUpdateStore } from "@/hooks/useStore";
 import { toast } from "sonner";
 import { useParams } from "react-router-dom";
+import StoreSetting from "@/pages/StoreSetting";
 
 function Settings() {
   const { storeId } = useParams();
@@ -42,6 +43,8 @@ function Settings() {
 
   return (
     <div className="space-y-4">
+      <StoreSetting storeId={store_id} />
+
       <div className="bg-white rounded-xl border border-border shadow-sm">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
