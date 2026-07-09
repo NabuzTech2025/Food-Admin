@@ -32,59 +32,80 @@ const SETTING_FIELDS = [
     label: "Auto Accept Remote Orders",
     description: "Automatically accept online orders",
     icon: <ShoppingBag size={22} className="text-blue-600" />,
+    allow_role: [1, 2],
   },
   {
     key: "auto_print_orders_remote",
     label: "Auto Print Remote Orders",
     description: "Automatically print online orders",
     icon: <Printer size={22} className="text-violet-600" />,
+    allow_role: [1],
   },
   {
     key: "auto_accept_orders_local",
     label: "Auto Accept Local Orders",
     description: "Automatically accept local orders",
     icon: <Store size={22} className="text-green-600" />,
+    allow_role: [1],
   },
   {
     key: "auto_print_orders_local",
     label: "Auto Print Local Orders",
     description: "Automatically print local orders",
     icon: <Printer size={22} className="text-orange-600" />,
+    allow_role: [1],
   },
   {
     key: "auto_accept_reservations",
     label: "Auto Accept Reservations",
     description: "Automatically accept reservations",
     icon: <Calendar size={22} className="text-pink-600" />,
+    allow_role: [1, 2],
   },
   {
     key: "lieferung_enabled",
     label: "Delivery Enabled",
     description: "Allow delivery orders",
     icon: <Truck size={22} className="text-cyan-600" />,
+    allow_role: [1, 2],
   },
   {
     key: "abholung_enabled",
     label: "Pickup Enabled",
     description: "Allow pickup orders",
     icon: <Package size={22} className="text-yellow-600" />,
+    allow_role: [1, 2],
   },
   {
     key: "is_kasse_integrated",
     label: "Kasse Integration",
     description: "Enable POS integration",
     icon: <Monitor size={22} className="text-red-600" />,
+    allow_role: [1],
   },
   {
     key: "is_windows_app",
     label: "Windows App",
     description: "Enable Windows application",
     icon: <MonitorSmartphone size={22} className="text-indigo-600" />,
+    allow_role: [1],
   },
-] as const;
+];
 
-export default function StoreSetting() {
-  const { store_id } = useAdminStore();
+interface Props {
+  storeId?: number | string | null;
+}
+
+export default function StoreSetting({ storeId: propStoreId }: Props = {}) {
+  const { store_id: adminStoreId, role_id } = useAdminStore();
+
+  const store_id = propStoreId ?? adminStoreId;
+
+  const numericRoleId = Number(role_id);
+  const visibleFields =
+    numericRoleId === 1
+      ? SETTING_FIELDS
+      : SETTING_FIELDS.filter((f) => f.allow_role.includes(numericRoleId));
 
   const { data, isLoading } = useGetStoreSettings(store_id);
 
@@ -199,7 +220,7 @@ export default function StoreSetting() {
           <>
             {/* Switches */}
             <div className="divide-y divide-border">
-              {SETTING_FIELDS.map(({ key, label, description, icon }) => (
+              {visibleFields.map(({ key, label, description, icon }) => (
                 <div
                   key={key}
                   className="flex items-center justify-between px-5 py-4 hover:bg-muted/30 transition-colors"
@@ -228,33 +249,35 @@ export default function StoreSetting() {
             </div>
 
             {/* Stripe Fee */}
-            <div className="border-t px-5 py-4">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-                  <Landmark size={22} className="text-violet-600" />
-                </div>
+            {numericRoleId === 1 && (
+              <div className="border-t px-5 py-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+                    <Landmark size={22} className="text-violet-600" />
+                  </div>
 
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Stripe Service Fee</p>
-                  <p className="text-xs text-muted-foreground">
-                    Additional fee for Stripe orders
-                  </p>
-                </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Stripe Service Fee</p>
+                    <p className="text-xs text-muted-foreground">
+                      Additional fee for Stripe orders
+                    </p>
+                  </div>
 
-                <Input
-                  type="number"
-                  min={0}
-                  className="w-32"
-                  value={settings.stripe_service_fee}
-                  onChange={(e) =>
-                    setSettings((prev) => ({
-                      ...prev,
-                      stripe_service_fee: Number(e.target.value),
-                    }))
-                  }
-                />
+                  <Input
+                    type="number"
+                    min={0}
+                    className="w-32"
+                    value={settings.stripe_service_fee}
+                    onChange={(e) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        stripe_service_fee: Number(e.target.value),
+                      }))
+                    }
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Collection Time */}
             <div className="border-t px-5 py-4">
