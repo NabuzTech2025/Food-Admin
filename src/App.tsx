@@ -6,7 +6,6 @@ import {
   Outlet,
   useNavigate,
 } from "react-router-dom";
-import { ThemeProvider } from "./context/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import AdminLayout from "./pages/Layout";
@@ -89,86 +88,78 @@ function App() {
   }, []);
 
   return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter basename="/test">
-          <NavigateSetter />
-          <Routes>
-            <Route path="/" element={<Navigate to="/admin-login" replace />} />
-            <Route path="/admin-login" element={<Login />} />
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter basename="/admin">
+        <NavigateSetter />
+        <Routes>
+          <Route path="/" element={<Navigate to="/admin-login" replace />} />
+          <Route path="/admin-login" element={<Login />} />
 
-            <Route element={<ProtectedRoute />}>
-              {/* ─── Existing AdminLayout — completely unchanged ─── */}
-              <Route path="/" element={<AdminLayout />}>
-                <Route index path="dashboard" element={<Dashboard />} />
-                <Route path="tax" element={<Tax />} />
-                <Route path="product/category" element={<Category />} />
-                <Route path="product/products" element={<Product />} />
-                <Route path="coupons" element={<Coupons />} />
-                <Route path="product/toppings" element={<Toppings />} />
-                <Route
-                  path="product/topping-groups"
-                  element={<ToppingGroups />}
-                />
-                <Route path="product/group-item" element={<GroupItem />} />
-                <Route
-                  path="product/variant-groups"
-                  element={<VariantGroups />}
-                />
-                <Route path="allergy/add-allergy" element={<AddAllergy />} />
-                <Route path="allergy/item-allergy" element={<ItemAllergy />} />
-                <Route path="category" element={<Categories />} />
-                <Route path="store-timing" element={<StoreTiming />} />
-                <Route path="store-settings" element={<StoreSetting />} />
-                <Route path="discount" element={<Discount />} />
-                <Route path="postcode" element={<PostCode />} />
-                <Route path="delivery-zone" element={<DeliveryZone />} />
-                <Route path="delivery" element={<Delivery />} />
-                <Route path="device-status" element={<DeviceStatus />} />
-                <Route path="customer" element={<Customer />} />
-                <Route path="customer/:id" element={<CustomerDetail />} />
-                <Route path="inventory" element={<Inventory />} />
-                <Route path="orders" element={<OrderPage />} />
-                <Route path="reservations" element={<AdminReservation />} />
-                <Route
-                  path="change-password"
-                  element={<ChangePasswordPage />}
-                />
-                <Route path="payment-settings" element={<PaymentSettings />} />
+          <Route element={<ProtectedRoute />}>
+            {/* ─── Existing AdminLayout — completely unchanged ─── */}
+            <Route path="/" element={<AdminLayout />}>
+              <Route index path="dashboard" element={<Dashboard />} />
+              <Route path="tax" element={<Tax />} />
+              <Route path="product/category" element={<Category />} />
+              <Route path="product/products" element={<Product />} />
+              <Route path="coupons" element={<Coupons />} />
+              <Route path="product/toppings" element={<Toppings />} />
+              <Route
+                path="product/topping-groups"
+                element={<ToppingGroups />}
+              />
+              <Route path="product/group-item" element={<GroupItem />} />
+              <Route
+                path="product/variant-groups"
+                element={<VariantGroups />}
+              />
+              <Route path="allergy/add-allergy" element={<AddAllergy />} />
+              <Route path="allergy/item-allergy" element={<ItemAllergy />} />
+              <Route path="category" element={<Categories />} />
+              <Route path="store-timing" element={<StoreTiming />} />
+              <Route path="store-settings" element={<StoreSetting />} />
+              <Route path="discount" element={<Discount />} />
+              <Route path="postcode" element={<PostCode />} />
+              <Route path="delivery-zone" element={<DeliveryZone />} />
+              <Route path="delivery" element={<Delivery />} />
+              <Route path="device-status" element={<DeviceStatus />} />
+              <Route path="customer" element={<Customer />} />
+              <Route path="customer/:id" element={<CustomerDetail />} />
+              <Route path="inventory" element={<Inventory />} />
+              <Route path="orders" element={<OrderPage />} />
+              <Route path="reservations" element={<AdminReservation />} />
+              <Route path="change-password" element={<ChangePasswordPage />} />
+              <Route path="payment-settings" element={<PaymentSettings />} />
 
-                {/* Super Admin Routes */}
-                <Route path="super/store-details" element={<StoreDetails />} />
-                <Route
-                  index
-                  path="super/dashboard"
-                  element={<SuperAdminDashboard />}
-                />
-                <Route
-                  path="super/store-config"
-                  element={<StoreConfigPage />}
-                />
-                <Route
-                  path="super/store-config/form"
-                  element={<StoreConfigFormPage />}
-                />
-                <Route path="super/reservations" element={<Reservation />} />
-                <Route path="super/device-status" element={<DeviceStatus />} />
-                <Route path="super/store-profile" element={<StoreProfile />} />
-              </Route>
-
-              {/* ─── ✅ NEW: StoreLayout — only when clicking a store ─── */}
-              <Route path="super/stores/:storeId" element={<StoreLayout />}>
-                <Route index element={<Navigate to="orders" replace />} />
-                <Route path="orders" element={<Orders />} />
-                <Route path="payments" element={<PaymentSettings />} />
-                <Route path="store-profile" element={<StoreProfile />} />
-                <Route path="settings" element={<Settings />} />
-              </Route>
+              {/* Super Admin Routes */}
+              <Route path="super/store-details" element={<StoreDetails />} />
+              <Route
+                index
+                path="super/dashboard"
+                element={<SuperAdminDashboard />}
+              />
+              <Route path="super/store-config" element={<StoreConfigPage />} />
+              <Route
+                path="super/store-config/form"
+                element={<StoreConfigFormPage />}
+              />
+              <Route path="super/reservations" element={<Reservation />} />
+              <Route path="super/device-status" element={<DeviceStatus />} />
+              <Route path="super/store-profile" element={<StoreProfile />} />
             </Route>
-          </Routes>
-        </BrowserRouter>
-      </QueryClientProvider>
-    </ThemeProvider>
+
+            {/* ─── ✅ NEW: StoreLayout — only when clicking a store ─── */}
+            <Route path="super/stores/:storeId" element={<StoreLayout />}>
+              <Route index element={<Navigate to="orders" replace />} />
+              <Route path="orders" element={<Orders />} />
+              <Route path="payments" element={<PaymentSettings />} />
+              <Route path="store-profile" element={<StoreProfile />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 

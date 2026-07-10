@@ -130,21 +130,21 @@ function StoreLayout() {
     : `S${storeId}`;
 
   return (
-    <div className="h-screen w-screen flex dark:bg-primary overflow-hidden relative">
+    <div className="h-screen w-screen flex bg-background overflow-hidden relative">
       {/* Sidebar */}
       <div
         className={`
           fixed lg:static inset-y-0 left-0
           w-56 h-full z-40
-          shadow-[8px_0_12px_-2px_rgba(0,0,0,0.2)]
-          flex flex-col bg-white
+          shadow-[8px_0_12px_-2px_rgba(0,0,0,0.15)]
+          flex flex-col bg-component-bg
           transition-transform duration-300 ease-in-out
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
         `}
       >
         {/* Sidebar header — back button + store identity */}
-        <div className="h-16 flex flex-col justify-center px-4 border-b border-gray-100 flex-shrink-0 relative">
+        <div className="h-16 flex flex-col justify-center px-4 border-b border-border shrink-0 relative">
           <div className="flex items-center gap-2">
             {/* Store logo / initials */}
             <div className="w-7 h-7 rounded-full bg-primary-light flex items-center justify-center overflow-hidden flex-shrink-0">
@@ -163,13 +163,13 @@ function StoreLayout() {
 
             {/* Store name + description */}
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-neutral-800 truncate leading-tight">
+              <p className="text-sm font-semibold text-foreground truncate leading-tight">
                 {storeLoading
                   ? "Loading..."
                   : (store?.name ?? `Store #${storeId}`)}
               </p>
               {store?.description && (
-                <p className="text-[10px] text-neutral-400 truncate leading-tight">
+                <p className="text-[10px] text-muted-foreground truncate leading-tight">
                   {store.description}
                 </p>
               )}
@@ -181,7 +181,7 @@ function StoreLayout() {
             className="absolute right-3 top-1/2 -translate-y-1/2 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           >
-            <X className="cursor-pointer text-neutral-600" size={20} />
+            <X className="cursor-pointer text-muted-foreground" size={20} />
           </button>
         </div>
 
@@ -193,7 +193,7 @@ function StoreLayout() {
             return (
               <div key={section} className="mb-1">
                 {/* Section label */}
-                <p className="text-[10px] uppercase tracking-widest text-neutral-400 font-medium px-2.5 pt-3 pb-1">
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium px-2.5 pt-3 pb-1">
                   {section}
                 </p>
 
@@ -205,7 +205,7 @@ function StoreLayout() {
                       className={`flex gap-2.5 items-center justify-between text-sm rounded-lg cursor-pointer px-2.5 py-2 font-semibold ${
                         isParentActive(item)
                           ? "bg-primary-light text-primary"
-                          : "text-neutral-600 hover:bg-gray-100"
+                          : "text-muted-foreground hover:bg-muted"
                       }`}
                     >
                       <div className="flex gap-2.5 items-center">
@@ -233,7 +233,7 @@ function StoreLayout() {
                               location.pathname === child.link ||
                               location.pathname.startsWith(child.link + "/")
                                 ? "text-primary font-semibold"
-                                : "text-neutral-500 hover:text-primary hover:bg-primary-light/50"
+                                : "text-muted-foreground hover:text-primary hover:bg-primary-light/50"
                             }`}
                           >
                             <span className="w-1 h-1 rounded-full bg-current flex-shrink-0" />

@@ -3,6 +3,7 @@ import { Search, Menu, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useAdminStore } from "@/context/store/useAdminStore";
 import { useNavigate } from "react-router-dom";
+import { ModeToggle } from "@/components/mode-toggle";
 
 function Header({
   name,
@@ -23,12 +24,12 @@ function Header({
   };
 
   return (
-    <div className="min-h-16 dark:bg-primary border-b border-gray-200 shadow-lg flex items-center justify-between px-4 gap-3">
+    <div className="min-h-16 bg-component-bg border-b border-border shadow-sm flex items-center justify-between px-4 gap-3">
       {/* Left side */}
       <div className="flex items-center gap-3 flex-1">
         {/* Hamburger — mobile only */}
         <button
-          className="lg:hidden p-1 text-neutral-600 hover:text-neutral-800 flex-shrink-0"
+          className="lg:hidden p-1 text-muted-foreground hover:text-foreground shrink-0"
           onClick={onMenuClick}
         >
           <Menu size={22} />
@@ -36,7 +37,7 @@ function Header({
 
         {/* Page title */}
         <h1
-          className={`text-base font-semibold whitespace-nowrap text-neutral-700 ${
+          className={`text-base font-semibold whitespace-nowrap text-foreground ${
             showSearch ? "hidden sm:block" : "block"
           }`}
         >
@@ -59,10 +60,10 @@ function Header({
       </div>
 
       {/* Right side */}
-      <div className="flex items-center gap-2 flex-shrink-0">
+      <div className="flex items-center gap-2 shrink-0">
         {/* Search icon — mobile only */}
         <button
-          className="sm:hidden p-2 text-neutral-500 hover:text-neutral-700"
+          className="sm:hidden p-2 text-muted-foreground hover:text-foreground"
           onClick={() => setShowSearch((prev) => !prev)}
         >
           <Search size={20} />
@@ -70,10 +71,12 @@ function Header({
 
         {children}
 
+        {/* <ModeToggle /> */}
+
         {/* Logout button */}
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-neutral-600 hover:text-primary hover:bg-primary-light rounded-lg transition-colors duration-200 cursor-pointer"
+          className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary-light dark:hover:bg-primary-light rounded-lg transition-colors duration-200 cursor-pointer"
         >
           <LogOut size={18} />
           <span className="hidden sm:inline">Logout</span>

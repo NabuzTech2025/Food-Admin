@@ -240,22 +240,22 @@ function AdminLayout() {
     location.pathname.startsWith(item.link + "/");
 
   return (
-    <div className="h-screen w-screen flex dark:bg-primary overflow-hidden relative">
+    <div className="h-screen w-screen flex bg-background overflow-hidden relative">
       {/* Sidebar */}
       <div
         style={{ width: sidebarWidth }}
         className={`
           fixed lg:static inset-y-0 left-0
           h-full z-40
-          shadow-[8px_0_12px_-2px_rgba(0,0,0,0.2)]
-          flex flex-col bg-white flex-shrink-0
+          shadow-[8px_0_12px_-2px_rgba(0,0,0,0.15)]
+          flex flex-col bg-component-bg shrink-0
           transition-transform duration-300 ease-in-out
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
         `}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center justify-center relative flex-shrink-0 border-b border-gray-100">
+        <div className="h-16 flex items-center justify-center relative shrink-0 border-b border-border">
           {role_id === 1 ? (
             <img
               src="https://magskrimages.s3.amazonaws.com/8f571a772d28460aa66fd448f47eb55f.png"
@@ -276,7 +276,7 @@ function AdminLayout() {
             className="absolute right-3 top-1/2 -translate-y-1/2 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           >
-            <X className="cursor-pointer text-neutral-600" size={20} />
+            <X className="cursor-pointer text-muted-foreground" size={20} />
           </button>
         </div>
 
@@ -292,17 +292,17 @@ function AdminLayout() {
                 className={`flex gap-3 items-center justify-between text-sm font-semibold rounded-lg cursor-pointer p-2.5 ${
                   isParentActive(item)
                     ? "bg-primary-light text-primary"
-                    : "text-neutral-600 hover:bg-gray-100"
+                    : "text-muted-foreground hover:bg-muted"
                 }`}
               >
                 <div className="flex gap-3 items-center min-w-0">
-                  <item.icon size={20} className="flex-shrink-0" />
+                  <item.icon size={20} className="shrink-0" />
                   <span className="text-[15px] truncate">{item.name}</span>
                 </div>
                 {item.children && (
                   <ChevronDown
                     size={16}
-                    className={`flex-shrink-0 transition-transform duration-200 ${
+                    className={`shrink-0 transition-transform duration-200 ${
                       openMenus[item.name] ? "rotate-180" : ""
                     }`}
                   />
@@ -320,10 +320,10 @@ function AdminLayout() {
                         location.pathname === child.link ||
                         location.pathname.startsWith(child.link + "/")
                           ? "text-primary font-semibold"
-                          : "text-neutral-500 hover:text-primary hover:bg-primary-light/50"
+                          : "text-muted-foreground hover:text-primary hover:bg-primary-light/50"
                       }`}
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-current flex-shrink-0" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-current shrink-0" />
                       <span className="truncate">{child.name}</span>
                     </div>
                   ))}
