@@ -76,7 +76,7 @@ function StoreConfigFormPage() {
   };
 
   const handleSubmit = async () => {
-    if (!storeId || !appName || !appBaseRoute || !copyrightText) {
+    if (!storeId || !appName || !copyrightText) {
       toast.error("Please fill in all required fields.");
       return;
     }
@@ -230,9 +230,7 @@ function StoreConfigFormPage() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="appBaseRoute">
-                App Base Route <span className="text-destructive">*</span>
-              </Label>
+              <Label htmlFor="appBaseRoute">App Base Route</Label>
               <Input
                 id="appBaseRoute"
                 placeholder="e.g. order-online"
