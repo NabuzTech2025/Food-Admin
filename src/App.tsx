@@ -45,6 +45,7 @@ import DeviceStatus from "./pages/SuperAdmin/Device-Status";
 import Delivery from "./pages/Delivery";
 import StoreDetails from "./pages/SuperAdmin/StoreDetails/AllStore";
 import StoreProfile from "./pages/SuperAdmin/StoreDetails/StoreProfile";
+import StoreSEO from "./pages/SuperAdmin/StoreDetails/StoreSEO";
 import OrderPage from "./pages/Orders/Orders";
 import ChangePasswordPage from "./pages/Change_Password";
 import PaymentSettings from "./pages/SuperAdmin/Payment-Settings/Payment-Settings";
@@ -154,6 +155,7 @@ function App() {
               <Route path="orders" element={<Orders />} />
               <Route path="payments" element={<PaymentSettings />} />
               <Route path="store-profile" element={<StoreProfile />} />
+              <Route path="seo" element={<StoreSEO />} />
               <Route path="settings" element={<Settings />} />
             </Route>
           </Route>
