@@ -46,6 +46,8 @@ import Delivery from "./pages/Delivery";
 import StoreDetails from "./pages/SuperAdmin/StoreDetails/AllStore";
 import StoreProfile from "./pages/SuperAdmin/StoreDetails/StoreProfile";
 import StoreSEO from "./pages/SuperAdmin/StoreDetails/StoreSEO";
+import StoreLegalPages from "./pages/SuperAdmin/StoreDetails/StoreLegalPages";
+import StoreLegalPageForm from "./pages/SuperAdmin/StoreDetails/StoreLegalPageForm";
 import OrderPage from "./pages/Orders/Orders";
 import ChangePasswordPage from "./pages/Change_Password";
 import PaymentSettings from "./pages/SuperAdmin/Payment-Settings/Payment-Settings";
@@ -156,6 +158,11 @@ function App() {
               <Route path="payments" element={<PaymentSettings />} />
               <Route path="store-profile" element={<StoreProfile />} />
               <Route path="seo" element={<StoreSEO />} />
+              <Route path="legal-pages" element={<StoreLegalPages />} />
+              <Route
+                path="legal-pages/form"
+                element={<StoreLegalPageForm />}
+              />
               <Route path="settings" element={<Settings />} />
             </Route>
           </Route>
