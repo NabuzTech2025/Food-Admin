@@ -90,6 +90,13 @@ const SETTING_FIELDS = [
     icon: <MonitorSmartphone size={22} className="text-indigo-600" />,
     allow_role: [1],
   },
+  {
+    key: "tisch_reservierung_enabled",
+    label: "Tisch Reservierung",
+    description: "Enable table reservations",
+    icon: <Calendar size={22} className="text-teal-600" />,
+    allow_role: [1, 2],
+  },
 ];
 
 interface Props {
@@ -126,6 +133,7 @@ export default function StoreSetting({ storeId: propStoreId }: Props = {}) {
     abholung_enabled: true,
     is_kasse_integrated: false,
     is_windows_app: false,
+    tisch_reservierung_enabled: false,
     default_collection_time: 30,
   });
 
@@ -143,6 +151,7 @@ export default function StoreSetting({ storeId: propStoreId }: Props = {}) {
       abholung_enabled: data.abholung_enabled ?? true,
       is_kasse_integrated: data.is_kasse_integrated ?? false,
       is_windows_app: data.is_windows_app ?? false,
+      tisch_reservierung_enabled: data.tisch_reservierung_enabled ?? false,
       default_collection_time: data.default_collection_time ?? 30,
     });
   }, [data]);
