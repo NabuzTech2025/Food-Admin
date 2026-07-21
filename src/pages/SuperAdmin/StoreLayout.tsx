@@ -257,7 +257,7 @@ function StoreLayout() {
       <div
         className={`
           fixed lg:static inset-y-0 left-0
-          w-56 h-full z-40
+          w-60 h-full z-40
           shadow-[8px_0_12px_-2px_rgba(0,0,0,0.15)]
           flex flex-col bg-component-bg
           transition-transform duration-300 ease-in-out
@@ -324,7 +324,7 @@ function StoreLayout() {
                     {/* Nav item */}
                     <div
                       onClick={() => handleNavClick(item)}
-                      className={`flex gap-2.5 items-center justify-between text-sm rounded-lg cursor-pointer px-2.5 py-2 font-semibold ${
+                      className={`flex gap-2.5 items-center justify-between text-lg rounded-lg cursor-pointer px-2.5 py-2 font-semibold ${
                         isParentActive(item)
                           ? "bg-primary-light text-primary"
                           : "text-muted-foreground hover:bg-muted"
