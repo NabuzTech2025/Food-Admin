@@ -50,6 +50,16 @@ axiosInstance.interceptors.response.use(
       //  Redirect to admin login (not /login)
       navigateTo("/admin-login", { replace: true });
     }
+
+    // Backend errors come back as { detail: "..." }, but call sites across
+    // the app read err.response.data.message. Backfill it so every existing
+    // toast.error(err?.response?.data?.message || fallback) shows the real
+    // backend message instead of always falling through to the fallback.
+    const data = error.response?.data;
+    if (data && typeof data === "object" && !data.message && data.detail) {
+      data.message = data.detail;
+    }
+
     return Promise.reject(error);
   },
 );
