@@ -155,6 +155,31 @@ function App() {
             <Route path="super/stores/:storeId" element={<StoreLayout />}>
               <Route index element={<Navigate to="orders" replace />} />
               <Route path="orders" element={<Orders />} />
+              <Route path="reservations" element={<AdminReservation />} />
+              <Route path="tax" element={<Tax />} />
+              <Route path="product/category" element={<Category />} />
+              <Route path="product/products" element={<Product />} />
+              <Route path="product/toppings" element={<Toppings />} />
+              <Route
+                path="product/topping-groups"
+                element={<ToppingGroups />}
+              />
+              <Route path="product/group-item" element={<GroupItem />} />
+              <Route
+                path="product/variant-groups"
+                element={<VariantGroups />}
+              />
+              <Route path="allergy/add-allergy" element={<AddAllergy />} />
+              <Route path="allergy/item-allergy" element={<ItemAllergy />} />
+              <Route path="coupons" element={<Coupons />} />
+              <Route path="category" element={<Categories />} />
+              <Route path="store-timing" element={<StoreTiming />} />
+              <Route path="discount" element={<Discount />} />
+              <Route path="postcode" element={<PostCode />} />
+              <Route path="delivery-zone" element={<DeliveryZone />} />
+              <Route path="delivery" element={<Delivery />} />
+              <Route path="customer" element={<Customer />} />
+              <Route path="customer/:id" element={<CustomerDetail />} />
               <Route path="payments" element={<PaymentSettings />} />
               <Route path="store-profile" element={<StoreProfile />} />
               <Route path="seo" element={<StoreSEO />} />

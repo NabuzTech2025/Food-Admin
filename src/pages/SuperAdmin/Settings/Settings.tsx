@@ -43,7 +43,7 @@ function Settings() {
 
   return (
     <div className="space-y-4">
-      <StoreSetting storeId={store_id} />
+      <StoreSetting storeId={store_id} roleId={1} />
 
       <div className="bg-white rounded-xl border border-border shadow-sm">
         {/* Header */}

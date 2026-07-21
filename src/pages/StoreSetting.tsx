@@ -95,20 +95,24 @@ const SETTING_FIELDS = [
     label: "Tisch Reservierung",
     description: "Enable table reservations",
     icon: <Calendar size={22} className="text-teal-600" />,
-    allow_role: [1, 2],
+    allow_role: [1],
   },
 ];
 
 interface Props {
   storeId?: number | string | null;
+  roleId?: number | string | null;
 }
 
-export default function StoreSetting({ storeId: propStoreId }: Props = {}) {
+export default function StoreSetting({
+  storeId: propStoreId,
+  roleId: propRoleId,
+}: Props = {}) {
   const { store_id: adminStoreId, role_id } = useAdminStore();
 
   const store_id = propStoreId ?? adminStoreId;
 
-  const numericRoleId = Number(role_id);
+  const numericRoleId = Number(propRoleId ?? role_id);
   const visibleFields =
     numericRoleId === 1
       ? SETTING_FIELDS
