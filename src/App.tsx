@@ -84,12 +84,6 @@ const ProtectedRoute = () => {
 };
 
 function App() {
-  const loadFromStorage = useAdminStore((state) => state.loadFromStorage);
-
-  useEffect(() => {
-    loadFromStorage();
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter basename="/test">
@@ -184,10 +178,7 @@ function App() {
               <Route path="store-profile" element={<StoreProfile />} />
               <Route path="seo" element={<StoreSEO />} />
               <Route path="legal-pages" element={<StoreLegalPages />} />
-              <Route
-                path="legal-pages/form"
-                element={<StoreLegalPageForm />}
-              />
+              <Route path="legal-pages/form" element={<StoreLegalPageForm />} />
               <Route path="settings" element={<Settings />} />
             </Route>
           </Route>

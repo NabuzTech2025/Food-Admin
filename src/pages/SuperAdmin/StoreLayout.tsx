@@ -55,13 +55,22 @@ function StoreLayout() {
 
   // Store-scoped pages read store_id from the global admin store, so point
   // it at the browsed store while this layout is mounted, and restore it after.
+  // Watches the live value (not just storeId) because on a hard reload
+  // App's loadFromStorage() resolves after this effect and would otherwise
+  // clobber it back to the logged-in admin's own store_id.
   const setStoreId = useAdminStore((s) => s.setStoreId);
+  const currentStoreId = useAdminStore((s) => s.store_id);
   const originalStoreId = useRef(useAdminStore.getState().store_id);
 
   useEffect(() => {
-    if (storeId) setStoreId(Number(storeId));
+    if (storeId && Number(currentStoreId) !== Number(storeId)) {
+      setStoreId(Number(storeId));
+    }
+  }, [storeId, currentStoreId, setStoreId]);
+
+  useEffect(() => {
     return () => setStoreId(originalStoreId.current);
-  }, [storeId]);
+  }, [setStoreId]);
 
   const navItems: NavItem[] = [
     {
