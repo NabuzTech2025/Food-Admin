@@ -4,7 +4,6 @@ import {
   Search,
   Plus,
   RefreshCw,
-  Edit,
   Store,
   MapPin,
   Globe,
@@ -140,7 +139,6 @@ function AllStorePage() {
                 <TableHead>Description</TableHead>
                 <TableHead>Address</TableHead>
                 <TableHead>Country</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -151,7 +149,7 @@ function AllStorePage() {
               ) : isError ? (
                 <TableRow>
                   <TableCell
-                    colSpan={6}
+                    colSpan={5}
                     className="text-center py-10 text-destructive text-sm"
                   >
                     Error: {(error as any)?.message || "Failed to load stores"}
@@ -159,7 +157,11 @@ function AllStorePage() {
                 </TableRow>
               ) : paginated.length > 0 ? (
                 paginated.map((store) => (
-                  <TableRow key={store.id} className="hover:bg-primary/5">
+                  <TableRow
+                    key={store.id}
+                    onClick={() => handleEdit(store)}
+                    className="hover:bg-primary/5 cursor-pointer"
+                  >
                     {/* Logo */}
                     <TableCell>
                       <div className="w-10 h-10 rounded-full border border-border bg-white flex items-center justify-center overflow-hidden shadow-sm">
@@ -210,24 +212,12 @@ function AllStorePage() {
                         <span className="text-neutral-300">—</span>
                       )}
                     </TableCell>
-
-                    {/* Actions */}
-                    <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEdit(store)}
-                        className="h-8 w-8 p-0"
-                      >
-                        <Edit size={15} />
-                      </Button>
-                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={6}
+                    colSpan={5}
                     className="text-center py-10 text-neutral-400 text-sm"
                   >
                     No stores found.{" "}

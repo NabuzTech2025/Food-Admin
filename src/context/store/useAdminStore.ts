@@ -16,6 +16,7 @@ interface AdminState {
   loadFromStorage: () => void;
   clearAdminData: () => void;
   setStoreData: (data: Store) => void;
+  setStoreId: (store_id: number | string | null) => void;
 }
 
 export const useAdminStore = create<AdminState>((set) => ({
@@ -61,4 +62,6 @@ export const useAdminStore = create<AdminState>((set) => ({
   },
 
   setStoreData: (data) => set({ storeData: data }),
+
+  setStoreId: (store_id) => set({ store_id }),
 }));

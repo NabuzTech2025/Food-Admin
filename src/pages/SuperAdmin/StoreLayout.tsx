@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { useGetStore } from "@/hooks/useStore";
+import { useAdminStore } from "@/context/store/useAdminStore";
 import {
   CreditCard,
   ChevronLeft,
@@ -11,8 +12,18 @@ import {
   Settings,
   Search,
   Scale,
+  Landmark,
+  ShoppingCart,
+  Salad,
+  Tag,
+  LayoutGrid,
+  Clock,
+  MapPin,
+  Map,
+  Truck,
+  Users,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
 
 interface NavChild {
@@ -42,11 +53,108 @@ function StoreLayout() {
 
   const base = `/super/stores/${storeId}`;
 
+  // Store-scoped pages read store_id from the global admin store, so point
+  // it at the browsed store while this layout is mounted, and restore it after.
+  const setStoreId = useAdminStore((s) => s.setStoreId);
+  const originalStoreId = useRef(useAdminStore.getState().store_id);
+
+  useEffect(() => {
+    if (storeId) setStoreId(Number(storeId));
+    return () => setStoreId(originalStoreId.current);
+  }, [storeId]);
+
   const navItems: NavItem[] = [
     {
       name: "Orders",
       icon: ListOrdered,
       link: `${base}/orders`,
+      section: "Operations",
+    },
+    {
+      name: "Reservations",
+      icon: ListOrdered,
+      link: `${base}/reservations`,
+      section: "Operations",
+    },
+    {
+      name: "Tax",
+      icon: Landmark,
+      link: `${base}/tax`,
+      section: "Operations",
+    },
+    {
+      name: "Product",
+      icon: ShoppingCart,
+      link: `${base}/product`,
+      section: "Operations",
+      children: [
+        { name: "Category", link: `${base}/product/category` },
+        { name: "Product", link: `${base}/product/products` },
+        { name: "Toppings", link: `${base}/product/toppings` },
+        { name: "Topping Groups", link: `${base}/product/topping-groups` },
+        { name: "Group Item", link: `${base}/product/group-item` },
+        {
+          name: "Product-Variant Groups",
+          link: `${base}/product/variant-groups`,
+        },
+      ],
+    },
+    {
+      name: "Allergy",
+      icon: Salad,
+      link: `${base}/allergy`,
+      section: "Operations",
+      children: [
+        { name: "Add Allergy", link: `${base}/allergy/add-allergy` },
+        { name: "Item Allergy", link: `${base}/allergy/item-allergy` },
+      ],
+    },
+    {
+      name: "Coupons",
+      icon: Tag,
+      link: `${base}/coupons`,
+      section: "Operations",
+    },
+    {
+      name: "Category Availability Time",
+      icon: LayoutGrid,
+      link: `${base}/category`,
+      section: "Operations",
+    },
+    {
+      name: "Store Timing",
+      icon: Clock,
+      link: `${base}/store-timing`,
+      section: "Operations",
+    },
+    {
+      name: "Discount Manage",
+      icon: Tag,
+      link: `${base}/discount`,
+      section: "Operations",
+    },
+    {
+      name: "PostCode",
+      icon: MapPin,
+      link: `${base}/postcode`,
+      section: "Operations",
+    },
+    {
+      name: "Delivery Zone",
+      icon: Map,
+      link: `${base}/delivery-zone`,
+      section: "Operations",
+    },
+    {
+      name: "Delivery Time",
+      icon: Truck,
+      link: `${base}/delivery`,
+      section: "Operations",
+    },
+    {
+      name: "Customer",
+      icon: Users,
+      link: `${base}/customer`,
       section: "Operations",
     },
     {
