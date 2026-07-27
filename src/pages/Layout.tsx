@@ -82,9 +82,13 @@ function AdminLayout() {
   }, []);
   // ────────────────────────────────────────────────────────────────
 
+  // Sidebar nav items differ based on role:
+  // role_id === 1  -> Super Admin menu (manages all stores)
+  // role_id !== 1  -> Normal Store Admin menu (manages a single store)
   const navItems: NavItem[] =
     role_id === 1
       ? [
+          // ── Super Admin nav ──
           { name: "Dashboard", icon: Home, link: "/super/dashboard" },
           { name: "Store Details", icon: MapPin, link: "/super/store-details" },
           {
@@ -102,8 +106,19 @@ function AdminLayout() {
             icon: MonitorSmartphone,
             link: "/super/device-status",
           },
+          // Payment Settings: visible to Super Admin (role_id === 1).
+          // NOTE: this route is registered WITHOUT the "/super" prefix in App.tsx
+          // (e.g. <Route path="payment-settings" .../>), so the link must match that.
+          {
+            name: "Payment Settings",
+            icon: CreditCard,
+            link: "/payment-settings",
+          },
+          // Change Password intentionally NOT shown on the global Super Admin
+          // dashboard — it belongs inside the per-store screen (StoreLayout.tsx).
         ]
       : [
+          // ── Normal Store Admin nav (Payment Settings intentionally NOT included) ──
           { name: "Dashboard", icon: Home, link: "/dashboard" },
           { name: "Orders", icon: ListOrdered, link: "/orders" },
           { name: "Reservations", icon: ListOrdered, link: "/reservations" },
@@ -179,18 +194,16 @@ function AdminLayout() {
             link: "/customer",
           },
           {
-            name: "Payment Settings",
-            icon: CreditCard,
-            link: "/payment-settings",
-          },
-          {
             name: "Change Password",
             icon: Package,
             link: "/change-password",
           },
+          // NOTE: "Payment Settings" removed from here on purpose —
+          // store admins (role_id !== 1) should not see this menu item.
         ];
 
-  // Auto-open parent if a child route is active
+  // Auto-open the parent dropdown if the current route matches one of its children,
+  // and set the active nav item name (used in the Header title) based on the current path.
   useEffect(() => {
     navItems.forEach((item) => {
       if (item.children) {
@@ -213,14 +226,17 @@ function AdminLayout() {
     }
   }, [location.pathname]);
 
+  // Close the mobile sidebar automatically whenever the route changes
   useEffect(() => {
     setSidebarOpen(false);
   }, [location.pathname]);
 
+  // Expand/collapse a nav item's dropdown (for items with children)
   const toggleMenu = (name: string) => {
     setOpenMenus((prev) => ({ ...prev, [name]: !prev[name] }));
   };
 
+  // If item has children, just toggle the dropdown; otherwise navigate directly
   const handleNavClick = (item: NavItem, index: number) => {
     if (item.children) {
       toggleMenu(item.name);
@@ -230,11 +246,13 @@ function AdminLayout() {
     }
   };
 
+  // Navigate to a child link (sub-menu item)
   const handleChildClick = (child: NavChild) => {
     setActiveName(child.name);
     navigate(child.link);
   };
 
+  // Highlight a parent nav item if the current route matches its link (or a sub-path of it)
   const isParentActive = (item: NavItem) =>
     location.pathname === item.link ||
     location.pathname.startsWith(item.link + "/");
@@ -254,7 +272,7 @@ function AdminLayout() {
           lg:translate-x-0
         `}
       >
-        {/* Logo */}
+        {/* Logo: Super Admin gets a fixed brand logo, Store Admin gets their own store logo/name */}
         <div className="h-16 flex items-center justify-center relative shrink-0 border-b border-border">
           {role_id === 1 ? (
             <img
@@ -280,10 +298,11 @@ function AdminLayout() {
           </button>
         </div>
 
-        {/* Nav */}
+        {/* Nav: renders whichever navItems array applies based on role_id (see above) */}
         <nav className="mt-3 px-2 space-y-1 overflow-y-auto flex-1">
           {navItems.map((item, index) => (
             <div key={index}>
+              {/* Parent nav row (clickable — either navigates or toggles dropdown) */}
               <div
                 ref={(el) => {
                   navRefs.current[index] = el;
@@ -309,7 +328,7 @@ function AdminLayout() {
                 )}
               </div>
 
-              {/* Children */}
+              {/* Children (sub-menu) — only rendered if item has children AND its dropdown is open */}
               {item.children && openMenus[item.name] && (
                 <div className="ml-4 mt-1 space-y-1 border-l-2 border-primary-light pl-3">
                   {item.children.map((child, childIndex) => (
@@ -333,7 +352,7 @@ function AdminLayout() {
           ))}
         </nav>
 
-        {/* Drag Handle */}
+        {/* Drag Handle: lets user resize the sidebar width by dragging (desktop only) */}
         <div
           onMouseDown={handleMouseDown}
           className="absolute right-0 top-0 h-full w-1.5 cursor-col-resize group z-50 hidden lg:block"
@@ -342,7 +361,7 @@ function AdminLayout() {
         </div>
       </div>
 
-      {/* Mobile overlay */}
+      {/* Mobile overlay: dark backdrop shown behind the sidebar on mobile; tapping it closes the sidebar */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-30 lg:hidden"
@@ -350,7 +369,7 @@ function AdminLayout() {
         />
       )}
 
-      {/* Main content */}
+      {/* Main content: header + page content rendered via <Outlet /> (nested routes) */}
       <div className="flex-1 flex flex-col bg-off-bg min-w-0">
         <Header name={activeName} onMenuClick={() => setSidebarOpen(true)} />
         <div className="p-4 md:p-5 overflow-auto flex-1">
