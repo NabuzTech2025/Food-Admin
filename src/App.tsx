@@ -86,7 +86,7 @@ const ProtectedRoute = () => {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter basename="/test">
+      <BrowserRouter basename="/admin">
         <NavigateSetter />
         <Routes>
           <Route path="/" element={<Navigate to="/admin-login" replace />} />
