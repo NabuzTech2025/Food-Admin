@@ -6,6 +6,7 @@ import {
   RefreshCw,
   Edit,
   Globe,
+  ExternalLink,
   Loader2,
   ArrowUpDown,
   ArrowUp,
@@ -50,7 +51,7 @@ type SortDir = "asc" | "desc";
 function TableRowSkeleton() {
   return (
     <TableRow>
-      {Array.from({ length: 8 }).map((_, i) => (
+      {Array.from({ length: 9 }).map((_, i) => (
         <TableCell key={i}>
           <Skeleton height={16} />
         </TableCell>
@@ -63,7 +64,7 @@ function TableRowSkeleton() {
 function StoreConfigPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [sortField, setSortField] = useState<SortField | null>(null);
+  const [sortField, setSortField] = useState<SortField | null>("store_id");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const sentinelRef = useRef<HTMLTableRowElement>(null);
   const [deleteTarget, setDeleteTarget] = useState<StoreConfig | null>(null);
@@ -278,6 +279,7 @@ function StoreConfigPage() {
                   </span>
                 </TableHead>
                 <TableHead>Subdomain</TableHead>
+                <TableHead>Link</TableHead>
                 <TableHead>Base Route</TableHead>
                 <TableHead>Country</TableHead>
                 <TableHead>PayPal Client ID</TableHead>
@@ -293,7 +295,7 @@ function StoreConfigPage() {
               ) : isError ? (
                 <TableRow>
                   <TableCell
-                    colSpan={9}
+                    colSpan={10}
                     className="text-center py-10 text-destructive text-sm"
                   >
                     Error:{" "}
@@ -321,6 +323,30 @@ function StoreConfigPage() {
                       {config.domain?.includes("/")
                         ? config.domain.split("/").slice(1).join("/")
                         : "—"}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {(() => {
+                        const domainPart = config.domain?.split("/")[0] ?? "";
+                        const subdomain = config.domain?.includes("/")
+                          ? config.domain.split("/").slice(1).join("/")
+                          : "";
+                        if (!domainPart) return "—";
+                        const href =
+                          domainPart === "magskr.de" && subdomain
+                            ? `https://magskr.de/${subdomain}`
+                            : `https://${domainPart}`;
+                        return (
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-primary hover:underline"
+                          >
+                            <ExternalLink size={13} />
+                            {href.replace(/^https:\/\//, "")}
+                          </a>
+                        );
+                      })()}
                     </TableCell>
                     <TableCell className="text-sm text-neutral-500">
                       <span className="inline-flex items-center gap-1">
@@ -377,7 +403,7 @@ function StoreConfigPage() {
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={9}
+                    colSpan={10}
                     className="text-center py-10 text-neutral-400 text-sm"
                   >
                     No store configs found.{" "}
@@ -392,7 +418,7 @@ function StoreConfigPage() {
               )}
               {!search && hasNextPage && (
                 <TableRow ref={sentinelRef}>
-                  <TableCell colSpan={9} className="text-center py-4">
+                  <TableCell colSpan={10} className="text-center py-4">
                     {isFetchingNextPage ? (
                       <Loader2
                         size={18}
