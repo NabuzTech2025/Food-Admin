@@ -333,7 +333,7 @@ function StoreConfigPage() {
                         if (!domainPart) return "—";
                         const href =
                           domainPart === "magskr.de" && subdomain
-                            ? `https://magskr.de/${subdomain}`
+                            ? `https://magskr.de/${subdomain}/`
                             : `https://${domainPart}`;
                         return (
                           <a
