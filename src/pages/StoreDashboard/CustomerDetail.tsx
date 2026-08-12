@@ -1,4 +1,4 @@
-// src/pages/CustomerDetail.tsx
+// src/pages/StoreDashboard/CustomerDetail.tsx
 import { useState, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {

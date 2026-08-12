@@ -15,24 +15,24 @@ import {
   getTodayReceivedBookings,
   getReservationDetails,
   type ReservationDetail,
-} from "../api/reservation";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Card, CardContent } from "../components/ui/card";
+} from "@/api/reservation";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Tabs,
   TabsList,
   TabsTrigger,
   TabsContent,
-} from "../components/ui/tabs";
+} from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "../components/ui/dialog";
-import { useAdminStore } from "../context/store/useAdminStore";
+} from "@/components/ui/dialog";
+import { useAdminStore } from "@/context/store/useAdminStore";
 
 const AdminReservation = () => {
   const store_id = useAdminStore((state) => state.store_id);

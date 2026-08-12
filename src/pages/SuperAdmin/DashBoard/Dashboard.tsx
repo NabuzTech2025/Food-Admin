@@ -26,7 +26,7 @@ import type { Order } from "@/api/order";
 
 import StatCard from "../../../components/SuperAdmin/DashBoard/StatCard";
 import AllStoresPanel from "../../../components/SuperAdmin/DashBoard/AllStoresPanel";
-import { OrderCard, OrderDetailModal } from "@/pages/Orders/Orders";
+import { OrderCard, OrderDetailModal } from "@/pages/StoreDashboard/Orders/Orders";
 
 // ─── Skeleton shapes matching each real component ────────────────────────────
 

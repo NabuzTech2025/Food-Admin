@@ -10,15 +10,15 @@ import {
   Store,
   UserRound,
 } from "lucide-react";
-import { getSuperAdminReservations } from "../../api/reservation";
+import { getSuperAdminReservations } from "@/api/reservation";
 import type {
   ReservationsResponse,
   ReservationItem,
-} from "../../api/reservation";
-import { Badge } from "../../components/ui/badge";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Card, CardContent } from "../../components/ui/card";
+} from "@/api/reservation";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import { ReservationDetailModal } from "./ReservationDetailModal";
 
 interface FlattenedReservation {

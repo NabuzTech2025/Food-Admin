@@ -8,7 +8,7 @@ import { useStoreChangePassword } from "@/hooks/useStoreChangePassword";
 import { toast } from "sonner";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import StoreSetting from "@/pages/StoreSetting";
+import StoreSetting from "@/pages/StoreDashboard/StoreSetting";
 
 interface PasswordForm {
   newPassword: string;

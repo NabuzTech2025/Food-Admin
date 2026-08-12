@@ -6,13 +6,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "../../components/ui/dialog";
+} from "@/components/ui/dialog";
 import { ArrowLeft, Utensils } from "lucide-react";
 import {
   getReservationDetails,
   type ReservationDetail,
-} from "../../api/reservation";
-import { Button } from "../../components/ui/button";
+} from "@/api/reservation";
+import { Button } from "@/components/ui/button";
 
 interface ReservationDetailModalProps {
   reservationId: number | null;
