@@ -61,6 +61,10 @@ import Reservation from "./pages/StoreDashboard/Reservation/Reservation";
 import Settings from "./pages/SuperAdmin/Settings/Settings";
 // import Reservation from "./pages/SuperAdmin/Reservation";
 import AdminReservation from "./pages/StoreDashboard/AdminReservation";
+import ReservationLayout from "./pages/ReservationDashboard/ReservationLayout";
+import ReservationOverview from "./pages/ReservationDashboard/Overview";
+import ReservationBookings from "./pages/ReservationDashboard/Bookings";
+import ReservationSettings from "./pages/ReservationDashboard/Settings";
 
 // ✅ Store-scoped page imports (create these pages as needed)
 
@@ -180,6 +184,14 @@ function App() {
               <Route path="legal-pages" element={<StoreLegalPages />} />
               <Route path="legal-pages/form" element={<StoreLegalPageForm />} />
               <Route path="settings" element={<Settings />} />
+            </Route>
+
+            {/* ─── Reservation owner dashboard (its own layout) ─── */}
+            <Route path="reservation-dashboard" element={<ReservationLayout />}>
+              <Route index element={<Navigate to="overview" replace />} />
+              <Route path="overview" element={<ReservationOverview />} />
+              <Route path="bookings" element={<ReservationBookings />} />
+              <Route path="settings" element={<ReservationSettings />} />
             </Route>
           </Route>
         </Routes>

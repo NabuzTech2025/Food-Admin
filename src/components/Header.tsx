@@ -1,8 +1,8 @@
 import { Input } from "@/components/ui/input";
-import { Search, Menu, LogOut } from "lucide-react";
+import { Search, Menu, LogOut, CalendarCheck, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { useAdminStore } from "@/context/store/useAdminStore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ModeToggle } from "@/components/mode-toggle";
 
 function Header({
@@ -17,6 +17,8 @@ function Header({
   const [showSearch, setShowSearch] = useState(false);
   const clearAdminData = useAdminStore((state) => state.clearAdminData);
   const navigate = useNavigate();
+  const location = useLocation();
+  const inReservation = location.pathname.startsWith("/reservation-dashboard");
 
   const handleLogout = () => {
     clearAdminData();
@@ -72,6 +74,26 @@ function Header({
         {children}
 
         {/* <ModeToggle /> */}
+
+        {/* Sits left of Logout: "Back to Admin" inside the reservation
+            dashboard, otherwise a shortcut into it. */}
+        {inReservation ? (
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary-light dark:hover:bg-primary-light rounded-lg transition-colors duration-200 cursor-pointer"
+          >
+            <ArrowLeft size={18} />
+            <span className="hidden sm:inline">Back to Admin</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => navigate("/reservation-dashboard")}
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary-light dark:hover:bg-primary-light rounded-lg transition-colors duration-200 cursor-pointer"
+          >
+            <CalendarCheck size={18} />
+            <span className="hidden sm:inline">Reservations</span>
+          </button>
+        )}
 
         {/* Logout button */}
         <button
