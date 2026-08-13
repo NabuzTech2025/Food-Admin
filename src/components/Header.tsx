@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Menu, LogOut, CalendarCheck, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { useAdminStore } from "@/context/store/useAdminStore";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { ModeToggle } from "@/components/mode-toggle";
 
 function Header({
@@ -18,7 +18,16 @@ function Header({
   const clearAdminData = useAdminStore((state) => state.clearAdminData);
   const navigate = useNavigate();
   const location = useLocation();
-  const inReservation = location.pathname.startsWith("/reservation-dashboard");
+  const { storeId } = useParams(); // set when browsing a store as super admin
+  const inReservation = location.pathname.includes("reservation-dashboard");
+  const reservationPath = storeId
+    ? `/super/stores/${storeId}/reservation-dashboard`
+    : "/reservation-dashboard";
+  const backPath = storeId ? `/super/stores/${storeId}/orders` : "/dashboard";
+  // Hide the reservation shortcut on super-admin top-level pages (store list,
+  // config, …) where no single store is in scope.
+  const superAdminTop =
+    location.pathname.startsWith("/super/") && !storeId;
 
   const handleLogout = () => {
     clearAdminData();
@@ -79,15 +88,15 @@ function Header({
             dashboard, otherwise a shortcut into it. */}
         {inReservation ? (
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate(backPath)}
             className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary-light dark:hover:bg-primary-light rounded-lg transition-colors duration-200 cursor-pointer"
           >
             <ArrowLeft size={18} />
             <span className="hidden sm:inline">Back to Admin</span>
           </button>
-        ) : (
+        ) : superAdminTop ? null : (
           <button
-            onClick={() => navigate("/reservation-dashboard")}
+            onClick={() => navigate(reservationPath)}
             className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary-light dark:hover:bg-primary-light rounded-lg transition-colors duration-200 cursor-pointer"
           >
             <CalendarCheck size={18} />

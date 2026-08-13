@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import { useAdminStore } from "@/context/store/useAdminStore";
 import { useCurrentStore } from "@/hooks/useCurrentStore";
+import { useReservationStoreId } from "@/hooks/useReservationV2";
 import { LayoutDashboard, CalendarCheck, Settings, Utensils } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
@@ -12,8 +13,8 @@ const navItems = [
 
 function ReservationLayout() {
   const { pathname, search } = useLocation(); // carry ?store_id across nav
-  const { store_id, storeData } = useAdminStore();
-  useCurrentStore(store_id);
+  const { storeData } = useAdminStore();
+  useCurrentStore(useReservationStoreId());
 
   const activeName =
     navItems.find((i) => pathname.endsWith(`/${i.to}`))?.name || "Reservations";

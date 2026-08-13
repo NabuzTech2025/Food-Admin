@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useAdminStore } from "@/context/store/useAdminStore";
 import {
@@ -21,13 +21,15 @@ import type {
 
 const KEY = "reservation-v2";
 
-// Resolve the store id for the reservation dashboard: a `?store_id=` URL param
-// wins (lets a super admin target any store), otherwise the logged-in store
-// owner's own store from the session. Returns null when neither is usable.
+// Resolve the store id for the reservation dashboard: a `:storeId` route param
+// wins (super admin at /super/stores/:storeId/reservation-dashboard), then a
+// `?store_id=` query param, otherwise the logged-in store owner's own store
+// from the session. Returns null when none is usable.
 export const useReservationStoreId = (): number | null => {
+  const { storeId: pathStoreId } = useParams();
   const [params] = useSearchParams();
   const sessionStoreId = useAdminStore((s) => s.store_id);
-  const raw = params.get("store_id") ?? sessionStoreId;
+  const raw = pathStoreId ?? params.get("store_id") ?? sessionStoreId;
   const n = raw != null ? Number(raw) : NaN;
   return Number.isFinite(n) && n > 0 ? n : null;
 };

@@ -186,6 +186,17 @@ function App() {
               <Route path="settings" element={<Settings />} />
             </Route>
 
+            {/* ─── Store-scoped reservation dashboard (super admin) ─── */}
+            <Route
+              path="super/stores/:storeId/reservation-dashboard"
+              element={<ReservationLayout />}
+            >
+              <Route index element={<Navigate to="overview" replace />} />
+              <Route path="overview" element={<ReservationOverview />} />
+              <Route path="bookings" element={<ReservationBookings />} />
+              <Route path="settings" element={<ReservationSettings />} />
+            </Route>
+
             {/* ─── Reservation owner dashboard (its own layout) ─── */}
             <Route path="reservation-dashboard" element={<ReservationLayout />}>
               <Route index element={<Navigate to="overview" replace />} />
