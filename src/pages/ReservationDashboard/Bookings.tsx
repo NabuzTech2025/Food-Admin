@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { format } from "date-fns";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import EditReservationDialog from "@/components/Forms/Reservations/EditReservationForm";
 import {
   useFilterReservations,
   useReservationStoreId,
   useUpdateReservation,
 } from "@/hooks/useReservationV2";
+import type { ReservationV2 } from "@/api/reservationV2";
 
 const fmtTime = (iso: string) => format(new Date(iso), "HH:mm");
 
@@ -28,6 +30,7 @@ const statusBadge = (status: string) => {
 function Bookings() {
   const storeId = useReservationStoreId();
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
+  const [editing, setEditing] = useState<ReservationV2 | null>(null);
 
   const { data: reservations = [], isLoading } = useFilterReservations(
     storeId ? { store_id: storeId, target_date: date, limit: 200 } : null,
@@ -95,7 +98,7 @@ function Bookings() {
                   {r.party_size} guests
                 </span>
                 <span className="col-span-2">{statusBadge(r.status)}</span>
-                <span className="col-span-3 flex justify-end gap-1.5">
+                <span className="col-span-3 flex flex-wrap justify-end gap-1.5">
                   {r.status === "pending" ? (
                     <>
                       <Button
@@ -142,12 +145,28 @@ function Bookings() {
                       Cancel
                     </Button>
                   ) : null}
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 px-2"
+                    onClick={() => setEditing(r)}
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </Button>
                 </span>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {editing && (
+        <EditReservationDialog
+          key={editing.id}
+          reservation={editing}
+          onClose={() => setEditing(null)}
+        />
+      )}
     </div>
   );
 }

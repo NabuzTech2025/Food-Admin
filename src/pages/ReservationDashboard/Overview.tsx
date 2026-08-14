@@ -1,9 +1,20 @@
 import { useMemo, useState } from "react";
 import { format } from "date-fns";
-import { Pencil, Phone, StickyNote, CalendarClock } from "lucide-react";
+import {
+  Pencil,
+  Phone,
+  StickyNote,
+  CalendarClock,
+  CalendarDays,
+  Clock,
+  Users,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import EditReservationDialog from "@/components/Forms/Reservations/EditReservationForm";
 import {
   useReservationConfig,
   useReservationStoreId,
@@ -12,6 +23,7 @@ import {
   useUpdateReservation,
 } from "@/hooks/useReservationV2";
 import type { ReservationV2 } from "@/api/reservationV2";
+import ReservationTooltip from "@/components/Forms/Reservations/ReservationTooltip";
 
 const fmtTime = (iso: string) => format(new Date(iso), "HH:mm");
 
@@ -40,6 +52,8 @@ function Overview() {
   const updateRes = useUpdateReservation();
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [editing, setEditing] = useState<ReservationV2 | null>(null);
+  const [hoveredId, setHoveredId] = useState<number | null>(null);
 
   const active = reservations.filter((r) => r.status !== "cancelled");
   const covers = useMemo(() => {
@@ -64,18 +78,11 @@ function Overview() {
     updateRes.mutate({ id: r.id, payload: { status: "booked" } });
   const decline = (r: ReservationV2) =>
     updateRes.mutate({ id: r.id, payload: { status: "cancelled" } });
-  const editDuration = (r: ReservationV2) => {
-    const val = window.prompt("Duration in minutes", String(r.duration_minutes));
-    if (!val) return;
-    const minutes = Number(val);
-    if (!Number.isFinite(minutes) || minutes <= 0) return;
-    updateRes.mutate({ id: r.id, payload: { duration_minutes: minutes } });
-  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-5">
       {/* Page header */}
-      <div className="flex items-center justify-between rounded-xl bg-component-bg border border-border px-5 py-4">
+      <div className="flex items-start justify-between gap-3 flex-wrap rounded-xl bg-component-bg border border-border px-5 py-4">
         <div>
           <h1 className="text-xl font-bold text-foreground">Owner Dashboard</h1>
           <p className="text-sm text-muted-foreground">
@@ -84,7 +91,7 @@ function Overview() {
         </div>
         {config && (
           <Badge
-            className={config.enabled ? "bg-green-600 text-white" : ""}
+            className={`shrink-0 ${config.enabled ? "bg-green-600 text-white" : ""}`}
             variant={config.enabled ? "default" : "secondary"}
           >
             Reservations {config.enabled ? "ON" : "OFF"}
@@ -126,7 +133,9 @@ function Overview() {
               <Stat label="Default Duration">
                 {config ? `${config.default_duration_minutes} min` : "—"}
               </Stat>
-              <Stat label="Max Party Size">{config?.max_party_size ?? "—"}</Stat>
+              <Stat label="Max Party Size">
+                {config?.max_party_size ?? "—"}
+              </Stat>
               <Stat label="Lead Time">
                 {config ? `${config.lead_time_minutes} min` : "—"}
               </Stat>
@@ -138,11 +147,18 @@ function Overview() {
 
           {/* Covers filled today */}
           <section className="rounded-xl bg-component-bg border border-border p-5">
-            <h2 className="font-semibold text-foreground">Covers Filled Today</h2>
+            <h2 className="font-semibold text-foreground">
+              Covers Filled Today
+            </h2>
             <p className="text-xs text-muted-foreground mb-4">
               Cap: {config?.max_covers ?? "—"} covers per slot
             </p>
-            <CoversChart slots={availability?.slots ?? []} />
+            <CoversChart
+              slots={availability?.slots ?? []}
+              reservations={active}
+              hoveredId={hoveredId}
+              onHover={setHoveredId}
+            />
           </section>
 
           {/* Today's bookings */}
@@ -160,14 +176,27 @@ function Overview() {
               </p>
             ) : (
               <div className="divide-y divide-border">
-                {active.map((r) => (
+                {active.map((r, i) => (
                   <button
                     key={r.id}
                     onClick={() => setSelectedId(r.id)}
+                    onMouseEnter={() => setHoveredId(r.id)}
+                    onMouseLeave={() => setHoveredId(null)}
                     className={`w-full flex items-center gap-3 py-3 text-left rounded-lg px-2 transition-colors ${
-                      selected?.id === r.id ? "bg-muted" : "hover:bg-muted/50"
+                      hoveredId !== r.id && selected?.id === r.id
+                        ? "bg-muted"
+                        : ""
                     }`}
+                    style={
+                      hoveredId === r.id
+                        ? { backgroundColor: `${colorFor(i)}22` }
+                        : undefined
+                    }
                   >
+                    <span
+                      className="w-2.5 h-2.5 rounded-sm shrink-0"
+                      style={{ backgroundColor: colorFor(i) }}
+                    />
                     <span className="font-semibold text-foreground w-14 shrink-0">
                       {fmtTime(r.reserved_for)}
                     </span>
@@ -210,7 +239,7 @@ function Overview() {
                           size="sm"
                           variant="outline"
                           className="h-8"
-                          onClick={() => editDuration(r)}
+                          onClick={() => setEditing(r)}
                         >
                           Edit
                         </Button>
@@ -266,8 +295,8 @@ function Overview() {
                   <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1">
                     <CalendarClock className="w-4 h-4" />
                     {fmtTime(selected.reserved_for)} –{" "}
-                    {fmtTime(selected.reserved_until)} ({selected.duration_minutes}{" "}
-                    min)
+                    {fmtTime(selected.reserved_until)} (
+                    {selected.duration_minutes} min)
                   </p>
                 </div>
 
@@ -314,9 +343,9 @@ function Overview() {
                   <Button
                     variant="outline"
                     className="w-full"
-                    onClick={() => editDuration(selected)}
+                    onClick={() => setEditing(selected)}
                   >
-                    Edit Duration
+                    Edit
                   </Button>
                 </div>
               </div>
@@ -324,6 +353,14 @@ function Overview() {
           </section>
         </div>
       </div>
+
+      {editing && (
+        <EditReservationDialog
+          key={editing.id}
+          reservation={editing}
+          onClose={() => setEditing(null)}
+        />
+      )}
     </div>
   );
 }
@@ -442,43 +479,192 @@ function CoversDonut({
   );
 }
 
-// Bars: covers filled per slot (total − available), colored by fill ratio.
+// Validated categorical palette (dataviz reference instance, light mode).
+// Hues assigned by booking order so a guest keeps one color across every slot
+// their reservation spans. A 9th+ booking folds into "Other" (gray).
+const SERIES_COLORS = [
+  "#2a78d6",
+  "#1baf7a",
+  "#eda100",
+  "#008300",
+  "#4a3aa7",
+  "#e34948",
+  "#e87ba4",
+  "#eb6834",
+];
+const colorFor = (index: number) =>
+  index < SERIES_COLORS.length ? SERIES_COLORS[index] : "#898781";
+
+// Soft organic "blob" card outline: a rounded rectangle with big round corners
+// and gentle raised-cosine bumps on every edge. Each edge's bump vanishes at its
+// ends (sin²(πtn) = 0 at t=0,1) so it meets the corner arcs cleanly. Sampled as a
+// polyline for smoothness; corners drawn as quarter-circle arcs.
+const W = 256;
+const H = 256;
+const CR = 40; // corner radius
+const AMP = 8; // bump amplitude
+const SEG = 20; // samples per edge
+const wave = (t: number, n: number) => Math.sin(Math.PI * t * n) ** 2;
+const blobPath = () => {
+  const x0 = AMP;
+  const x1 = W - AMP;
+  const y0 = AMP;
+  const y1 = H - AMP;
+  const f = (v: number) => v.toFixed(1);
+  let d = `M ${f(x0 + CR)} ${f(y0)}`;
+  // top edge → right (bump up), 2 bumps
+  for (let i = 1; i <= SEG; i++) {
+    const t = i / SEG;
+    d += ` L ${f(x0 + CR + t * (x1 - x0 - 2 * CR))} ${f(y0 - AMP * wave(t, 2))}`;
+  }
+  d += ` A ${CR} ${CR} 0 0 1 ${f(x1)} ${f(y0 + CR)}`;
+  // right edge → down (bump right), 1 bump
+  for (let i = 1; i <= SEG; i++) {
+    const t = i / SEG;
+    d += ` L ${f(x1 + AMP * wave(t, 1))} ${f(y0 + CR + t * (y1 - y0 - 2 * CR))}`;
+  }
+  d += ` A ${CR} ${CR} 0 0 1 ${f(x1 - CR)} ${f(y1)}`;
+  // bottom edge → left (bump down), 2 bumps
+  for (let i = 1; i <= SEG; i++) {
+    const t = i / SEG;
+    d += ` L ${f(x1 - CR - t * (x1 - x0 - 2 * CR))} ${f(y1 + AMP * wave(t, 2))}`;
+  }
+  d += ` A ${CR} ${CR} 0 0 1 ${f(x0)} ${f(y1 - CR)}`;
+  // left edge → up (bump left), 1 bump
+  for (let i = 1; i <= SEG; i++) {
+    const t = i / SEG;
+    d += ` L ${f(x0 - AMP * wave(t, 1))} ${f(y1 - CR - t * (y1 - y0 - 2 * CR))}`;
+  }
+  d += ` A ${CR} ${CR} 0 0 1 ${f(x0 + CR)} ${f(y0)} Z`;
+  return d;
+};
+const SCALLOP_D = blobPath();
+
+// Stacked bars: one colored segment per reservation, so overlapping bookings
+// in the same slot read as distinct guests rather than a single block.
 function CoversChart({
   slots,
+  reservations,
+  hoveredId,
+  onHover,
 }: {
-  slots: { time: string; available: number; total: number }[];
+  slots: { time: string; datetime: string; total: number }[];
+  reservations: ReservationV2[];
+  hoveredId: number | null;
+  onHover: (id: number | null) => void;
 }) {
+  const [tip, setTip] = useState<{
+    x: number;
+    y: number;
+    r: ReservationV2;
+  } | null>(null);
+
   if (slots.length === 0)
     return (
       <p className="text-sm text-muted-foreground py-6 text-center">
         No slots for today.
       </p>
     );
+
+  const enter = (r: ReservationV2, e: React.MouseEvent) => {
+    onHover(r.id);
+    setTip({ x: e.clientX, y: e.clientY, r });
+  };
+  const leave = () => {
+    onHover(null);
+    setTip(null);
+  };
+
   return (
-    <div className="flex items-end gap-1.5 h-40 overflow-x-auto">
-      {slots.map((s) => {
-        const filled = Math.max(s.total - s.available, 0);
-        const ratio = s.total ? filled / s.total : 0;
-        const color =
-          ratio >= 1
-            ? "bg-red-500"
-            : ratio >= 0.85
-              ? "bg-amber-500"
-              : "bg-green-600";
-        return (
-          <div
-            key={s.time}
-            className="flex-1 min-w-9 flex flex-col items-center justify-end h-full gap-1"
-          >
-            <span className="text-xs font-medium text-foreground">{filled}</span>
+    <div>
+      <div className="flex items-end gap-1.5 h-40 overflow-x-auto">
+        {slots.map((s) => {
+          // Bookings whose window [reserved_for, reserved_until) covers this slot.
+          const t = new Date(s.datetime).getTime();
+          const here = reservations.filter(
+            (r) =>
+              new Date(r.reserved_for).getTime() <= t &&
+              t < new Date(r.reserved_until).getTime(),
+          );
+          const filled = here.reduce((sum, r) => sum + r.party_size, 0);
+          const barPct = s.total ? Math.min(filled / s.total, 1) * 100 : 0;
+          return (
             <div
-              className={`w-full rounded-t ${color}`}
-              style={{ height: `${Math.max(ratio * 100, 3)}%` }}
-            />
-            <span className="text-[10px] text-muted-foreground">{s.time}</span>
-          </div>
-        );
-      })}
+              key={s.time}
+              className="flex-1 min-w-9 flex flex-col items-center justify-end h-full gap-1"
+            >
+              <span className="text-xs font-medium text-foreground">
+                {filled}
+              </span>
+              <div
+                className="w-full rounded-t overflow-hidden flex flex-col gap-0.5"
+                style={{ height: `${Math.max(barPct, filled ? 3 : 0)}%` }}
+              >
+                {here.map((r) => (
+                  <div
+                    key={r.id}
+                    className="w-full cursor-pointer transition-opacity"
+                    style={{
+                      flexGrow: r.party_size,
+                      backgroundColor: colorFor(
+                        reservations.findIndex((x) => x.id === r.id),
+                      ),
+                      opacity:
+                        hoveredId != null && hoveredId !== r.id ? 0.25 : 1,
+                    }}
+                    onMouseEnter={(e) => enter(r, e)}
+                    onMouseMove={(e) =>
+                      setTip({ x: e.clientX, y: e.clientY, r })
+                    }
+                    onMouseLeave={leave}
+                  />
+                ))}
+              </div>
+              <span className="text-[10px] text-muted-foreground">
+                {s.time}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Legend — identity is never color-alone */}
+      {reservations.length > 0 && (
+        <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-4">
+          {reservations.map((r, i) => (
+            <span
+              key={r.id}
+              className="flex items-center gap-1.5 text-xs cursor-default transition-opacity"
+              style={{
+                opacity: hoveredId != null && hoveredId !== r.id ? 0.4 : 1,
+              }}
+              onMouseEnter={() => onHover(r.id)}
+              onMouseLeave={() => onHover(null)}
+            >
+              <span
+                className="w-2.5 h-2.5 rounded-sm shrink-0"
+                style={{ backgroundColor: colorFor(i) }}
+              />
+              <span className="text-foreground">
+                {r.customer_name || "Guest"}
+              </span>
+              <span className="text-muted-foreground">
+                {fmtTime(r.reserved_for)}
+              </span>
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Reusable reservation tooltip */}
+      {tip && (
+        <ReservationTooltip
+          x={tip.x}
+          y={tip.y}
+          reservation={tip.r}
+          color={colorFor(reservations.findIndex((r) => r.id === tip.r.id))}
+        />
+      )}
     </div>
   );
 }
