@@ -26,8 +26,7 @@ function Header({
   const backPath = storeId ? `/super/stores/${storeId}/orders` : "/dashboard";
   // Hide the reservation shortcut on super-admin top-level pages (store list,
   // config, …) where no single store is in scope.
-  const superAdminTop =
-    location.pathname.startsWith("/super/") && !storeId;
+  const superAdminTop = location.pathname.startsWith("/super/") && !storeId;
 
   const handleLogout = () => {
     clearAdminData();
@@ -86,7 +85,7 @@ function Header({
 
         {/* Sits left of Logout: "Back to Admin" inside the reservation
             dashboard, otherwise a shortcut into it. */}
-        {inReservation ? (
+        {/* {inReservation ? (
           <button
             onClick={() => navigate(backPath)}
             className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary-light dark:hover:bg-primary-light rounded-lg transition-colors duration-200 cursor-pointer"
@@ -102,7 +101,7 @@ function Header({
             <CalendarCheck size={18} />
             <span className="hidden sm:inline">Reservations</span>
           </button>
-        )}
+        )} */}
 
         {/* Logout button */}
         <button
