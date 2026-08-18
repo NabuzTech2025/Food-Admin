@@ -103,12 +103,12 @@ export interface TodayReservationsResponse {
 // ── Manage reservations (staff) ────────────────────────────────
 export const getTodayReservations = async (
   storeId: number,
-): Promise<ReservationV2[]> => {
+): Promise<TodayReservationsResponse> => {
   const res = await axiosInstance.get<TodayReservationsResponse>(
     `${V2}/store/today`,
     { params: { store_id: storeId } },
   );
-  return res.data.reservations;
+  return res.data;
 };
 
 export interface FilterReservationsPayload {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { format } from "date-fns";
 import {
   Pencil,
@@ -47,7 +47,9 @@ function Overview() {
   const today = format(new Date(), "yyyy-MM-dd");
 
   const { data: config } = useReservationConfig(storeId);
-  const { data: reservations = [], isLoading } = useTodayReservations(storeId);
+  const { data: todayData, isLoading } = useTodayReservations(storeId);
+  const reservations = todayData?.reservations ?? [];
+  const summary = todayData?.summary;
   const { data: availability } = useAvailability(storeId, today, 2);
   const updateRes = useUpdateReservation();
 
@@ -56,17 +58,6 @@ function Overview() {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
   const active = reservations.filter((r) => r.status !== "cancelled");
-  const covers = useMemo(() => {
-    const booked = active
-      .filter((r) => r.status === "booked")
-      .reduce((s, r) => s + r.party_size, 0);
-    const pending = active
-      .filter((r) => r.status === "pending")
-      .reduce((s, r) => s + r.party_size, 0);
-    const capacity = config?.max_covers ?? 0;
-    const available = Math.max(capacity - booked - pending, 0);
-    return { booked, pending, available, capacity };
-  }, [active, config]);
 
   const selected =
     active.find((r) => r.id === selectedId) ??
@@ -101,9 +92,9 @@ function Overview() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* ── Left column ── */}
-        <div className="lg:col-span-2 space-y-5">
+        <div className="contents lg:block lg:col-span-2 lg:space-y-5">
           {/* Reservation settings */}
-          <section className="rounded-xl bg-component-bg border border-border p-5">
+          <section className="order-4 rounded-xl bg-component-bg border border-border p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-foreground">
                 Reservation Settings
@@ -126,8 +117,8 @@ function Overview() {
                   {config?.enabled ? "ON" : "OFF"}
                 </span>
               </Stat>
-              <Stat label="Max Covers">{config?.max_covers ?? "—"}</Stat>
-              <Stat label="Slot Interval">
+              <Stat label="Capacity">{config?.max_covers ?? "—"}</Stat>
+              <Stat label="Booking Interval">
                 {config ? `${config.slot_interval_minutes} min` : "—"}
               </Stat>
               <Stat label="Default Duration">
@@ -146,7 +137,7 @@ function Overview() {
           </section>
 
           {/* Covers filled today */}
-          <section className="rounded-xl bg-component-bg border border-border p-5">
+          <section className="order-2 rounded-xl bg-component-bg border border-border p-5">
             <h2 className="font-semibold text-foreground">
               Covers Filled Today
             </h2>
@@ -162,7 +153,7 @@ function Overview() {
           </section>
 
           {/* Today's bookings */}
-          <section className="rounded-xl bg-component-bg border border-border p-5">
+          <section className="order-3 rounded-xl bg-component-bg border border-border p-5">
             <h2 className="font-semibold text-foreground mb-4">
               Today's Bookings
             </h2>
@@ -253,31 +244,36 @@ function Overview() {
         </div>
 
         {/* ── Right column ── */}
-        <div className="space-y-5">
+        <div className="contents lg:block lg:space-y-5">
           {/* Today's overview donut */}
-          <section className="rounded-xl bg-component-bg border border-border p-5">
+          <section className="order-1 rounded-xl bg-component-bg border border-border p-5">
             <h2 className="font-semibold text-foreground">Today's Overview</h2>
             <p className="text-xs text-muted-foreground mb-4">
               {format(new Date(), "EEE, d MMMM yyyy")}
             </p>
             <div className="flex items-center gap-5">
-              <CoversDonut {...covers} />
+              <CoversDonut
+                total={summary?.total ?? 0}
+                booked={summary?.booked ?? 0}
+                pending={summary?.pending ?? 0}
+                cancelled={summary?.cancelled ?? 0}
+              />
               <div className="space-y-2 text-sm">
-                <Legend color="bg-muted-foreground/30" label="Available">
-                  {covers.available}
-                </Legend>
                 <Legend color="bg-green-600" label="Booked">
-                  {covers.booked}
+                  {summary?.booked ?? 0}
                 </Legend>
                 <Legend color="bg-amber-500" label="Pending">
-                  {covers.pending}
+                  {summary?.pending ?? 0}
+                </Legend>
+                <Legend color="bg-red-500" label="Cancelled">
+                  {summary?.cancelled ?? 0}
                 </Legend>
               </div>
             </div>
           </section>
 
           {/* Booking details */}
-          <section className="rounded-xl bg-component-bg border border-border p-5">
+          <section className="order-5 rounded-xl bg-component-bg border border-border p-5">
             <h2 className="font-semibold text-foreground mb-4">
               Booking Details
             </h2>
@@ -407,25 +403,28 @@ const DetailRow = ({
   </div>
 );
 
-// Donut: SVG ring split into booked / pending / available arcs.
+// Donut: SVG ring split into booked / pending / cancelled arcs, one color each.
 function CoversDonut({
+  total,
   booked,
   pending,
-  available,
-  capacity,
+  cancelled,
 }: {
+  total: number;
   booked: number;
   pending: number;
-  available: number;
-  capacity: number;
+  cancelled: number;
 }) {
   const r = 46;
   const c = 2 * Math.PI * r;
-  const total = capacity || 1;
-  const bookedLen = (booked / total) * c;
-  const pendingLen = (pending / total) * c;
-  const reserved = booked + pending;
+  const denom = total || 1;
+  const arcs = [
+    { value: booked, color: "#16a34a" },
+    { value: pending, color: "#f59e0b" },
+    { value: cancelled, color: "#ef4444" },
+  ];
 
+  let offset = 0;
   return (
     <svg width="120" height="120" viewBox="0 0 120 120" className="shrink-0">
       <g transform="rotate(-90 60 60)">
@@ -437,25 +436,24 @@ function CoversDonut({
           strokeWidth="12"
           className="stroke-muted"
         />
-        <circle
-          cx="60"
-          cy="60"
-          r={r}
-          fill="none"
-          strokeWidth="12"
-          stroke="#16a34a"
-          strokeDasharray={`${bookedLen} ${c}`}
-        />
-        <circle
-          cx="60"
-          cy="60"
-          r={r}
-          fill="none"
-          strokeWidth="12"
-          stroke="#f59e0b"
-          strokeDasharray={`${pendingLen} ${c}`}
-          strokeDashoffset={-bookedLen}
-        />
+        {arcs.map((a, i) => {
+          const len = (a.value / denom) * c;
+          const dashOffset = -offset;
+          offset += len;
+          return (
+            <circle
+              key={i}
+              cx="60"
+              cy="60"
+              r={r}
+              fill="none"
+              strokeWidth="12"
+              stroke={a.color}
+              strokeDasharray={`${len} ${c}`}
+              strokeDashoffset={dashOffset}
+            />
+          );
+        })}
       </g>
       <text
         x="60"
@@ -464,7 +462,7 @@ function CoversDonut({
         className="fill-foreground font-bold"
         fontSize="24"
       >
-        {reserved}
+        {total}
       </text>
       <text
         x="60"
@@ -473,7 +471,7 @@ function CoversDonut({
         className="fill-muted-foreground"
         fontSize="11"
       >
-        / {capacity} covers
+        total
       </text>
     </svg>
   );
