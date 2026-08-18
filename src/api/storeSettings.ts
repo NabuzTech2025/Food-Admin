@@ -20,6 +20,7 @@ export interface StoreSettings {
   is_kasse_integrated: boolean;
   is_windows_app: boolean;
   tisch_reservierung_enabled: boolean;
+  reservation_v2_enabled: boolean;
 
   default_collection_time: number;
 }
