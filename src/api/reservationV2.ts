@@ -84,14 +84,31 @@ export const getAvailability = async (
   return res.data;
 };
 
+export interface TodayReservationsResponse {
+  date: string;
+  store_ids: number[];
+  summary: {
+    total: number;
+    pending: number;
+    booked: number;
+    cancelled: number;
+    active_total: number;
+    pending_covers: number;
+    booked_covers: number;
+    active_covers: number;
+  };
+  reservations: ReservationV2[];
+}
+
 // ── Manage reservations (staff) ────────────────────────────────
 export const getTodayReservations = async (
   storeId: number,
 ): Promise<ReservationV2[]> => {
-  const res = await axiosInstance.get(`${V2}/store/today`, {
-    params: { store_id: storeId },
-  });
-  return res.data;
+  const res = await axiosInstance.get<TodayReservationsResponse>(
+    `${V2}/store/today`,
+    { params: { store_id: storeId } },
+  );
+  return res.data.reservations;
 };
 
 export interface FilterReservationsPayload {
