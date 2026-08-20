@@ -273,7 +273,7 @@ function Overview() {
           </section>
 
           {/* Booking details */}
-          <section className="order-5 rounded-xl bg-component-bg border border-border p-5">
+          <section className="order-5 rounded-xl bg-component-bg border border-border p-5 hidden lg:block">
             <h2 className="font-semibold text-foreground mb-4">
               Booking Details
             </h2>
