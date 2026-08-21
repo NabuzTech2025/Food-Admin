@@ -19,6 +19,7 @@ import {
   useReservationConfig,
   useReservationStoreId,
   useTodayReservations,
+  useReceivedTodayReservations,
   useAvailability,
   useUpdateReservation,
 } from "@/hooks/useReservationV2";
@@ -50,6 +51,8 @@ function Overview() {
   const { data: todayData, isLoading } = useTodayReservations(storeId);
   const reservations = todayData?.reservations ?? [];
   const summary = todayData?.summary;
+  const { data: receivedToday, isLoading: isReceivedLoading } =
+    useReceivedTodayReservations(storeId);
   const { data: availability } = useAvailability(storeId, today, 2);
   const updateRes = useUpdateReservation();
 
@@ -94,7 +97,7 @@ function Overview() {
         {/* ── Left column ── */}
         <div className="contents lg:block lg:col-span-2 lg:space-y-5">
           {/* Reservation settings */}
-          <section className="order-4 rounded-xl bg-component-bg border border-border p-5">
+          <section className="order-1 rounded-xl bg-component-bg border border-border p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-foreground">
                 Reservation Settings
@@ -151,129 +154,22 @@ function Overview() {
               onHover={setHoveredId}
             />
           </section>
-
-          {/* Today's bookings */}
-          <section className="order-3 rounded-xl bg-component-bg border border-border p-5">
-            <h2 className="font-semibold text-foreground mb-4">
-              Today's Bookings
-            </h2>
-            {isLoading ? (
-              <p className="text-sm text-muted-foreground py-6 text-center">
-                Loading…
-              </p>
-            ) : active.length === 0 ? (
-              <p className="text-sm text-muted-foreground py-6 text-center">
-                No bookings today.
-              </p>
-            ) : (
-              <div className="divide-y divide-border">
-                {active.map((r, i) => (
-                  <button
-                    key={r.id}
-                    onClick={() => setSelectedId(r.id)}
-                    onMouseEnter={() => setHoveredId(r.id)}
-                    onMouseLeave={() => setHoveredId(null)}
-                    className={`w-full flex items-center gap-3 py-3 text-left rounded-lg px-2 transition-colors ${
-                      hoveredId !== r.id && selected?.id === r.id
-                        ? "bg-muted"
-                        : ""
-                    }`}
-                    style={
-                      hoveredId === r.id
-                        ? { backgroundColor: `${colorFor(i)}22` }
-                        : undefined
-                    }
-                  >
-                    <span
-                      className="w-2.5 h-2.5 rounded-sm shrink-0"
-                      style={{ backgroundColor: colorFor(i) }}
-                    />
-                    <span className="font-semibold text-foreground w-14 shrink-0">
-                      {fmtTime(r.reserved_for)}
-                    </span>
-                    <span className="flex-1 min-w-0 truncate font-medium text-foreground">
-                      {r.customer_name || "Guest"}
-                    </span>
-                    <span className="text-sm text-muted-foreground w-20 shrink-0 hidden sm:block">
-                      {r.party_size} guests
-                    </span>
-                    <span className="text-sm text-muted-foreground w-16 shrink-0 hidden md:block">
-                      {r.duration_minutes} min
-                    </span>
-                    <span className="shrink-0">{statusBadge(r.status)}</span>
-                    <span
-                      className="shrink-0 flex gap-1.5"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {r.status === "pending" ? (
-                        <>
-                          <Button
-                            size="sm"
-                            className="bg-green-600 hover:bg-green-700 text-white h-8"
-                            disabled={updateRes.isPending}
-                            onClick={() => accept(r)}
-                          >
-                            Accept
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            className="h-8"
-                            disabled={updateRes.isPending}
-                            onClick={() => decline(r)}
-                          >
-                            Decline
-                          </Button>
-                        </>
-                      ) : (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-8"
-                          onClick={() => setEditing(r)}
-                        >
-                          Edit
-                        </Button>
-                      )}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </section>
         </div>
 
         {/* ── Right column ── */}
         <div className="contents lg:block lg:space-y-5">
-          {/* Today's overview donut */}
-          <section className="order-1 rounded-xl bg-component-bg border border-border p-5">
-            <h2 className="font-semibold text-foreground">Today's Overview</h2>
-            <p className="text-xs text-muted-foreground mb-4">
-              {format(new Date(), "EEE, d MMMM yyyy")}
-            </p>
-            <div className="flex items-center gap-5">
-              <CoversDonut
-                total={summary?.total ?? 0}
-                booked={summary?.booked ?? 0}
-                pending={summary?.pending ?? 0}
-                cancelled={summary?.cancelled ?? 0}
-              />
-              <div className="space-y-2 text-sm">
-                <Legend color="bg-green-600" label="Booked">
-                  {summary?.booked ?? 0}
-                </Legend>
-                <Legend color="bg-amber-500" label="Pending">
-                  {summary?.pending ?? 0}
-                </Legend>
-                <Legend color="bg-red-500" label="Cancelled">
-                  {summary?.cancelled ?? 0}
-                </Legend>
-              </div>
-            </div>
-          </section>
+          <SummaryCard
+            className="order-3"
+            title="Today's Overview"
+            subtitle={format(new Date(), "EEE, d MMMM yyyy")}
+            total={summary?.total ?? 0}
+            booked={summary?.booked ?? 0}
+            pending={summary?.pending ?? 0}
+            cancelled={summary?.cancelled ?? 0}
+          />
 
           {/* Booking details */}
-          <section className="order-5 rounded-xl bg-component-bg border border-border p-5 hidden lg:block">
+          <section className="order-4 rounded-xl bg-component-bg border border-border p-5 hidden lg:block">
             <h2 className="font-semibold text-foreground mb-4">
               Booking Details
             </h2>
@@ -350,6 +246,60 @@ function Overview() {
         </div>
       </div>
 
+      {/* Today's bookings — full width */}
+      <section className="rounded-xl bg-component-bg border border-border p-5">
+        <h2 className="font-semibold text-foreground mb-4">
+          Today's Bookings
+        </h2>
+        <ReservationsTable
+          reservations={active}
+          isLoading={isLoading}
+          emptyText="No bookings today."
+          showDate
+          hoveredId={hoveredId}
+          onHover={setHoveredId}
+          selectedId={selected?.id ?? null}
+          onSelect={setSelectedId}
+          updateRes={updateRes}
+          accept={accept}
+          decline={decline}
+          onEdit={setEditing}
+        />
+      </section>
+
+      {/* Requests received today (created today, for any date) — full width */}
+      <section className="rounded-xl bg-component-bg border border-border p-5">
+        <SummaryCard
+          bare
+          title="Received Today"
+          subtitle="New requests booked in today"
+          total={receivedToday?.summary.total ?? 0}
+          booked={receivedToday?.summary.booked ?? 0}
+          pending={receivedToday?.summary.pending ?? 0}
+          cancelled={receivedToday?.summary.cancelled ?? 0}
+        />
+        {receivedToday?.summary.next_upcoming_date && (
+          <p className="text-xs text-muted-foreground mt-3">
+            Next upcoming date: {receivedToday.summary.next_upcoming_date}
+            {receivedToday.summary.upcoming_pending_truncated && " (+more)"}
+          </p>
+        )}
+
+        <h3 className="font-semibold text-foreground mt-5 mb-4">
+          Received Bookings
+        </h3>
+        <ReservationsTable
+          reservations={receivedToday?.reservations ?? []}
+          isLoading={isReceivedLoading}
+          emptyText="No requests received today."
+          showDate
+          updateRes={updateRes}
+          accept={accept}
+          decline={decline}
+          onEdit={setEditing}
+        />
+      </section>
+
       {editing && (
         <EditReservationDialog
           key={editing.id}
@@ -389,6 +339,180 @@ const Legend = ({
     <span className="font-semibold text-foreground">{children}</span>
   </div>
 );
+
+// Donut + legend summary card — shared look for "Today's Overview" and
+// "Received Today". `bare` drops the card chrome when nested in another section.
+const SummaryCard = ({
+  title,
+  subtitle,
+  total,
+  booked,
+  pending,
+  cancelled,
+  className = "",
+  bare = false,
+}: {
+  title: string;
+  subtitle: string;
+  total: number;
+  booked: number;
+  pending: number;
+  cancelled: number;
+  className?: string;
+  bare?: boolean;
+}) => (
+  <section
+    className={
+      bare ? className : `rounded-xl bg-component-bg border border-border p-5 ${className}`
+    }
+  >
+    <h2 className="font-semibold text-foreground">{title}</h2>
+    <p className="text-xs text-muted-foreground mb-4">{subtitle}</p>
+    <div className="flex items-center gap-5">
+      <CoversDonut total={total} booked={booked} pending={pending} cancelled={cancelled} />
+      <div className="space-y-2 text-sm">
+        <Legend color="bg-green-600" label="Booked">
+          {booked}
+        </Legend>
+        <Legend color="bg-amber-500" label="Pending">
+          {pending}
+        </Legend>
+        <Legend color="bg-red-500" label="Cancelled">
+          {cancelled}
+        </Legend>
+      </div>
+    </div>
+  </section>
+);
+
+// Reservation list — shared table look for "Today's Bookings" and "Received Today".
+// `hoveredId`/`onHover`/`selectedId`/`onSelect` are only passed by Today's Bookings,
+// which syncs row highlight with the covers chart above it.
+function ReservationsTable({
+  reservations,
+  isLoading,
+  emptyText,
+  showDate,
+  hoveredId = null,
+  onHover,
+  selectedId = null,
+  onSelect,
+  updateRes,
+  accept,
+  decline,
+  onEdit,
+}: {
+  reservations: ReservationV2[];
+  isLoading?: boolean;
+  emptyText: string;
+  showDate?: boolean;
+  hoveredId?: number | null;
+  onHover?: (id: number | null) => void;
+  selectedId?: number | null;
+  onSelect?: (id: number) => void;
+  updateRes: { isPending: boolean };
+  accept: (r: ReservationV2) => void;
+  decline: (r: ReservationV2) => void;
+  onEdit: (r: ReservationV2) => void;
+}) {
+  if (isLoading)
+    return (
+      <p className="text-sm text-muted-foreground py-6 text-center">
+        Loading…
+      </p>
+    );
+  if (reservations.length === 0)
+    return (
+      <p className="text-sm text-muted-foreground py-6 text-center">
+        {emptyText}
+      </p>
+    );
+
+  const colorSync = !!onHover;
+
+  return (
+    <div className="divide-y divide-border">
+      {reservations.map((r, i) => (
+        <button
+          key={r.id}
+          onClick={() => onSelect?.(r.id)}
+          onMouseEnter={() => onHover?.(r.id)}
+          onMouseLeave={() => onHover?.(null)}
+          className={`w-full flex items-center gap-3 py-3 text-left rounded-lg px-2 transition-colors ${
+            colorSync && hoveredId !== r.id && selectedId === r.id
+              ? "bg-muted"
+              : ""
+          }`}
+          style={
+            colorSync && hoveredId === r.id
+              ? { backgroundColor: `${colorFor(i)}22` }
+              : undefined
+          }
+        >
+          {colorSync && (
+            <span
+              className="w-2.5 h-2.5 rounded-sm shrink-0"
+              style={{ backgroundColor: colorFor(i) }}
+            />
+          )}
+          {showDate && (
+            <span className="text-sm text-muted-foreground w-16 shrink-0 hidden sm:block">
+              {format(new Date(r.reserved_for), "d MMM")}
+            </span>
+          )}
+          <span className="font-semibold text-foreground w-14 shrink-0">
+            {fmtTime(r.reserved_for)}
+          </span>
+          <span className="flex-1 min-w-0 truncate font-medium text-foreground">
+            {r.customer_name || "Guest"}
+          </span>
+          <span className="text-sm text-muted-foreground w-20 shrink-0 hidden sm:block">
+            {r.party_size} guests
+          </span>
+          <span className="text-sm text-muted-foreground w-16 shrink-0 hidden md:block">
+            {r.duration_minutes} min
+          </span>
+          <span className="shrink-0">{statusBadge(r.status)}</span>
+          <span
+            className="shrink-0 flex gap-1.5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {r.status === "pending" ? (
+              <>
+                <Button
+                  size="sm"
+                  className="bg-green-600 hover:bg-green-700 text-white h-8"
+                  disabled={updateRes.isPending}
+                  onClick={() => accept(r)}
+                >
+                  Accept
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="h-8"
+                  disabled={updateRes.isPending}
+                  onClick={() => decline(r)}
+                >
+                  Decline
+                </Button>
+              </>
+            ) : (
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8"
+                onClick={() => onEdit(r)}
+              >
+                Edit
+              </Button>
+            )}
+          </span>
+        </button>
+      ))}
+    </div>
+  );
+}
 
 const DetailRow = ({
   label,

@@ -7,6 +7,7 @@ import {
   updateReservationConfig,
   getAvailability,
   getTodayReservations,
+  getReceivedTodayReservations,
   filterReservations,
   updateReservation,
   createReservation,
@@ -70,6 +71,13 @@ export const useTodayReservations = (storeId: number | null) =>
   useQuery({
     queryKey: [KEY, "today", storeId],
     queryFn: () => getTodayReservations(storeId!),
+    enabled: !!storeId,
+  });
+
+export const useReceivedTodayReservations = (storeId: number | null) =>
+  useQuery({
+    queryKey: [KEY, "received-today", storeId],
+    queryFn: () => getReceivedTodayReservations(storeId!),
     enabled: !!storeId,
   });
 

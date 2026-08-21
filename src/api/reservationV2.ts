@@ -111,6 +111,33 @@ export const getTodayReservations = async (
   return res.data;
 };
 
+export interface ReceivedTodayResponse {
+  date: string;
+  store_ids: number[];
+  summary: TodayReservationsResponse["summary"] & {
+    upcoming_pending: number;
+    upcoming_booked: number;
+    upcoming_total: number;
+    upcoming_pending_covers: number;
+    upcoming_booked_covers: number;
+    next_upcoming_date: string | null;
+    upcoming_pending_truncated: boolean;
+  };
+  reservations: ReservationV2[];
+}
+
+// Reservations *created* today (booked or requested today, for any date) —
+// distinct from getTodayReservations, which is reservations *scheduled* for today.
+export const getReceivedTodayReservations = async (
+  storeId: number,
+): Promise<ReceivedTodayResponse> => {
+  const res = await axiosInstance.get<ReceivedTodayResponse>(
+    `${V2}/store/received-today`,
+    { params: { store_id: storeId } },
+  );
+  return res.data;
+};
+
 export interface FilterReservationsPayload {
   store_id: number;
   target_date: string;
