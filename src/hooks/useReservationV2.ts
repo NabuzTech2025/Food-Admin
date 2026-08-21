@@ -12,6 +12,7 @@ import {
   updateReservation,
   createReservation,
   deleteReservation,
+  getSuperAdminReceivedTodayV2,
 } from "@/api/reservationV2";
 import type {
   ReservationConfig,
@@ -120,6 +121,12 @@ export const useCreateReservation = () => {
       toast.error(e?.response?.data?.message || "Failed to create reservation"),
   });
 };
+
+export const useSuperAdminReceivedTodayV2 = () =>
+  useQuery({
+    queryKey: [KEY, "super-admin", "received-today"],
+    queryFn: getSuperAdminReceivedTodayV2,
+  });
 
 export const useDeleteReservation = () => {
   const qc = useQueryClient();

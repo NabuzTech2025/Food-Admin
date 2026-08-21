@@ -202,3 +202,41 @@ export const createReservation = async (
 export const deleteReservation = async (id: number): Promise<void> => {
   await axiosInstance.delete(`${V2}/${id}`);
 };
+
+// ── Super admin: cross-store overview ──────────────────────────
+export interface StoreSummaryV2 {
+  total: number;
+  pending: number;
+  booked: number;
+  cancelled: number;
+  active_total: number;
+  pending_covers: number;
+  booked_covers: number;
+  active_covers: number;
+  upcoming_pending: number;
+  upcoming_booked: number;
+  upcoming_total: number;
+  upcoming_pending_covers: number;
+  upcoming_booked_covers: number;
+  next_upcoming_date: string | null;
+  upcoming_pending_truncated: boolean;
+}
+
+export interface SuperAdminReceivedTodayV2Response {
+  date: string;
+  store_count: number;
+  totals: StoreSummaryV2;
+  stores: {
+    store_id: number;
+    store_name: string;
+    summary: StoreSummaryV2;
+  }[];
+}
+
+export const getSuperAdminReceivedTodayV2 =
+  async (): Promise<SuperAdminReceivedTodayV2Response> => {
+    const res = await axiosInstance.get<SuperAdminReceivedTodayV2Response>(
+      `${V2}/admin/received-today`,
+    );
+    return res.data;
+  };

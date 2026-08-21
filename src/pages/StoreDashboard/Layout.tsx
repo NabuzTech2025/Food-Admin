@@ -102,6 +102,11 @@ function AdminLayout() {
             link: "/super/reservations",
           },
           {
+            name: "Reservations V2",
+            icon: ListOrdered,
+            link: "/super/reservations-v2",
+          },
+          {
             name: "Device Status",
             icon: MonitorSmartphone,
             link: "/super/device-status",

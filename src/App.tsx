@@ -58,6 +58,7 @@ import StoreSetting from "./pages/StoreDashboard/StoreSetting";
 import StoreLayout from "./pages/SuperAdmin/StoreLayout";
 import Orders from "./pages/StoreDashboard/Orders/Orders";
 import Reservation from "./pages/StoreDashboard/Reservation/Reservation";
+import ReservationV2 from "./pages/StoreDashboard/Reservation/ReservationV2";
 import Settings from "./pages/SuperAdmin/Settings/Settings";
 // import Reservation from "./pages/SuperAdmin/Reservation";
 import AdminReservation from "./pages/StoreDashboard/AdminReservation";
@@ -145,6 +146,10 @@ function App() {
                 element={<StoreConfigFormPage />}
               />
               <Route path="super/reservations" element={<Reservation />} />
+              <Route
+                path="super/reservations-v2"
+                element={<ReservationV2 />}
+              />
               <Route path="super/device-status" element={<DeviceStatus />} />
               <Route path="super/store-profile" element={<StoreProfile />} />
             </Route>
