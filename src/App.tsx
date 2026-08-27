@@ -92,7 +92,7 @@ const ProtectedRoute = () => {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter basename="/test">
+      <BrowserRouter basename="/admin">
         <NavigateSetter />
         <Routes>
           <Route path="/" element={<Navigate to="/admin-login" replace />} />
@@ -147,10 +147,7 @@ function App() {
                 element={<StoreConfigFormPage />}
               />
               <Route path="super/reservations" element={<Reservation />} />
-              <Route
-                path="super/reservations-v2"
-                element={<ReservationV2 />}
-              />
+              <Route path="super/reservations-v2" element={<ReservationV2 />} />
               <Route path="super/device-status" element={<DeviceStatus />} />
               <Route path="super/store-status" element={<StoreStatus />} />
               <Route path="super/store-profile" element={<StoreProfile />} />
