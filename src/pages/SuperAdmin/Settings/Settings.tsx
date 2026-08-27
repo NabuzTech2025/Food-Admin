@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
-import { Loader2, MapPin, KeyRound, Eye, EyeOff } from "lucide-react";
+import { Loader2, MapPin, KeyRound, Eye, EyeOff, Store } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useGetStore, useUpdateStore } from "@/hooks/useStore";
+import {
+  useGetStore,
+  useUpdateStore,
+  useSetStoreActive,
+} from "@/hooks/useStore";
 import { useStoreChangePassword } from "@/hooks/useStoreChangePassword";
 import { toast } from "sonner";
 import { useParams } from "react-router-dom";
@@ -25,6 +29,20 @@ function Settings() {
   const { mutate: updateStore, isPending } = useUpdateStore();
   const { mutateAsync: changePassword, isPending: isChangingPassword } =
     useStoreChangePassword();
+  const { mutateAsync: setStoreActive, isPending: isToggling } =
+    useSetStoreActive();
+
+  const handleToggleActive = async (isActive: boolean) => {
+    if (!store_id) return;
+    try {
+      const res = await setStoreActive({ id: store_id, isActive });
+      toast.success(res.message);
+    } catch (err: any) {
+      toast.error(
+        err?.response?.data?.message || "Failed to update store visibility",
+      );
+    }
+  };
 
   const [useDistanceDelivery, setUseDistanceDelivery] = useState(false);
   const [showNew, setShowNew] = useState(false);
@@ -98,6 +116,29 @@ function Settings() {
           </div>
         ) : (
           <div className="divide-y divide-border">
+            <div className="flex items-center justify-between px-5 py-4 hover:bg-muted/30 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                  <Store size={22} className="text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-neutral-800">
+                    Store Active
+                  </p>
+                  <p className="text-xs text-neutral-500">
+                    Show this store in the Magskr customer app (nearby +
+                    search). The store's own ordering website is unaffected.
+                  </p>
+                </div>
+              </div>
+              <Switch
+                checked={data?.is_active ?? false}
+                disabled={isToggling}
+                onCheckedChange={handleToggleActive}
+                className="cursor-pointer"
+              />
+            </div>
+
             <div className="flex items-center justify-between px-5 py-4 hover:bg-muted/30 transition-colors">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">

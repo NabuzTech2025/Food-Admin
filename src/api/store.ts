@@ -48,6 +48,7 @@ export interface Holiday {
 export interface StoreDetail {
   id: number;
   name: string;
+  is_active?: boolean;
   description?: string;
   image_url?: string;
   logo?: string;
@@ -80,6 +81,23 @@ export const getStoreById = async (
     return res.data?.data ?? res.data;
   } catch (error) {
     console.error("Get Store By ID Error:", error);
+    throw error;
+  }
+};
+
+// Super-admin only: toggle store visibility in the Magskr customer app
+export const setStoreActive = async (
+  storeId: number | string,
+  isActive: boolean,
+): Promise<{ id: number; name: string; is_active: boolean; message: string }> => {
+  try {
+    const res = await axiosInstance.patch(
+      `superadmin/stores/${storeId}/active`,
+      { is_active: isActive },
+    );
+    return res.data?.data ?? res.data;
+  } catch (error) {
+    console.error("Set Store Active Error:", error);
     throw error;
   }
 };

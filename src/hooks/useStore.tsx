@@ -1,4 +1,9 @@
-import { getStoreById, updateStore, type StoreDetail } from "@/api/store";
+import {
+  getStoreById,
+  setStoreActive,
+  updateStore,
+  type StoreDetail,
+} from "@/api/store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const STORE_BY_ID_KEY = "store-by-id";
@@ -23,6 +28,25 @@ export const useUpdateStore = () => {
       id: number | string;
       payload: Partial<StoreDetail>;
     }) => updateStore(id, payload),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [STORE_BY_ID_KEY, variables.id],
+      });
+    },
+  });
+};
+
+export const useSetStoreActive = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      isActive,
+    }: {
+      id: number | string;
+      isActive: boolean;
+    }) => setStoreActive(id, isActive),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: [STORE_BY_ID_KEY, variables.id],
