@@ -20,6 +20,7 @@ import {
   CreditCard,
   Clock,
   MonitorSmartphone,
+  Store,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
@@ -118,6 +119,11 @@ function AdminLayout() {
             name: "Payment Settings",
             icon: CreditCard,
             link: "/payment-settings",
+          },
+          {
+            name: "Store Status",
+            icon: Store,
+            link: "/super/store-status",
           },
           // Change Password intentionally NOT shown on the global Super Admin
           // dashboard — it belongs inside the per-store screen (StoreLayout.tsx).

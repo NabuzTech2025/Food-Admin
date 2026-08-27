@@ -85,6 +85,42 @@ export const getStoreById = async (
   }
 };
 
+export interface StoreActiveState {
+  id: number;
+  name: string;
+  is_active: boolean;
+  store_type: number;
+  address: string;
+}
+
+// Super-admin only: list all stores' active states (optional is_active filter)
+export const getAllStoresActive = async (
+  isActive?: boolean,
+): Promise<StoreActiveState[]> => {
+  try {
+    const res = await axiosInstance.get(`superadmin/stores/active`, {
+      params: isActive === undefined ? {} : { is_active: isActive },
+    });
+    return res.data?.data ?? res.data;
+  } catch (error) {
+    console.error("Get All Stores Active Error:", error);
+    throw error;
+  }
+};
+
+// Super-admin only: read current store visibility flag
+export const getStoreActive = async (
+  storeId: number | string,
+): Promise<{ id: number; name: string; is_active: boolean }> => {
+  try {
+    const res = await axiosInstance.get(`superadmin/stores/${storeId}/active`);
+    return res.data?.data ?? res.data;
+  } catch (error) {
+    console.error("Get Store Active Error:", error);
+    throw error;
+  }
+};
+
 // Super-admin only: toggle store visibility in the Magskr customer app
 export const setStoreActive = async (
   storeId: number | string,

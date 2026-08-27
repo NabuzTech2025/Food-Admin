@@ -51,6 +51,7 @@ import StoreLegalPageForm from "./pages/SuperAdmin/StoreDetails/StoreLegalPageFo
 import OrderPage from "./pages/StoreDashboard/Orders/Orders";
 import ChangePasswordPage from "./pages/StoreDashboard/Change_Password";
 import PaymentSettings from "./pages/SuperAdmin/Payment-Settings/Payment-Settings";
+import StoreStatus from "./pages/SuperAdmin/StoreStatus/StoreStatus";
 import SuperAdminDashboard from "./pages/SuperAdmin/DashBoard/Dashboard";
 import StoreConfigPage from "./pages/SuperAdmin/StoreConfig/StoreConfig";
 import StoreConfigFormPage from "./pages/SuperAdmin/StoreConfig/StoreConfigForm";
@@ -151,6 +152,7 @@ function App() {
                 element={<ReservationV2 />}
               />
               <Route path="super/device-status" element={<DeviceStatus />} />
+              <Route path="super/store-status" element={<StoreStatus />} />
               <Route path="super/store-profile" element={<StoreProfile />} />
             </Route>
 

@@ -1,5 +1,7 @@
 import {
   getStoreById,
+  getStoreActive,
+  getAllStoresActive,
   setStoreActive,
   updateStore,
   type StoreDetail,
@@ -7,6 +9,8 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const STORE_BY_ID_KEY = "store-by-id";
+const STORE_ACTIVE_KEY = "store-active";
+const STORES_ACTIVE_KEY = "stores-active";
 
 export const useGetStore = (storeId?: number | string | null) => {
   return useQuery<StoreDetail>({
@@ -36,6 +40,21 @@ export const useUpdateStore = () => {
   });
 };
 
+export const useGetAllStoresActive = (isActive?: boolean) => {
+  return useQuery({
+    queryKey: [STORES_ACTIVE_KEY, isActive ?? "all"],
+    queryFn: () => getAllStoresActive(isActive),
+  });
+};
+
+export const useGetStoreActive = (storeId?: number | string | null) => {
+  return useQuery({
+    queryKey: [STORE_ACTIVE_KEY, storeId],
+    queryFn: () => getStoreActive(storeId!),
+    enabled: !!storeId,
+  });
+};
+
 export const useSetStoreActive = () => {
   const queryClient = useQueryClient();
 
@@ -49,8 +68,12 @@ export const useSetStoreActive = () => {
     }) => setStoreActive(id, isActive),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
+        queryKey: [STORE_ACTIVE_KEY, variables.id],
+      });
+      queryClient.invalidateQueries({
         queryKey: [STORE_BY_ID_KEY, variables.id],
       });
+      queryClient.invalidateQueries({ queryKey: [STORES_ACTIVE_KEY] });
     },
   });
 };
