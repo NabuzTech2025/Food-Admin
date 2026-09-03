@@ -71,7 +71,7 @@ import BookingLayout from "./pages/BookingAdmin/BookingLayout";
 import BookingDashboard from "./pages/BookingAdmin/Dashboard";
 import CreateBooking from "./pages/BookingAdmin/CreateBooking";
 import BookingsList from "./pages/BookingAdmin/Bookings";
-import BookingCalendar from "./pages/BookingAdmin/Calendar";
+import BookingServices from "./pages/BookingAdmin/Services";
 
 // ✅ Store-scoped page imports (create these pages as needed)
 
@@ -220,7 +220,7 @@ function App() {
               <Route path="dashboard" element={<BookingDashboard />} />
               <Route path="create" element={<CreateBooking />} />
               <Route path="bookings" element={<BookingsList />} />
-              <Route path="calendar" element={<BookingCalendar />} />
+              <Route path="services" element={<BookingServices />} />
             </Route>
           </Route>
         </Routes>

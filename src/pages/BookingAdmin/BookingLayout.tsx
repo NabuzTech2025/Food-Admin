@@ -2,8 +2,8 @@ import Header from "@/components/Header";
 import {
   LayoutDashboard,
   CalendarCheck,
-  CalendarDays,
   PlusCircle,
+  Package,
   Ticket,
   X,
 } from "lucide-react";
@@ -13,7 +13,7 @@ import { NavLink, Outlet, useLocation } from "react-router-dom";
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, to: "dashboard" },
   { name: "Bookings", icon: CalendarCheck, to: "bookings" },
-  { name: "Calendar", icon: CalendarDays, to: "calendar" },
+  { name: "Services", icon: Package, to: "services" },
   { name: "Create Booking", icon: PlusCircle, to: "create" },
 ];
 

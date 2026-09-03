@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import {
   CalendarDays,
   Clock,
@@ -8,50 +8,26 @@ import {
   PoundSterling,
   Users,
   Plus,
+  Pencil,
 } from "lucide-react";
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useTodayBookings, useBookingStoreId } from "@/hooks/useBookingV2";
+import type { BookingV2 } from "@/api/bookingV2";
+import BookingCoversChart from "./BookingCoversChart";
+import EditBookingDialog from "./EditBookingDialog";
 
-// ponytail: static demo data; wire to booking API when the endpoint exists
-const stats = [
-  { label: "Total Bookings", value: "24", icon: CalendarDays },
-  { label: "Pending", value: "6", icon: Clock },
-  { label: "Accepted", value: "15", icon: CheckCircle2 },
-  { label: "Declined", value: "3", icon: XCircle },
-  { label: "Revenue (Accepted)", value: "£1,250.00", icon: PoundSterling },
-  { label: "Total Guests", value: "48", icon: Users },
-];
+const statusBadge = (status: BookingV2["status"]) => {
+  if (status === "booked") return <Badge className="bg-green-600 text-white">Accepted</Badge>;
+  if (status === "pending") return <Badge className="bg-amber-500 text-white">Pending</Badge>;
+  return <Badge className="bg-destructive text-white">Declined</Badge>;
+};
 
-const chartData = [
-  { day: "Mon", value: 8 },
-  { day: "Tue", value: 6 },
-  { day: "Wed", value: 14 },
-  { day: "Thu", value: 24 },
-  { day: "Fri", value: 9 },
-  { day: "Sat", value: 18 },
-  { day: "Sun", value: 15 },
-];
+const money = (n: number, currency: string) =>
+  new Intl.NumberFormat("en-GB", { style: "currency", currency: currency === "STR" ? "GBP" : currency }).format(n);
 
-const schedule = [
-  { time: "10:00 AM", title: "Premier League", sub: "Sarah Ahmed · 8 Guests", status: "Accepted" },
-  { time: "12:30 PM", title: "Champions League", sub: "John Smith · 6 Guests", status: "Pending" },
-  { time: "03:00 PM", title: "World Cup", sub: "Michael Brown · 10 Guests", status: "Accepted" },
-  { time: "05:00 PM", title: "Available Slot", sub: "05:00 PM - 06:00 PM", status: null },
-];
-
-const ranges = ["Daily", "Weekly", "Monthly"] as const;
-
-const statusBadge = (status: string) =>
-  status === "Accepted" ? (
-    <Badge className="bg-green-600 text-white">Accepted</Badge>
-  ) : (
-    <Badge className="bg-amber-500 text-white">Pending</Badge>
-  );
-
-function StatCard({ label, value, icon: Icon }: (typeof stats)[number]) {
+function StatCard({ label, value, icon: Icon }: { label: string; value: string; icon: React.ElementType }) {
   return (
     <div className="rounded-xl bg-component-bg border border-border p-5 flex items-center justify-between gap-3">
       <div className="min-w-0">
@@ -67,7 +43,20 @@ function StatCard({ label, value, icon: Icon }: (typeof stats)[number]) {
 
 function Dashboard() {
   const navigate = useNavigate();
-  const [range, setRange] = useState<(typeof ranges)[number]>("Daily");
+  const { data, isLoading } = useTodayBookings(useBookingStoreId());
+  const [editing, setEditing] = useState<BookingV2 | null>(null);
+
+  const s = data?.summary;
+  const currency = data?.bookings[0]?.currency ?? "GBP";
+  const stats = [
+    { label: "Total Bookings", value: String(s?.total ?? 0), icon: CalendarDays },
+    { label: "Pending", value: String(s?.pending ?? 0), icon: Clock },
+    { label: "Accepted", value: String(s?.booked ?? 0), icon: CheckCircle2 },
+    { label: "Declined", value: String(s?.cancelled ?? 0), icon: XCircle },
+    { label: "Revenue (Accepted)", value: money(s?.revenue_booked ?? 0, currency), icon: PoundSterling },
+    { label: "Total Guests", value: String(s?.guests ?? 0), icon: Users },
+  ];
+  const schedule = data?.bookings ?? [];
 
   return (
     <div className="max-w-7xl mx-auto space-y-5">
@@ -94,32 +83,12 @@ function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Booking overview chart */}
         <section className="lg:col-span-2 rounded-xl bg-component-bg border border-border p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-foreground">Booking Overview</h2>
-            <div className="flex gap-1 text-xs">
-              {ranges.map((r) => (
-                <button
-                  key={r}
-                  onClick={() => setRange(r)}
-                  className={cn(
-                    "px-3 py-1.5 rounded-lg font-medium transition-colors",
-                    range === r
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-muted"
-                  )}
-                >
-                  {r}
-                </button>
-              ))}
-            </div>
-          </div>
-          <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={chartData} barCategoryGap="35%">
-              <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} domain={[0, 30]} ticks={[0, 10, 20, 30]} width={24} />
-              <Bar dataKey="value" fill="var(--primary)" radius={[8, 8, 8, 8]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <h2 className="font-semibold text-foreground mb-1">Booking Overview</h2>
+          {isLoading ? (
+            <p className="text-sm text-muted-foreground py-6 text-center">Loading…</p>
+          ) : (
+            <BookingCoversChart bookings={schedule} />
+          )}
         </section>
 
         {/* Today's schedule */}
@@ -134,20 +103,42 @@ function Dashboard() {
             </button>
           </div>
           <div className="divide-y divide-border">
-            {schedule.map((item) => (
-              <div key={item.time} className="flex items-center gap-3 py-3">
-                <span className="text-xs text-muted-foreground w-16 shrink-0">{item.time}</span>
-                <span className="w-px self-stretch bg-border" />
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-foreground truncate">{item.title}</p>
-                  <p className="text-xs text-muted-foreground truncate">{item.sub}</p>
+            {isLoading ? (
+              <p className="text-sm text-muted-foreground py-6 text-center">Loading…</p>
+            ) : schedule.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-6 text-center">No bookings today.</p>
+            ) : (
+              schedule.map((b) => (
+                <div key={b.id} className="flex items-center gap-3 py-3">
+                  <span className="text-xs text-muted-foreground w-16 shrink-0">
+                    {format(parseISO(b.start_at), "hh:mm a")}
+                  </span>
+                  <span className="w-px self-stretch bg-border" />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-foreground truncate">
+                      {b.customer_name || "Guest"}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {b.reference} · {b.party_size} Guests
+                    </p>
+                  </div>
+                  {statusBadge(b.status)}
+                  <button
+                    onClick={() => setEditing(b)}
+                    className="text-muted-foreground hover:text-primary shrink-0"
+                    aria-label="Edit booking"
+                  >
+                    <Pencil size={15} />
+                  </button>
                 </div>
-                {item.status && statusBadge(item.status)}
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </section>
       </div>
+
+      {/* Edit booking */}
+      <EditBookingDialog booking={editing} onClose={() => setEditing(null)} />
     </div>
   );
 }

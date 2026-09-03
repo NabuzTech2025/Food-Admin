@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { format, parseISO } from "date-fns";
 import {
   Search,
   SlidersHorizontal,
@@ -9,12 +10,12 @@ import {
   Check,
   X,
   User,
+  Pencil,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { DatePicker } from "@/components/ui/date-picker";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
@@ -22,55 +23,69 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-
-type Status = "Accepted" | "Pending" | "Declined";
-
-// ponytail: static demo data; wire to booking API when the endpoint exists
-type Booking = {
-  id: string;
-  title: string;
-  customer: string;
-  phone: string;
-  date: string;
-  time: string;
-  guests: number;
-  status: Status;
-};
-
-const bookings: Booking[] = [
-  { id: "BK-10245", title: "Premier League", customer: "Sarah Ahmed", phone: "+44 7700 900123", date: "02 Sep 2026", time: "10:00 AM", guests: 8, status: "Accepted" },
-  { id: "BK-10246", title: "Champions League", customer: "John Smith", phone: "+44 7700 900456", date: "02 Sep 2026", time: "12:30 PM", guests: 6, status: "Pending" },
-  { id: "BK-10247", title: "World Cup", customer: "Michael Brown", phone: "+44 7700 900789", date: "02 Sep 2026", time: "03:00 PM", guests: 10, status: "Accepted" },
-];
+import {
+  useFilterBookings,
+  useBookingStoreId,
+  useUpdateBooking,
+} from "@/hooks/useBookingV2";
+import type { BookingV2 } from "@/api/bookingV2";
+import EditBookingDialog from "./EditBookingDialog";
 
 const tabs = ["All", "Pending", "Accepted", "Declined"] as const;
+type Tab = (typeof tabs)[number];
 
-const statusBadge = (status: Status) => {
-  const map: Record<Status, string> = {
-    Accepted: "bg-green-600 text-white",
-    Pending: "bg-amber-500 text-white",
-    Declined: "bg-destructive text-white",
-  };
-  return <Badge className={map[status]}>{status}</Badge>;
+// tab -> booking status
+const tabStatus: Record<Exclude<Tab, "All">, BookingV2["status"]> = {
+  Pending: "pending",
+  Accepted: "booked",
+  Declined: "cancelled",
 };
 
-function BookingCard({ b }: { b: Booking }) {
+const statusBadge = (status: BookingV2["status"]) => {
+  if (status === "booked") return <Badge className="bg-green-600 text-white">Accepted</Badge>;
+  if (status === "pending") return <Badge className="bg-amber-500 text-white">Pending</Badge>;
+  return <Badge className="bg-destructive text-white">Declined</Badge>;
+};
+
+function BookingCard({
+  b,
+  onAccept,
+  onDecline,
+  onOpen,
+  onEdit,
+  isUpdating,
+}: {
+  b: BookingV2;
+  onAccept: (b: BookingV2) => void;
+  onDecline: (b: BookingV2) => void;
+  onOpen: (b: BookingV2) => void;
+  onEdit: (b: BookingV2) => void;
+  isUpdating: boolean;
+}) {
   return (
-    <div className="rounded-xl bg-component-bg border border-border p-5 space-y-4">
+    <div
+      onClick={() => onOpen(b)}
+      className="rounded-xl bg-component-bg border border-border p-5 space-y-4 cursor-pointer hover:border-primary/40 transition-colors"
+    >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="font-semibold text-foreground">{b.title}</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">{b.id}</p>
+          <h3 className="font-semibold text-foreground">{b.customer_name || "Guest"}</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">{b.reference}</p>
         </div>
-        {statusBadge(b.status)}
+        <div className="flex items-center gap-2 shrink-0">
+          {statusBadge(b.status)}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(b);
+            }}
+            className="text-muted-foreground hover:text-primary"
+            aria-label="Edit booking"
+          >
+            <Pencil size={16} />
+          </button>
+        </div>
       </div>
 
       <div className="flex items-center gap-3 border-t border-border pt-4">
@@ -78,30 +93,49 @@ function BookingCard({ b }: { b: Booking }) {
           <User size={18} />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="font-semibold text-foreground truncate">{b.customer}</p>
-          <p className="text-sm text-muted-foreground truncate">{b.phone}</p>
+          <p className="font-semibold text-foreground truncate">
+            {b.customer_phone || "—"}
+          </p>
+          {b.customer_email && (
+            <p className="text-sm text-muted-foreground truncate">{b.customer_email}</p>
+          )}
         </div>
         <ChevronRight size={18} className="text-muted-foreground shrink-0" />
       </div>
 
       <div className="flex items-center gap-5 border-t border-border pt-4 text-sm text-muted-foreground flex-wrap">
         <span className="flex items-center gap-1.5">
-          <CalendarDays size={15} className="text-primary" /> {b.date}
+          <CalendarDays size={15} className="text-primary" /> {format(parseISO(b.start_at), "dd MMM yyyy")}
         </span>
         <span className="flex items-center gap-1.5">
-          <Clock size={15} className="text-primary" /> {b.time}
+          <Clock size={15} className="text-primary" /> {format(parseISO(b.start_at), "hh:mm a")}
         </span>
         <span className="flex items-center gap-1.5 ml-auto">
-          <Users size={15} className="text-primary" /> {b.guests}
+          <Users size={15} className="text-primary" /> {b.party_size}
         </span>
       </div>
 
-      {b.status === "Pending" && (
+      {b.status === "pending" && (
         <div className="grid grid-cols-2 gap-3 pt-1">
-          <Button variant="outline" className="border-destructive text-destructive hover:bg-destructive/10">
+          <Button
+            variant="outline"
+            className="border-destructive text-destructive hover:bg-destructive/10"
+            disabled={isUpdating}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDecline(b);
+            }}
+          >
             <X className="w-4 h-4" /> Decline
           </Button>
-          <Button className="bg-green-600 hover:bg-green-700 text-white">
+          <Button
+            className="bg-green-600 hover:bg-green-700 text-white"
+            disabled={isUpdating}
+            onClick={(e) => {
+              e.stopPropagation();
+              onAccept(b);
+            }}
+          >
             <Check className="w-4 h-4" /> Accept
           </Button>
         </div>
@@ -110,22 +144,119 @@ function BookingCard({ b }: { b: Booking }) {
   );
 }
 
+const money = (n: number, currency: string) =>
+  new Intl.NumberFormat("en-GB", {
+    style: "currency",
+    currency: currency === "STR" ? "GBP" : currency,
+  }).format(n);
+
+function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-start justify-between gap-4 py-2 border-b border-border last:border-0">
+      <span className="text-sm text-muted-foreground shrink-0">{label}</span>
+      <span className="text-sm font-medium text-foreground text-right break-words">{children}</span>
+    </div>
+  );
+}
+
+function BookingDetailDialog({
+  booking,
+  onClose,
+  onEdit,
+}: {
+  booking: BookingV2 | null;
+  onClose: () => void;
+  onEdit: (b: BookingV2) => void;
+}) {
+  return (
+    <Dialog open={!!booking} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-h-[85vh] overflow-y-auto">
+        {booking && (
+          <>
+            <DialogHeader>
+              <div className="flex items-center justify-between gap-3 pr-6">
+                <DialogTitle>{booking.customer_name || "Guest"}</DialogTitle>
+                {statusBadge(booking.status)}
+              </div>
+              <p className="text-xs text-muted-foreground">{booking.reference}</p>
+            </DialogHeader>
+
+            <div className="mt-2">
+              <DetailRow label="Date">{format(parseISO(booking.start_at), "EEE, dd MMM yyyy")}</DetailRow>
+              <DetailRow label="Time">
+                {format(parseISO(booking.start_at), "hh:mm a")} – {format(parseISO(booking.end_at), "hh:mm a")}
+                <span className="text-muted-foreground font-normal"> · {booking.duration_minutes} min</span>
+              </DetailRow>
+              <DetailRow label="Guests">{booking.party_size}</DetailRow>
+              <DetailRow label="Units">{booking.units}</DetailRow>
+              <DetailRow label="Phone">{booking.customer_phone || "—"}</DetailRow>
+              <DetailRow label="Email">{booking.customer_email || "—"}</DetailRow>
+              <DetailRow label="Payment">
+                <span className="capitalize">{booking.payment_status}</span>
+              </DetailRow>
+              {booking.price_total != null && (
+                <DetailRow label="Total">{money(booking.price_total, booking.currency)}</DetailRow>
+              )}
+              {booking.deposit_amount != null && (
+                <DetailRow label="Deposit">{money(booking.deposit_amount, booking.currency)}</DetailRow>
+              )}
+              {booking.note && <DetailRow label="Note">{booking.note}</DetailRow>}
+              <DetailRow label="Created">{format(parseISO(booking.created_at), "dd MMM yyyy, hh:mm a")}</DetailRow>
+            </div>
+
+            {booking.form_data && Object.keys(booking.form_data).length > 0 && (
+              <div className="mt-4">
+                <p className="text-sm font-semibold text-foreground mb-1">Additional Details</p>
+                {Object.entries(booking.form_data).map(([k, v]) => (
+                  <DetailRow key={k} label={k.replace(/_/g, " ")}>
+                    {typeof v === "boolean" ? (v ? "Yes" : "No") : String(v)}
+                  </DetailRow>
+                ))}
+              </div>
+            )}
+
+            <DialogFooter className="mt-5">
+              <Button onClick={() => onEdit(booking)}>
+                <Pencil className="w-4 h-4" /> Edit Booking
+              </Button>
+            </DialogFooter>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function Bookings() {
-  const [tab, setTab] = useState<(typeof tabs)[number]>("All");
+  const storeId = useBookingStoreId();
+  const [tab, setTab] = useState<Tab>("All");
   const [query, setQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
+  const [selected, setSelected] = useState<BookingV2 | null>(null);
+  const [editing, setEditing] = useState<BookingV2 | null>(null);
+
+  // applied date filter
+  const [targetDate, setTargetDate] = useState(format(new Date(), "yyyy-MM-dd"));
+
+  const { data: bookings = [], isLoading } = useFilterBookings(storeId, targetDate);
+  const updateBooking = useUpdateBooking();
+
+  const accept = (b: BookingV2) =>
+    updateBooking.mutate({ id: b.id, payload: { status: "booked" } });
+  const decline = (b: BookingV2) =>
+    updateBooking.mutate({ id: b.id, payload: { status: "cancelled" } });
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return bookings.filter(
       (b) =>
-        (tab === "All" || b.status === tab) &&
+        (tab === "All" || b.status === tabStatus[tab]) &&
         (!q ||
-          b.title.toLowerCase().includes(q) ||
-          b.customer.toLowerCase().includes(q) ||
-          b.id.toLowerCase().includes(q))
+          (b.customer_name ?? "").toLowerCase().includes(q) ||
+          (b.customer_phone ?? "").toLowerCase().includes(q) ||
+          b.reference.toLowerCase().includes(q))
     );
-  }, [tab, query]);
+  }, [bookings, tab, query]);
 
   return (
     <div className="max-w-4xl mx-auto space-y-5">
@@ -140,7 +271,12 @@ function Bookings() {
             className="pl-10"
           />
         </div>
-        <Button variant="default" size="icon" onClick={() => setFilterOpen(true)} aria-label="Filter">
+        <Button
+          variant="default"
+          size="icon"
+          onClick={() => setFilterOpen(true)}
+          aria-label="Filter"
+        >
           <SlidersHorizontal className="w-4 h-4" />
         </Button>
       </div>
@@ -165,67 +301,63 @@ function Bookings() {
 
       {/* List */}
       <div className="space-y-4">
-        <p className="text-xs font-semibold tracking-wide text-muted-foreground">TODAY</p>
-        {filtered.length === 0 ? (
+        <p className="text-xs font-semibold tracking-wide text-muted-foreground">
+          {format(parseISO(targetDate), "dd MMM yyyy").toUpperCase()}
+        </p>
+        {isLoading ? (
+          <div className="rounded-xl bg-component-bg border border-border p-10 text-center text-sm text-muted-foreground">
+            Loading…
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="rounded-xl bg-component-bg border border-border p-10 text-center text-sm text-muted-foreground">
             No bookings found.
           </div>
         ) : (
-          filtered.map((b) => <BookingCard key={b.id} b={b} />)
+          filtered.map((b) => (
+            <BookingCard
+              key={b.id}
+              b={b}
+              onAccept={accept}
+              onDecline={decline}
+              onOpen={setSelected}
+              onEdit={setEditing}
+              isUpdating={updateBooking.isPending}
+            />
+          ))
         )}
       </div>
 
-      {/* Filter modal */}
+      {/* Filter modal — pick a date to filter immediately */}
       <Dialog open={filterOpen} onOpenChange={setFilterOpen}>
-        <DialogContent>
+        <DialogContent className="w-auto">
           <DialogHeader>
             <DialogTitle>Filter Bookings</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="space-y-1.5">
-              <Label className="flex items-center gap-2">
-                <CalendarDays size={16} className="text-primary" /> Date
-              </Label>
-              <DatePicker value="" onChange={() => {}} placeholder="Select booking date" />
-            </div>
-            <div className="space-y-1.5">
-              <Label className="flex items-center gap-2">
-                <SlidersHorizontal size={16} className="text-primary" /> Service
-              </Label>
-              <Select>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="All services" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="premier">Premier League</SelectItem>
-                  <SelectItem value="champions">Champions League</SelectItem>
-                  <SelectItem value="worldcup">World Cup</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <Label className="flex items-center gap-2">
-                <Users size={16} className="text-primary" /> Guests
-              </Label>
-              <Select>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Any number of guests" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1-4">1 - 4</SelectItem>
-                  <SelectItem value="5-8">5 - 8</SelectItem>
-                  <SelectItem value="9+">9+</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button className="w-full" onClick={() => setFilterOpen(false)}>
-              Apply Filters
-            </Button>
-          </DialogFooter>
+          <Calendar
+            mode="single"
+            selected={parseISO(targetDate)}
+            onSelect={(d) => {
+              if (!d) return;
+              setTargetDate(format(d, "yyyy-MM-dd"));
+              setFilterOpen(false);
+            }}
+            autoFocus
+          />
         </DialogContent>
       </Dialog>
+
+      {/* Booking detail */}
+      <BookingDetailDialog
+        booking={selected}
+        onClose={() => setSelected(null)}
+        onEdit={(b) => {
+          setSelected(null);
+          setEditing(b);
+        }}
+      />
+
+      {/* Edit booking */}
+      <EditBookingDialog booking={editing} onClose={() => setEditing(null)} />
     </div>
   );
 }
