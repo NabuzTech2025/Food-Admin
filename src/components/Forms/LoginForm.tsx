@@ -37,6 +37,8 @@ function LoginForm() {
         toast.success(result.message || "Login successful");
         if (result.role_id === 1) {
           navigate("/super/dashboard", { replace: true });
+        } else if (Number(result.store_type) === 2) {
+          navigate("/booking-admin", { replace: true });
         } else {
           navigate("/dashboard", { replace: true });
         }

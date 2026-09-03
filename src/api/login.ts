@@ -11,6 +11,8 @@ export interface LoginResponse {
   role_id: number;
   store_id: number;
   store_type: string;
+  device_token: string | null;
+  customer_name: string | null;
   message?: string;
 }
 

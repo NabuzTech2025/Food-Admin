@@ -67,6 +67,11 @@ import ReservationLayout from "./pages/ReservationDashboard/ReservationLayout";
 import ReservationOverview from "./pages/ReservationDashboard/Overview";
 import ReservationBookings from "./pages/ReservationDashboard/Bookings";
 import ReservationSettings from "./pages/ReservationDashboard/Settings";
+import BookingLayout from "./pages/BookingAdmin/BookingLayout";
+import BookingDashboard from "./pages/BookingAdmin/Dashboard";
+import CreateBooking from "./pages/BookingAdmin/CreateBooking";
+import BookingsList from "./pages/BookingAdmin/Bookings";
+import BookingCalendar from "./pages/BookingAdmin/Calendar";
 
 // ✅ Store-scoped page imports (create these pages as needed)
 
@@ -207,6 +212,15 @@ function App() {
               <Route path="overview" element={<ReservationOverview />} />
               <Route path="bookings" element={<ReservationBookings />} />
               <Route path="settings" element={<ReservationSettings />} />
+            </Route>
+
+            {/* ─── Booking admin (mobile-style dashboard) ─── */}
+            <Route path="booking-admin" element={<BookingLayout />}>
+              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route path="dashboard" element={<BookingDashboard />} />
+              <Route path="create" element={<CreateBooking />} />
+              <Route path="bookings" element={<BookingsList />} />
+              <Route path="calendar" element={<BookingCalendar />} />
             </Route>
           </Route>
         </Routes>
