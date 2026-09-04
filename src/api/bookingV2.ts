@@ -197,3 +197,86 @@ export const updateService = async (
 export const deleteService = async (id: number): Promise<void> => {
   await axiosInstance.delete(`${V2}/services/${id}`);
 };
+
+// ── Availability & guest booking ───────────────────────────────
+export interface AvailabilitySlot {
+  time: string;
+  datetime: string;
+  available: number;
+  total: number;
+  bookable: boolean;
+}
+
+export interface ServiceAvailability {
+  service_id: number;
+  service_name: string;
+  store_id: number;
+  date: string;
+  party_size: number;
+  enabled: boolean;
+  duration_minutes: number;
+  reason: string | null;
+  slots: AvailabilitySlot[];
+}
+
+export const getServiceAvailability = async (
+  serviceId: number,
+  date: string,
+  partySize: number,
+): Promise<ServiceAvailability> => {
+  const res = await axiosInstance.get<ServiceAvailability>(`${V2}/availability`, {
+    params: { service_id: serviceId, date, party_size: partySize },
+  });
+  return res.data;
+};
+
+export interface CreateGuestBookingPayload {
+  store_id: number;
+  service_id: number;
+  start_at: string;
+  party_size: number;
+  customer_name: string;
+  customer_phone?: string;
+  customer_email?: string;
+  note?: string;
+  option_ids?: number[];
+  form_data?: Record<string, unknown>;
+}
+
+export const createGuestBooking = async (
+  payload: CreateGuestBookingPayload,
+): Promise<BookingV2> => {
+  const res = await axiosInstance.post<BookingV2>(`${V2}/guest`, payload);
+  return res.data;
+};
+
+// ── Booking config (settings) ──────────────────────────────────
+export interface BookingConfig {
+  store_id: number;
+  enabled: boolean;
+  slot_interval_minutes: number;
+  lead_time_minutes: number;
+  booking_window_days: number;
+  currency: string;
+  require_payment: boolean;
+  auto_accept: boolean;
+}
+
+export const getBookingConfig = async (
+  storeId: number,
+): Promise<BookingConfig> => {
+  const res = await axiosInstance.get<BookingConfig>(`${V2}/config`, {
+    params: { store_id: storeId },
+  });
+  return res.data;
+};
+
+export const updateBookingConfig = async (
+  storeId: number,
+  payload: Partial<Omit<BookingConfig, "store_id">>,
+): Promise<BookingConfig> => {
+  const res = await axiosInstance.put<BookingConfig>(`${V2}/config`, payload, {
+    params: { store_id: storeId },
+  });
+  return res.data;
+};

@@ -11,12 +11,18 @@ import {
   createService,
   updateService,
   deleteService,
+  getServiceAvailability,
+  createGuestBooking,
+  getBookingConfig,
+  updateBookingConfig,
 } from "@/api/bookingV2";
 import type {
   FilterBookingsPayload,
   UpdateBookingPayload,
   CreateServicePayload,
   UpdateServicePayload,
+  CreateGuestBookingPayload,
+  BookingConfig,
 } from "@/api/bookingV2";
 
 const KEY = "booking-v2";
@@ -132,5 +138,54 @@ export const useDeleteService = () => {
     },
     onError: (e: any) =>
       toast.error(e?.response?.data?.message || "Failed to delete service"),
+  });
+};
+
+// ── Availability & guest booking ───────────────────────────────
+export const useServiceAvailability = (
+  serviceId: number | null,
+  date: string,
+  partySize: number,
+) =>
+  useQuery({
+    queryKey: [KEY, "availability", serviceId, date, partySize],
+    queryFn: () => getServiceAvailability(serviceId!, date, partySize),
+    enabled: !!serviceId && !!date && partySize > 0,
+  });
+
+export const useCreateGuestBooking = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CreateGuestBookingPayload) => createGuestBooking(payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [KEY] });
+      toast.success("Booking created");
+    },
+    onError: (e: any) =>
+      toast.error(e?.response?.data?.message || "Failed to create booking"),
+  });
+};
+
+// ── Config (settings) ──────────────────────────────────────────
+const CFG = "booking-config";
+
+export const useBookingConfig = (storeId: number | null) =>
+  useQuery({
+    queryKey: [CFG, storeId],
+    queryFn: () => getBookingConfig(storeId!),
+    enabled: !!storeId,
+  });
+
+export const useUpdateBookingConfig = (storeId: number | null) => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: Partial<Omit<BookingConfig, "store_id">>) =>
+      updateBookingConfig(storeId!, payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [CFG, storeId] });
+      toast.success("Settings saved");
+    },
+    onError: (e: any) =>
+      toast.error(e?.response?.data?.message || "Failed to save settings"),
   });
 };

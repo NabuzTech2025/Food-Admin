@@ -4,6 +4,7 @@ import {
   CalendarCheck,
   PlusCircle,
   Package,
+  Settings,
   Ticket,
   X,
 } from "lucide-react";
@@ -15,6 +16,7 @@ const navItems = [
   { name: "Bookings", icon: CalendarCheck, to: "bookings" },
   { name: "Services", icon: Package, to: "services" },
   { name: "Create Booking", icon: PlusCircle, to: "create" },
+  { name: "Settings", icon: Settings, to: "settings" },
 ];
 
 function BookingLayout() {

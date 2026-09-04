@@ -20,6 +20,7 @@ function Header({
   const location = useLocation();
   const { storeId } = useParams(); // set when browsing a store as super admin
   const inReservation = location.pathname.includes("reservation-dashboard");
+  const inBooking = location.pathname.includes("booking-admin");
   const reservationPath = storeId
     ? `/super/stores/${storeId}/reservation-dashboard`
     : "/reservation-dashboard";
@@ -85,7 +86,7 @@ function Header({
 
         {/* Sits left of Logout: "Back to Admin" inside the reservation
             dashboard, otherwise a shortcut into it. */}
-        {inReservation ? (
+        {inBooking ? null : inReservation ? (
           <button
             onClick={() => navigate(backPath)}
             className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary-light dark:hover:bg-primary-light rounded-lg transition-colors duration-200 cursor-pointer"
