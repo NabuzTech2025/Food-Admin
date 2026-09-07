@@ -148,13 +148,20 @@ export interface CreateServicePayload {
   store_id: number;
   name: string;
   description?: string;
+  image_url?: string;
   duration_minutes: number;
   buffer_minutes: number;
   min_party: number;
   max_party: number;
   price_mode: string;
   price: number;
+  deposit_amount?: number | null;
+  require_payment?: boolean;
+  slot_interval_minutes?: number | null;
+  lead_time_minutes?: number | null;
+  booking_window_days?: number | null;
   options?: ServiceOption[];
+  hours?: ServiceHour[];
   is_active: boolean;
   sort_order: number;
 }
