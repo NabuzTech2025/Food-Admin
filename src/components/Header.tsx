@@ -1,5 +1,14 @@
 import { Input } from "@/components/ui/input";
-import { Search, Menu, LogOut, CalendarCheck, ArrowLeft } from "lucide-react";
+import {
+  Search,
+  Menu,
+  LogOut,
+  CalendarCheck,
+  ArrowLeft,
+  BookIcon,
+  BookA,
+  BookCheck,
+} from "lucide-react";
 import { useState } from "react";
 import { useAdminStore } from "@/context/store/useAdminStore";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
@@ -95,13 +104,22 @@ function Header({
             <span className="hidden sm:inline">Back to Admin</span>
           </button>
         ) : superAdminTop ? null : (
-          <button
-            onClick={() => navigate(reservationPath)}
-            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary-light dark:hover:bg-primary-light rounded-lg transition-colors duration-200 cursor-pointer"
-          >
-            <CalendarCheck size={18} />
-            <span className="hidden sm:inline">Reservations</span>
-          </button>
+          <>
+            <button
+              onClick={() => navigate(reservationPath)}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary-light dark:hover:bg-primary-light rounded-lg transition-colors duration-200 cursor-pointer"
+            >
+              <CalendarCheck size={18} />
+              <span className="hidden sm:inline">Reservations</span>
+            </button>
+            <button
+              onClick={() => navigate("/booking-admin")}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary-light dark:hover:bg-primary-light rounded-lg transition-colors duration-200 cursor-pointer"
+            >
+              <BookCheck size={18} />
+              <span className="hidden sm:inline">Bookings</span>
+            </button>
+          </>
         )}
 
         {/* Logout button */}
