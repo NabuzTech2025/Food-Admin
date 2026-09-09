@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/select";
 import {
   useServices,
+  useResources,
   useBookingStoreId,
   useCreateService,
   useUpdateService,
@@ -138,6 +139,7 @@ type OptionField = {
 type HourField = { day_of_week: string; start_time: string; end_time: string };
 type FormValues = {
   name: string;
+  resource_id: string;
   description: string;
   duration_minutes: string;
   buffer_minutes: string;
@@ -156,8 +158,11 @@ type FormValues = {
   hours: HourField[];
 };
 
+const NO_RESOURCE = "none";
+
 const defaultsFrom = (s: BookingService | null): FormValues => ({
   name: s?.name ?? "",
+  resource_id: s?.resource_id != null ? String(s.resource_id) : NO_RESOURCE,
   description: s?.description ?? "",
   duration_minutes: String(s?.duration_minutes ?? 60),
   buffer_minutes: String(s?.buffer_minutes ?? 15),
@@ -257,6 +262,7 @@ function ServiceForm({
   const create = useCreateService();
   const update = useUpdateService();
   const upload = useUploadImage();
+  const { data: resources = [] } = useResources(storeId);
   const isEdit = !!service;
 
   const { control, register, handleSubmit } = useForm<FormValues>({
@@ -283,6 +289,7 @@ function ServiceForm({
 
     const payload = {
       name: v.name,
+      resource_id: v.resource_id === NO_RESOURCE ? null : Number(v.resource_id),
       description: v.description,
       image_url: imageUrl || undefined,
       duration_minutes: Number(v.duration_minutes),
@@ -365,6 +372,28 @@ function ServiceForm({
             <div className="space-y-1.5">
               <Label>Name</Label>
               <Input {...register("name", { required: true })} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Resource</Label>
+              <Controller
+                control={control}
+                name="resource_id"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="No resource" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={NO_RESOURCE}>No resource</SelectItem>
+                      {resources.map((r) => (
+                        <SelectItem key={r.id} value={String(r.id)}>
+                          {r.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
             <div className="space-y-1.5">
               <Label>Description</Label>

@@ -146,6 +146,7 @@ export interface BookingService {
 
 export interface CreateServicePayload {
   store_id: number;
+  resource_id?: number | null;
   name: string;
   description?: string;
   image_url?: string;
@@ -203,6 +204,63 @@ export const updateService = async (
 
 export const deleteService = async (id: number): Promise<void> => {
   await axiosInstance.delete(`${V2}/services/${id}`);
+};
+
+// ── Resources (the stadium / chairs / rooms) ───────────────────
+export type CapacityMode = "exclusive" | "pooled";
+
+export interface Resource {
+  id: number;
+  store_id: number;
+  name: string;
+  capacity: number;
+  capacity_mode: CapacityMode;
+  is_active: boolean;
+  sort_order: number;
+}
+
+export interface CreateResourcePayload {
+  store_id: number;
+  name: string;
+  capacity: number;
+  capacity_mode: CapacityMode;
+  is_active: boolean;
+  sort_order: number;
+}
+
+export type UpdateResourcePayload = Partial<
+  Omit<Resource, "id" | "store_id">
+>;
+
+export const listResources = async (
+  storeId: number,
+): Promise<Resource[]> => {
+  const res = await axiosInstance.get<Resource[]>(`${V2}/resources`, {
+    params: { store_id: storeId },
+  });
+  return res.data;
+};
+
+export const createResource = async (
+  payload: CreateResourcePayload,
+): Promise<Resource> => {
+  const res = await axiosInstance.post<Resource>(`${V2}/resources`, payload);
+  return res.data;
+};
+
+export const updateResource = async (
+  id: number,
+  payload: UpdateResourcePayload,
+): Promise<Resource> => {
+  const res = await axiosInstance.put<Resource>(
+    `${V2}/resources/${id}`,
+    payload,
+  );
+  return res.data;
+};
+
+export const deleteResource = async (id: number): Promise<void> => {
+  await axiosInstance.delete(`${V2}/resources/${id}`);
 };
 
 // ── Availability & guest booking ───────────────────────────────

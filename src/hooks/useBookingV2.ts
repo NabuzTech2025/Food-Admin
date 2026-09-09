@@ -15,6 +15,10 @@ import {
   createGuestBooking,
   getBookingConfig,
   updateBookingConfig,
+  listResources,
+  createResource,
+  updateResource,
+  deleteResource,
 } from "@/api/bookingV2";
 import type {
   FilterBookingsPayload,
@@ -22,6 +26,8 @@ import type {
   CreateServicePayload,
   UpdateServicePayload,
   CreateGuestBookingPayload,
+  CreateResourcePayload,
+  UpdateResourcePayload,
   BookingConfig,
 } from "@/api/bookingV2";
 
@@ -138,6 +144,56 @@ export const useDeleteService = () => {
     },
     onError: (e: any) =>
       toast.error(e?.response?.data?.message || "Failed to delete service"),
+  });
+};
+
+// ── Resources ───────────────────────────────────────────────────
+const RES = "booking-resource";
+
+export const useResources = (storeId: number | null) =>
+  useQuery({
+    queryKey: [RES, storeId],
+    queryFn: () => listResources(storeId!),
+    enabled: !!storeId,
+  });
+
+export const useCreateResource = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CreateResourcePayload) => createResource(payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [RES] });
+      toast.success("Resource created");
+    },
+    onError: (e: any) =>
+      toast.error(e?.response?.data?.message || "Failed to create resource"),
+  });
+};
+
+export const useUpdateResource = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: UpdateResourcePayload }) =>
+      updateResource(id, payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [RES] });
+      toast.success("Resource updated");
+    },
+    onError: (e: any) =>
+      toast.error(e?.response?.data?.message || "Failed to update resource"),
+  });
+};
+
+export const useDeleteResource = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => deleteResource(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [RES] });
+      toast.success("Resource deleted");
+    },
+    onError: (e: any) =>
+      toast.error(e?.response?.data?.message || "Failed to delete resource"),
   });
 };
 

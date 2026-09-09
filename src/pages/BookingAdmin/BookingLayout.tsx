@@ -4,6 +4,7 @@ import {
   CalendarCheck,
   PlusCircle,
   Package,
+  Box,
   Settings,
   Ticket,
   X,
@@ -15,6 +16,7 @@ const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, to: "dashboard" },
   { name: "Bookings", icon: CalendarCheck, to: "bookings" },
   { name: "Services", icon: Package, to: "services" },
+  { name: "Resources", icon: Box, to: "resources" },
   { name: "Create Booking", icon: PlusCircle, to: "create" },
   { name: "Settings", icon: Settings, to: "settings" },
 ];
