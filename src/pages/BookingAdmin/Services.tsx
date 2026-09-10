@@ -45,7 +45,7 @@ import { useUploadImage } from "@/hooks/Common/useUploadImage";
 import type { BookingService } from "@/api/bookingV2";
 
 const priceModes = ["flat", "per_person", "none"];
-const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const money = (n: number) =>
   new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(
@@ -631,7 +631,7 @@ function ServiceForm({
                 size="sm"
                 onClick={() =>
                   hours.append({
-                    day_of_week: "1",
+                    day_of_week: "0",
                     start_time: "09:00",
                     end_time: "17:00",
                   })
