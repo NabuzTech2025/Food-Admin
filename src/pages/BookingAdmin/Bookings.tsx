@@ -74,6 +74,9 @@ function BookingCard({
           <p className="text-xs text-muted-foreground mt-0.5">{b.reference}</p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
+          <span className="text-xs text-muted-foreground">
+            Payment Status : <span className="capitalize text-foreground font-medium">{b.payment_status}</span>
+          </span>
           {statusBadge(b.status)}
           <button
             onClick={(e) => {
@@ -144,11 +147,14 @@ function BookingCard({
   );
 }
 
-const money = (n: number, currency: string) =>
-  new Intl.NumberFormat("en-GB", {
-    style: "currency",
-    currency: currency === "STR" ? "GBP" : currency,
-  }).format(n);
+const money = (n: number, currency: string) => {
+  const code = { STR: "GBP", DE: "EUR" }[currency] ?? currency;
+  try {
+    return new Intl.NumberFormat("en-GB", { style: "currency", currency: code }).format(n);
+  } catch {
+    return `${code} ${n.toFixed(2)}`; // non-ISO currency code
+  }
+};
 
 function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
