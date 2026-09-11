@@ -132,6 +132,7 @@ type OptionField = {
   name: string;
   price_delta: string;
   price_mode: string;
+  max_qty: string;
   is_default: boolean;
   is_active: boolean;
   sort_order: string;
@@ -184,6 +185,7 @@ const defaultsFrom = (s: BookingService | null): FormValues => ({
     name: o.name,
     price_delta: String(o.price_delta),
     price_mode: o.price_mode,
+    max_qty: String(o.max_qty ?? 1),
     is_default: o.is_default,
     is_active: o.is_active,
     sort_order: String(o.sort_order),
@@ -309,6 +311,7 @@ function ServiceForm({
         name: o.name,
         price_delta: Number(o.price_delta),
         price_mode: o.price_mode,
+        max_qty: Number(o.max_qty),
         is_default: o.is_default,
         is_active: o.is_active,
         sort_order: Number(o.sort_order),
@@ -533,6 +536,7 @@ function ServiceForm({
                     name: "",
                     price_delta: "0",
                     price_mode: "flat",
+                    max_qty: "1",
                     is_default: false,
                     is_active: true,
                     sort_order: String(options.fields.length),
@@ -560,7 +564,7 @@ function ServiceForm({
                     <Trash2 size={16} />
                   </button>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   <Input
                     type="number"
                     step="0.01"
@@ -587,6 +591,12 @@ function ServiceForm({
                         </SelectContent>
                       </Select>
                     )}
+                  />
+                  <Input
+                    type="number"
+                    min="1"
+                    placeholder="Max qty"
+                    {...register(`options.${i}.max_qty` as const)}
                   />
                 </div>
                 <div className="flex items-center gap-6 text-sm">
