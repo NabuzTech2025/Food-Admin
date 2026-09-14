@@ -132,6 +132,8 @@ type OptionField = {
   name: string;
   price_delta: string;
   price_mode: string;
+  is_required: boolean;
+  min_qty: string;
   max_qty: string;
   is_default: boolean;
   is_active: boolean;
@@ -185,6 +187,8 @@ const defaultsFrom = (s: BookingService | null): FormValues => ({
     name: o.name,
     price_delta: String(o.price_delta),
     price_mode: o.price_mode,
+    is_required: o.is_required ?? false,
+    min_qty: String(o.min_qty ?? 0),
     max_qty: String(o.max_qty ?? 1),
     is_default: o.is_default,
     is_active: o.is_active,
@@ -311,6 +315,8 @@ function ServiceForm({
         name: o.name,
         price_delta: Number(o.price_delta),
         price_mode: o.price_mode,
+        is_required: o.is_required,
+        min_qty: Number(o.min_qty),
         max_qty: Number(o.max_qty),
         is_default: o.is_default,
         is_active: o.is_active,
@@ -536,6 +542,8 @@ function ServiceForm({
                     name: "",
                     price_delta: "0",
                     price_mode: "flat",
+                    is_required: false,
+                    min_qty: "0",
                     max_qty: "1",
                     is_default: false,
                     is_active: true,
@@ -564,7 +572,7 @@ function ServiceForm({
                     <Trash2 size={16} />
                   </button>
                 </div>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   <Input
                     type="number"
                     step="0.01"
@@ -594,12 +602,31 @@ function ServiceForm({
                   />
                   <Input
                     type="number"
+                    min="0"
+                    placeholder="Min qty"
+                    {...register(`options.${i}.min_qty` as const)}
+                  />
+                  <Input
+                    type="number"
                     min="1"
                     placeholder="Max qty"
                     {...register(`options.${i}.max_qty` as const)}
                   />
                 </div>
                 <div className="flex items-center gap-6 text-sm">
+                  <label className="flex items-center gap-2">
+                    <Controller
+                      control={control}
+                      name={`options.${i}.is_required` as const}
+                      render={({ field }) => (
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      )}
+                    />
+                    Required
+                  </label>
                   <label className="flex items-center gap-2">
                     <Controller
                       control={control}

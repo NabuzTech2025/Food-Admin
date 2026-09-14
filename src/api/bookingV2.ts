@@ -109,6 +109,8 @@ export interface ServiceOption {
   name: string;
   price_delta: number;
   price_mode: string;
+  is_required: boolean;
+  min_qty: number;
   max_qty: number;
   is_default: boolean;
   is_active: boolean;
