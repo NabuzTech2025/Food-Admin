@@ -10,7 +10,12 @@ import { toast } from "sonner";
 import { useParams } from "react-router-dom";
 
 interface PaymentMethod {
-  key: "cash_enabled" | "card_enabled" | "stripe_enabled" | "paypal_enabled";
+  key:
+    | "cash_enabled"
+    | "card_enabled"
+    | "stripe_enabled"
+    | "paypal_enabled"
+    | "ec_enabled";
   label: string;
   description: string;
   icon: React.ReactNode;
@@ -41,6 +46,12 @@ const PAYMENT_METHODS: PaymentMethod[] = [
     description: "Accept payments via PayPal",
     icon: <Wallet size={22} className="text-sky-500" />,
   },
+  {
+    key: "ec_enabled",
+    label: "EC",
+    description: "Accept EC payments",
+    icon: <CreditCard size={22} className="text-orange-500" />,
+  },
 ];
 
 function PaymentSettingsPage() {
@@ -59,6 +70,7 @@ function PaymentSettingsPage() {
     card_enabled: false,
     stripe_enabled: false,
     paypal_enabled: false,
+    ec_enabled: false,
   });
 
   useEffect(() => {
@@ -68,6 +80,7 @@ function PaymentSettingsPage() {
         card_enabled: data.card_enabled,
         stripe_enabled: data.stripe_enabled,
         paypal_enabled: data.paypal_enabled,
+        ec_enabled: data.ec_enabled,
       });
     }
   }, [data]);

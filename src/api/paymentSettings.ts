@@ -5,6 +5,7 @@ export interface PaymentSettings {
   card_enabled: boolean;
   stripe_enabled: boolean;
   paypal_enabled: boolean;
+  ec_enabled: boolean;
   store_id: number | string;
 }
 
