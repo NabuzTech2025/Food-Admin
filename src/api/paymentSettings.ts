@@ -37,3 +37,48 @@ export const updatePaymentSettings = async (
   );
   return res.data;
 };
+
+// ── Per-order-type settings ──
+
+export type OrderTypeName = "delivery" | "collection" | "dine_in";
+
+export type PaymentFlags = Omit<PaymentSettings, "store_id">;
+
+export interface OrderTypeSettings {
+  store_id: number;
+  order_type: number;
+  order_type_name: OrderTypeName;
+  is_override: boolean;
+  flags: PaymentFlags;
+}
+
+export const getOrderTypeSettings = async (
+  store_id: number | string,
+): Promise<OrderTypeSettings[]> => {
+  const res = await axiosInstance.get(
+    `store-payment-settings/${store_id}/order-types`,
+  );
+  return res.data;
+};
+
+export const updateOrderTypeSettings = async (
+  store_id: number | string,
+  order_type: OrderTypeName,
+  flags: Partial<PaymentFlags>,
+): Promise<OrderTypeSettings> => {
+  const res = await axiosInstance.put(
+    `store-payment-settings/${store_id}/order-types/${order_type}`,
+    flags,
+  );
+  return res.data;
+};
+
+export const resetOrderTypeSettings = async (
+  store_id: number | string,
+  order_type: OrderTypeName,
+): Promise<OrderTypeSettings> => {
+  const res = await axiosInstance.delete(
+    `store-payment-settings/${store_id}/order-types/${order_type}`,
+  );
+  return res.data;
+};
