@@ -4,9 +4,6 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  useGetPaymentSettings,
-  useCreatePaymentSettings,
-  useUpdatePaymentSettings,
   useGetOrderTypeSettings,
   useUpdateOrderTypeSettings,
   useResetOrderTypeSettings,
@@ -31,12 +28,12 @@ const PAYMENT_METHODS: PaymentMethod[] = [
     description: "Accept cash payments on delivery or pickup",
     icon: <Banknote size={22} className="text-green-600" />,
   },
-  {
-    key: "card_enabled",
-    label: "Card",
-    description: "Accept debit and credit card payments",
-    icon: <CreditCard size={22} className="text-blue-600" />,
-  },
+  // {
+  //   key: "card_enabled",
+  //   label: "Card",
+  //   description: "Accept debit and credit card payments",
+  //   icon: <CreditCard size={22} className="text-blue-600" />,
+  // },
   {
     key: "stripe_enabled",
     label: "Stripe",
@@ -106,88 +103,6 @@ const EMPTY_FLAGS: PaymentFlags = {
   paypal_enabled: false,
   ec_enabled: false,
 };
-
-function StoreWideCard({ store_id }: { store_id: number }) {
-  const { data, isLoading } = useGetPaymentSettings(store_id);
-  const { mutate: create, isPending: isCreating } = useCreatePaymentSettings();
-  const { mutate: update, isPending: isUpdating } = useUpdatePaymentSettings();
-
-  const isPending = isCreating || isUpdating;
-
-  const [settings, setSettings] = useState<PaymentFlags>(EMPTY_FLAGS);
-
-  useEffect(() => {
-    if (data) {
-      setSettings({
-        cash_enabled: data.cash_enabled,
-        card_enabled: data.card_enabled,
-        stripe_enabled: data.stripe_enabled,
-        paypal_enabled: data.paypal_enabled,
-        ec_enabled: data.ec_enabled,
-      });
-    }
-  }, [data]);
-
-  const toggle = (key: FlagKey) => {
-    if (!store_id || isPending) return;
-
-    const newSettings = { ...settings, [key]: !settings[key] };
-    setSettings(newSettings);
-
-    const payload = { ...newSettings, store_id };
-
-    const onError = (err: any) => {
-      setSettings(settings);
-      toast.error(
-        err?.response?.data?.message || "Failed to update payment settings",
-      );
-    };
-
-    if (data?.id) {
-      update(
-        { id: store_id as number, payload },
-        { onSuccess: () => toast.success("Payment settings updated"), onError },
-      );
-    } else {
-      create(payload, {
-        onError,
-        onSuccess: () => toast.success("Payment settings saved"),
-      });
-    }
-  };
-
-  return (
-    <div className="bg-white rounded-xl border border-border shadow-sm">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-        <div>
-          <h2 className="text-base font-semibold text-neutral-800">
-            Payment Methods
-          </h2>
-          <p className="text-xs text-neutral-500 mt-0.5">
-            Store-wide default. Order types with no override inherit these.
-          </p>
-        </div>
-        {isPending && (
-          <Loader2 size={18} className="animate-spin text-primary" />
-        )}
-      </div>
-
-      {isLoading ? (
-        <div className="flex justify-center py-16">
-          <Loader2 className="animate-spin text-primary" size={28} />
-        </div>
-      ) : (
-        <MethodRows flags={settings} onToggle={toggle} disabled={isPending} />
-      )}
-
-      <div className="px-5 py-3 border-t bg-muted/30">
-        <p className="text-xs text-neutral-500">
-          Enable or disable payment methods available to customers at checkout.
-        </p>
-      </div>
-    </div>
-  );
-}
 
 function OrderTypeEditor({ store_id }: { store_id: number }) {
   const { data, isLoading } = useGetOrderTypeSettings(store_id);
@@ -327,7 +242,6 @@ function PaymentSettingsPage() {
 
   return (
     <div className="space-y-4">
-      <StoreWideCard store_id={store_id} />
       <OrderTypeEditor store_id={store_id} />
     </div>
   );
