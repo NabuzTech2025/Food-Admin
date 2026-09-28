@@ -43,6 +43,7 @@ function DeliveryTimePlanForm({
     useDeleteDeliveryTimePlan();
   const isLoading = isCreating || isDeleting;
 
+  const [name, setName] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [selectedDays, setSelectedDays] = useState<number[]>([]);
@@ -51,10 +52,12 @@ function DeliveryTimePlanForm({
   useEffect(() => {
     if (open) {
       if (editData) {
+        setName(editData.names?.[0] ?? "");
         setStartTime(editData.start_time.slice(0, 5));
         setEndTime(editData.end_time.slice(0, 5));
         setSelectedDays([...editData.days]);
       } else {
+        setName("");
         setStartTime("");
         setEndTime("");
         setSelectedDays([]);
@@ -64,6 +67,7 @@ function DeliveryTimePlanForm({
   }, [open, editData]);
 
   const handleClose = () => {
+    setName("");
     setStartTime("");
     setEndTime("");
     setSelectedDays([]);
@@ -82,6 +86,7 @@ function DeliveryTimePlanForm({
 
   const validate = () => {
     const e: Record<string, string> = {};
+    if (!name.trim()) e.name = "Name is required";
     if (!startTime) e.startTime = "Opening time is required";
     if (!endTime) e.endTime = "Closing time is required";
     if (selectedDays.length === 0) e.days = "Select at least one day";
@@ -97,17 +102,14 @@ function DeliveryTimePlanForm({
         await Promise.all(editData.ids.map((id) => deleteItem(id)));
       }
 
-      // ── Build payload — name = day name automatically ──
-      const payload = selectedDays.map((dayVal) => {
-        const dayObj = DAYS_OF_WEEK.find((d) => d.value === dayVal)!;
-        return {
-          day_of_week: dayVal,
-          start_time: `${startTime}:00`,
-          end_time: `${endTime}:00`,
-          store_id: Number(store_id),
-          name: dayObj.name, // ✅ "Monday", "Tuesday"... automatically
-        };
-      });
+      // ── Build payload — name from the input field ──
+      const payload = selectedDays.map((dayVal) => ({
+        day_of_week: dayVal,
+        start_time: `${startTime}:00`,
+        end_time: `${endTime}:00`,
+        store_id: Number(store_id),
+        name: name.trim(),
+      }));
 
       await bulkCreate({ store_id: Number(store_id), payload });
       toast.success(
@@ -132,6 +134,23 @@ function DeliveryTimePlanForm({
         </div>
 
         <div className="flex-1 overflow-y-auto px-8 py-6 space-y-5">
+          {/* Name */}
+          <div className="space-y-1.5">
+            <label className="text-base font-semibold text-neutral-700">
+              Name <span className="text-destructive">*</span>
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Weekday Lunch"
+              className="w-full h-10 px-3 text-sm rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+            {errors.name && (
+              <p className="text-xs text-destructive">{errors.name}</p>
+            )}
+          </div>
+
           {/* Opening + Closing Time */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">

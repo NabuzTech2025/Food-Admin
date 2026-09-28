@@ -159,6 +159,9 @@ function DeliveryPage() {
                     #
                   </TableHead>
                   <TableHead className="font-semibold text-neutral-700">
+                    NAME
+                  </TableHead>
+                  <TableHead className="font-semibold text-neutral-700">
                     DAYS
                   </TableHead>
                   <TableHead className="font-semibold text-neutral-700">
@@ -175,7 +178,7 @@ function DeliveryPage() {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-10">
+                    <TableCell colSpan={6} className="text-center py-10">
                       <Loader2
                         className="animate-spin mx-auto text-primary"
                         size={24}
@@ -187,6 +190,9 @@ function DeliveryPage() {
                     <TableRow key={index} className="hover:bg-muted/30">
                       <TableCell className="text-neutral-500">
                         {index + 1}
+                      </TableCell>
+                      <TableCell className="text-neutral-700 font-medium">
+                        {group.names[0] ?? "—"}
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
@@ -236,7 +242,7 @@ function DeliveryPage() {
                 ) : (
                   <TableRow>
                     <TableCell
-                      colSpan={5}
+                      colSpan={6}
                       className="text-center py-10 text-neutral-400"
                     >
                       No delivery time plans found.
@@ -260,6 +266,9 @@ function DeliveryPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-neutral-800">
+                      {group.names[0] ?? "—"}
+                    </p>
+                    <p className="text-xs text-neutral-500">
                       {fmt(group.start_time)} – {fmt(group.end_time)}
                     </p>
                     <div className="flex flex-wrap gap-1 mt-2">
