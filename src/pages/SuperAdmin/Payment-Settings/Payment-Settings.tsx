@@ -13,6 +13,7 @@ import {
 import type { PaymentFlags, OrderTypeName } from "@/api/paymentSettings";
 import { toast } from "sonner";
 import { useParams } from "react-router-dom";
+import { useAdminStore } from "@/context/store/useAdminStore";
 
 type FlagKey = keyof PaymentFlags;
 
@@ -252,8 +253,11 @@ function OrderTypeEditor({ store_id }: { store_id: number }) {
 }
 
 function PaymentSettingsPage() {
+  // Super-admin per-store route passes :storeId; store-admin route has none,
+  // so fall back to the store in context (their own store).
   const { storeId } = useParams();
-  const store_id = Number(storeId);
+  const contextStoreId = useAdminStore((s) => s.store_id);
+  const store_id = Number(storeId ?? contextStoreId);
 
   return (
     <div className="space-y-4">

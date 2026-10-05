@@ -129,7 +129,7 @@ function AdminLayout() {
           // dashboard — it belongs inside the per-store screen (StoreLayout.tsx).
         ]
       : [
-          // ── Normal Store Admin nav (Payment Settings intentionally NOT included) ──
+          // ── Normal Store Admin nav ──
           { name: "Dashboard", icon: Home, link: "/dashboard" },
           { name: "Orders", icon: ListOrdered, link: "/orders" },
           { name: "Reservations", icon: ListOrdered, link: "/reservations" },
@@ -180,6 +180,11 @@ function AdminLayout() {
             link: "/store-settings",
           },
           {
+            name: "Payment Settings",
+            icon: CreditCard,
+            link: "/payment-settings",
+          },
+          {
             name: "Discount Manage",
             icon: Tag,
             link: "/discount",
@@ -209,8 +214,6 @@ function AdminLayout() {
             icon: Package,
             link: "/change-password",
           },
-          // NOTE: "Payment Settings" removed from here on purpose —
-          // store admins (role_id !== 1) should not see this menu item.
         ];
 
   // Auto-open the parent dropdown if the current route matches one of its children,
