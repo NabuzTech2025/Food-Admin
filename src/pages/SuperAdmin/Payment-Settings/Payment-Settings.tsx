@@ -4,6 +4,8 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
+  useGetPaymentSettings,
+  useCreatePaymentSettings,
   useGetOrderTypeSettings,
   useUpdateOrderTypeSettings,
   useResetOrderTypeSettings,
@@ -106,12 +108,14 @@ const EMPTY_FLAGS: PaymentFlags = {
 
 function OrderTypeEditor({ store_id }: { store_id: number }) {
   const { data, isLoading } = useGetOrderTypeSettings(store_id);
+  const { data: storeSettings } = useGetPaymentSettings(store_id);
+  const { mutate: create, isPending: isCreating } = useCreatePaymentSettings();
   const { mutate: save, isPending: isSaving } =
     useUpdateOrderTypeSettings(store_id);
   const { mutate: reset, isPending: isResetting } =
     useResetOrderTypeSettings(store_id);
 
-  const isPending = isSaving || isResetting;
+  const isPending = isSaving || isResetting || isCreating;
 
   // Local mirror of server flags, keyed by order type, for optimistic toggles.
   const [flagsByType, setFlagsByType] = useState<
@@ -145,19 +149,30 @@ function OrderTypeEditor({ store_id }: { store_id: number }) {
     const next = { ...prev, [key]: !prev[key] };
     setFlagsByType((s) => ({ ...s, [orderType]: next }));
 
+    const onError = (err: any) => {
+      setFlagsByType((s) => ({ ...s, [orderType]: prev }));
+      toast.error(
+        err?.response?.data?.message || "Failed to update payment settings",
+      );
+    };
+
     // Send all five — a full set is what the toggles represent.
-    save(
-      { order_type: orderType, flags: next },
-      {
-        onSuccess: () => toast.success("Payment settings updated"),
-        onError: (err: any) => {
-          setFlagsByType((s) => ({ ...s, [orderType]: prev }));
-          toast.error(
-            err?.response?.data?.message || "Failed to update payment settings",
-          );
-        },
-      },
-    );
+    const saveOverride = () =>
+      save(
+        { order_type: orderType, flags: next },
+        { onSuccess: () => toast.success("Payment settings updated"), onError },
+      );
+
+    // Order-type overrides need a base store-settings record. Have it → save;
+    // don't → create it first, then save.
+    if (storeSettings?.id) {
+      saveOverride();
+    } else {
+      create(
+        { ...next, store_id },
+        { onSuccess: saveOverride, onError },
+      );
+    }
   };
 
   const handleReset = (orderType: OrderTypeName) => {
