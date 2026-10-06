@@ -19,6 +19,10 @@ import {
   createResource,
   updateResource,
   deleteResource,
+  listBlackouts,
+  createBlackouts,
+  updateBlackout,
+  deleteBlackout,
 } from "@/api/bookingV2";
 import type {
   FilterBookingsPayload,
@@ -29,6 +33,8 @@ import type {
   CreateResourcePayload,
   UpdateResourcePayload,
   BookingConfig,
+  BlackoutBlock,
+  UpdateBlackoutPayload,
 } from "@/api/bookingV2";
 
 const KEY = "booking-v2";
@@ -243,5 +249,61 @@ export const useUpdateBookingConfig = (storeId: number | null) => {
     },
     onError: (e: any) =>
       toast.error(e?.response?.data?.message || "Failed to save settings"),
+  });
+};
+
+// ── Blackouts ────────────────────────────────────────────────────
+const BLK = "booking-blackout";
+
+export const useBlackouts = (storeId: number | null) =>
+  useQuery({
+    queryKey: [BLK, storeId],
+    queryFn: () => listBlackouts(storeId!, true),
+    enabled: !!storeId,
+  });
+
+export const useCreateBlackouts = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      storeId,
+      blocks,
+    }: {
+      storeId: number;
+      blocks: BlackoutBlock[];
+    }) => createBlackouts(storeId, blocks),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [BLK] });
+      toast.success("Blackout created");
+    },
+    onError: (e: any) =>
+      toast.error(e?.response?.data?.message || "Failed to create blackout"),
+  });
+};
+
+export const useUpdateBlackout = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: UpdateBlackoutPayload }) =>
+      updateBlackout(id, payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [BLK] });
+      toast.success("Blackout updated");
+    },
+    onError: (e: any) =>
+      toast.error(e?.response?.data?.message || "Failed to update blackout"),
+  });
+};
+
+export const useDeleteBlackout = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => deleteBlackout(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [BLK] });
+      toast.success("Blackout deleted");
+    },
+    onError: (e: any) =>
+      toast.error(e?.response?.data?.message || "Failed to delete blackout"),
   });
 };

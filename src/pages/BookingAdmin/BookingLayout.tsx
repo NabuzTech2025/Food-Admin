@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import {
   LayoutDashboard,
   CalendarCheck,
+  CalendarX,
   PlusCircle,
   Package,
   Box,
@@ -17,6 +18,7 @@ const navItems = [
   { name: "Bookings", icon: CalendarCheck, to: "bookings" },
   { name: "Services", icon: Package, to: "services" },
   { name: "Resources", icon: Box, to: "resources" },
+  { name: "Blackouts", icon: CalendarX, to: "blackouts" },
   { name: "Create Booking", icon: PlusCircle, to: "create" },
   { name: "Settings", icon: Settings, to: "settings" },
 ];

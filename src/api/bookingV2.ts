@@ -348,3 +348,53 @@ export const updateBookingConfig = async (
   });
   return res.data;
 };
+
+// ── Blackouts (recurring weekly block-out windows) ─────────────
+export interface Blackout {
+  id: number;
+  store_id: number;
+  service_id: number | null; // null = applies to the whole store
+  name: string;
+  day_of_week: number; // 0-6
+  start_time: string;
+  end_time: string;
+  is_active: boolean;
+  sort_order: number;
+}
+
+export type BlackoutBlock = Omit<Blackout, "id" | "store_id">;
+export type UpdateBlackoutPayload = Partial<BlackoutBlock>;
+
+export const listBlackouts = async (
+  storeId: number,
+  includeInactive = true,
+): Promise<Blackout[]> => {
+  const res = await axiosInstance.get<Blackout[]>(`${V2}/blackouts`, {
+    params: { store_id: storeId, include_inactive: includeInactive },
+  });
+  return res.data;
+};
+
+// POST is bulk — we send a single block from the form.
+export const createBlackouts = async (
+  storeId: number,
+  blocks: BlackoutBlock[],
+): Promise<Blackout[]> => {
+  const res = await axiosInstance.post<Blackout[]>(`${V2}/blackouts`, {
+    store_id: storeId,
+    blocks,
+  });
+  return res.data;
+};
+
+export const updateBlackout = async (
+  id: number,
+  payload: UpdateBlackoutPayload,
+): Promise<Blackout> => {
+  const res = await axiosInstance.put<Blackout>(`${V2}/blackouts/${id}`, payload);
+  return res.data;
+};
+
+export const deleteBlackout = async (id: number): Promise<void> => {
+  await axiosInstance.delete(`${V2}/blackouts/${id}`);
+};
