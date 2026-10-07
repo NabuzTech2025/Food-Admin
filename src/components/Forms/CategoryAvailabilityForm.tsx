@@ -5,6 +5,7 @@ import { Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAdminStore } from "@/context/store/useAdminStore";
 import {
   useCreateBulkCategoryAvailabilities,
@@ -26,6 +27,12 @@ const DAYS_OF_WEEK = [
   { name: "Sunday", short: "Su", value: 6 },
 ];
 
+// "According to Day" = all-day window: 12:00 AM → 11:59 PM
+const ALL_DAY_START = "00:00";
+const ALL_DAY_END = "23:59";
+
+type AvailabilityMode = "day" | "time";
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface CategoryAvailabilityFormProps {
@@ -45,6 +52,7 @@ function CategoryAvailabilityForm({
   const { store_id } = useAdminStore();
 
   // ── Form State ──
+  const [mode, setMode] = useState<AvailabilityMode>("day");
   const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
   const [selectedDays, setSelectedDays] = useState<number[]>([]);
   const [startTime, setStartTime] = useState("");
@@ -71,12 +79,18 @@ function CategoryAvailabilityForm({
         const cat = categoryList.find(
           (c: any) => c.id === editData.category_id,
         );
+        const start = editData.start_time?.slice(0, 5) ?? "";
+        const end = editData.end_time?.slice(0, 5) ?? "";
+        setMode(
+          start === ALL_DAY_START && end === ALL_DAY_END ? "day" : "time",
+        );
         setSelectedCategories(cat ? [cat] : []);
         setSelectedDays(editData.days);
-        setStartTime(editData.start_time?.slice(0, 5) ?? "");
-        setEndTime(editData.end_time?.slice(0, 5) ?? "");
+        setStartTime(start);
+        setEndTime(end);
         setIsActive(editData.isActive);
       } else {
+        setMode("day");
         setSelectedCategories([]);
         setSelectedDays([]);
         setStartTime("");
@@ -137,15 +151,17 @@ function CategoryAvailabilityForm({
       toast.error("Please select at least one day");
       return;
     }
-    if (!startTime) {
+    if (mode === "time" && !startTime) {
       toast.error("Please set opening time");
       return;
     }
-    if (!endTime) {
+    if (mode === "time" && !endTime) {
       toast.error("Please set closing time");
       return;
     }
 
+    const effStart = mode === "day" ? ALL_DAY_START : startTime;
+    const effEnd = mode === "day" ? ALL_DAY_END : endTime;
     const formatTime = (t: string) => `${t}:00.000000`;
 
     try {
@@ -163,8 +179,8 @@ function CategoryAvailabilityForm({
           payload.push({
             category_id: cat.id,
             day_of_week: day,
-            start_time: formatTime(startTime),
-            end_time: formatTime(endTime),
+            start_time: formatTime(effStart),
+            end_time: formatTime(effEnd),
             label: "Auto Generated",
             isActive,
           });
@@ -200,6 +216,17 @@ function CategoryAvailabilityForm({
         {/* Scrollable Body */}
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
           <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+            {/* ── Mode Tabs ── */}
+            <Tabs
+              value={mode}
+              onValueChange={(v) => setMode(v as AvailabilityMode)}
+            >
+              <TabsList className="w-full">
+                <TabsTrigger value="day">According to Day</TabsTrigger>
+                <TabsTrigger value="time">According to Time</TabsTrigger>
+              </TabsList>
+            </Tabs>
+
             {/* ── Category Select ── */}
             <div className="space-y-2">
               <label className="text-base font-semibold text-neutral-700">
@@ -239,7 +266,8 @@ function CategoryAvailabilityForm({
               )}
             </div>
 
-            {/* ── Time Fields ── */}
+            {/* ── Time Fields (only "According to Time") ── */}
+            {mode === "time" && (
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-base font-semibold text-neutral-700">
@@ -266,6 +294,7 @@ function CategoryAvailabilityForm({
                 />
               </div>
             </div>
+            )}
 
             {/* ── Day Selection ── */}
             <div className="space-y-3">
