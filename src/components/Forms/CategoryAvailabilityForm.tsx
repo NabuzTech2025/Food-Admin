@@ -109,15 +109,16 @@ function CategoryAvailabilityForm({
     onClose();
   };
 
-  // ── Category selection ──
-  const handleCategoryAdd = (id: string | number | undefined) => {
-    if (!id) return;
+  // ── Category selection (toggle: add if new, remove if already selected) ──
+  const handleCategoryToggle = (id: string | number | undefined) => {
+    if (id === undefined) return;
     const cat = categoryList.find((c: any) => c.id === Number(id));
     if (!cat) return;
-    setSelectedCategories((prev) => {
-      if (prev.find((c) => c.id === cat.id)) return prev;
-      return [...prev, cat];
-    });
+    setSelectedCategories((prev) =>
+      prev.find((c) => c.id === cat.id)
+        ? prev.filter((c) => c.id !== cat.id)
+        : [...prev, cat],
+    );
   };
 
   const handleCategoryRemove = (id: number) => {
@@ -160,9 +161,9 @@ function CategoryAvailabilityForm({
       return;
     }
 
-    const effStart = mode === "day" ? ALL_DAY_START : startTime;
-    const effEnd = mode === "day" ? ALL_DAY_END : endTime;
     const formatTime = (t: string) => `${t}:00.000000`;
+    const effStart = mode === "day" ? "00:00:00" : formatTime(startTime);
+    const effEnd = mode === "day" ? "23:59:59" : formatTime(endTime);
 
     try {
       // Edit: delete all old items first
@@ -179,8 +180,8 @@ function CategoryAvailabilityForm({
           payload.push({
             category_id: cat.id,
             day_of_week: day,
-            start_time: formatTime(effStart),
-            end_time: formatTime(effEnd),
+            start_time: effStart,
+            end_time: effEnd,
             label: "Auto Generated",
             isActive,
           });
@@ -234,14 +235,12 @@ function CategoryAvailabilityForm({
               </label>
               <SearchableSelect
                 label=""
+                multiple
                 options={categoryList}
                 value={undefined}
-                onChange={handleCategoryAdd}
-                placeholder={
-                  isEditMode
-                    ? "Click to change category..."
-                    : "Click to add categories..."
-                }
+                selectedValues={selectedCategories.map((c) => c.id)}
+                onChange={handleCategoryToggle}
+                placeholder="Click to add categories..."
               />
 
               {/* Selected Categories Tags */}
@@ -268,32 +267,32 @@ function CategoryAvailabilityForm({
 
             {/* ── Time Fields (only "According to Time") ── */}
             {mode === "time" && (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-base font-semibold text-neutral-700">
-                  Opening Time <span className="text-destructive">*</span>
-                </label>
-                <input
-                  type="time"
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
-                  className="w-full h-10 px-3 text-base rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
-                  required
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-base font-semibold text-neutral-700">
+                    Opening Time <span className="text-destructive">*</span>
+                  </label>
+                  <input
+                    type="time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    className="w-full h-10 px-3 text-base rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
+                    required
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-base font-semibold text-neutral-700">
+                    Closing Time <span className="text-destructive">*</span>
+                  </label>
+                  <input
+                    type="time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    className="w-full h-10 px-3 text-base rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
+                    required
+                  />
+                </div>
               </div>
-              <div className="space-y-1.5">
-                <label className="text-base font-semibold text-neutral-700">
-                  Closing Time <span className="text-destructive">*</span>
-                </label>
-                <input
-                  type="time"
-                  value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
-                  className="w-full h-10 px-3 text-base rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
-                  required
-                />
-              </div>
-            </div>
             )}
 
             {/* ── Day Selection ── */}

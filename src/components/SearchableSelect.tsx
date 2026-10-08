@@ -1,6 +1,6 @@
 // src/components/ui/SearchableSelect.tsx
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, X } from "lucide-react";
+import { Check, ChevronDown, X } from "lucide-react";
 
 interface SearchableSelectProps<T> {
   options: T[];
@@ -13,6 +13,9 @@ interface SearchableSelectProps<T> {
   getOptionLabel?: (opt: T) => string;
   getOptionValue?: (opt: T) => string | number;
   error?: string;
+  /** Multi-select: dropdown stays open, onChange toggles each value */
+  multiple?: boolean;
+  selectedValues?: Array<string | number>;
 }
 
 function SearchableSelect<T>({
@@ -26,6 +29,8 @@ function SearchableSelect<T>({
   getOptionLabel = (opt: any) => opt.name,
   getOptionValue = (opt: any) => opt.id,
   error,
+  multiple = false,
+  selectedValues = [],
 }: SearchableSelectProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,10 +56,17 @@ function SearchableSelect<T>({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const isSelected = (opt: T) =>
+    multiple
+      ? selectedValues.includes(getOptionValue(opt))
+      : getOptionValue(opt) === value;
+
   const handleSelect = (opt: T) => {
     onChange(getOptionValue(opt));
-    setIsOpen(false);
-    setSearchTerm("");
+    if (!multiple) {
+      setIsOpen(false);
+      setSearchTerm("");
+    }
   };
 
   const handleClear = (e: React.MouseEvent) => {
@@ -81,12 +93,26 @@ function SearchableSelect<T>({
           } ${isOpen ? "border-primary ring-1 ring-primary" : ""}`}
         >
           <span
-            className={selectedOption ? "text-neutral-900" : "text-neutral-400"}
+            className={
+              multiple
+                ? selectedValues.length > 0
+                  ? "text-neutral-900"
+                  : "text-neutral-400"
+                : selectedOption
+                  ? "text-neutral-900"
+                  : "text-neutral-400"
+            }
           >
-            {selectedOption ? getOptionLabel(selectedOption) : placeholder}
+            {multiple
+              ? selectedValues.length > 0
+                ? `${selectedValues.length} selected`
+                : placeholder
+              : selectedOption
+                ? getOptionLabel(selectedOption)
+                : placeholder}
           </span>
           <div className="flex items-center gap-1">
-            {clearable && selectedOption && (
+            {clearable && !multiple && selectedOption && (
               <button
                 type="button"
                 onClick={handleClear}
@@ -124,13 +150,16 @@ function SearchableSelect<T>({
                   <div
                     key={getOptionValue(opt)}
                     onClick={() => handleSelect(opt)}
-                    className={`px-3 py-2 text-sm cursor-pointer transition-colors ${
-                      getOptionValue(opt) === value
+                    className={`flex items-center justify-between gap-2 px-3 py-2 text-sm cursor-pointer transition-colors ${
+                      isSelected(opt)
                         ? "bg-primary-light text-primary font-medium"
                         : "hover:bg-muted text-neutral-700"
                     }`}
                   >
-                    {getOptionLabel(opt)}
+                    <span>{getOptionLabel(opt)}</span>
+                    {multiple && isSelected(opt) && (
+                      <Check size={16} className="text-primary shrink-0" />
+                    )}
                   </div>
                 ))
               ) : (
