@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { TimePicker } from "@/components/ui/time-picker";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   Dialog,
@@ -697,13 +698,25 @@ function ServiceForm({
                     </Select>
                   )}
                 />
-                <Input
-                  type="time"
-                  {...register(`hours.${i}.start_time` as const)}
+                <Controller
+                  control={control}
+                  name={`hours.${i}.start_time` as const}
+                  render={({ field }) => (
+                    <TimePicker
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
-                <Input
-                  type="time"
-                  {...register(`hours.${i}.end_time` as const)}
+                <Controller
+                  control={control}
+                  name={`hours.${i}.end_time` as const}
+                  render={({ field }) => (
+                    <TimePicker
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
                 <button
                   type="button"

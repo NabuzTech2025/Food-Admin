@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { TimePicker } from "@/components/ui/time-picker";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   Dialog,
@@ -157,11 +158,29 @@ function BlackoutForm({
           </div>
           <div className="space-y-1.5">
             <Label>Start</Label>
-            <Input type="time" {...register("start_time")} />
+            <Controller
+              control={control}
+              name="start_time"
+              render={({ field }) => (
+                <TimePicker
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                />
+              )}
+            />
           </div>
           <div className="space-y-1.5">
             <Label>End</Label>
-            <Input type="time" {...register("end_time")} />
+            <Controller
+              control={control}
+              name="end_time"
+              render={({ field }) => (
+                <TimePicker
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                />
+              )}
+            />
           </div>
         </div>
 

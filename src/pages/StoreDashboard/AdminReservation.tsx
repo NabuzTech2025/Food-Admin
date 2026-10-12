@@ -83,10 +83,13 @@ const AdminReservation = () => {
           ? await filterStoreReservations(payload)
           : await getTodayReceivedBookings(payload);
 
-      // Sort by created_at descending (recently received on top)
-      const sorted = (res || []).sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      // "Received" tab: recently received on top (created_at desc).
+      // "Booking" tab: chronological by reservation date & time (reserved_for asc).
+      const sorted = (res || []).sort((a, b) =>
+        activeTab === "today_received_booking"
+          ? new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          : new Date(a.reserved_for).getTime() -
+            new Date(b.reserved_for).getTime(),
       );
       setData(sorted);
     } catch (err: any) {

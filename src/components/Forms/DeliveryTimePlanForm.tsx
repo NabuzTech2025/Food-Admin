@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { TimePicker } from "@/components/ui/time-picker";
 import { useAdminStore } from "@/context/store/useAdminStore";
 import {
   useBulkCreateDeliveryTimePlans,
@@ -157,12 +158,7 @@ function DeliveryTimePlanForm({
               <label className="text-base font-semibold text-neutral-700">
                 Opening Time <span className="text-destructive">*</span>
               </label>
-              <input
-                type="time"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-                className="w-full h-10 px-3 text-sm rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
-              />
+              <TimePicker value={startTime} onChange={setStartTime} />
               {errors.startTime && (
                 <p className="text-xs text-destructive">{errors.startTime}</p>
               )}
@@ -171,12 +167,7 @@ function DeliveryTimePlanForm({
               <label className="text-base font-semibold text-neutral-700">
                 Closing Time <span className="text-destructive">*</span>
               </label>
-              <input
-                type="time"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-                className="w-full h-10 px-3 text-sm rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
-              />
+              <TimePicker value={endTime} onChange={setEndTime} />
               {errors.endTime && (
                 <p className="text-xs text-destructive">{errors.endTime}</p>
               )}

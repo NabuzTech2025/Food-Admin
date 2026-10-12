@@ -1,11 +1,12 @@
 // src/components/Forms/HolidayForm.tsx
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { TimePicker } from "@/components/ui/time-picker";
 import { useAdminStore } from "@/context/store/useAdminStore";
 import { useAddHoliday, useUpdateHoliday } from "@/hooks/usestoreTiming";
 import type { Holiday } from "@/api/storeTiming";
@@ -39,6 +40,7 @@ function HolidayForm({ open, onClose, editData }: HolidayFormProps) {
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors },
@@ -137,10 +139,17 @@ function HolidayForm({ open, onClose, editData }: HolidayFormProps) {
                 <label className="text-base font-semibold text-neutral-700">
                   Time <span className="text-destructive">*</span>
                 </label>
-                <input
-                  type="time"
-                  className="w-full h-10 px-3 text-base rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
-                  {...register("time", { required: "Time is required" })}
+                <Controller
+                  control={control}
+                  name="time"
+                  rules={{ required: "Time is required" }}
+                  render={({ field }) => (
+                    <TimePicker
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      error={!!errors.time}
+                    />
+                  )}
                 />
                 <FieldError message={errors.time?.message} />
               </div>
