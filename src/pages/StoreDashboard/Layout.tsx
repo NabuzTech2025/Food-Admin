@@ -10,6 +10,7 @@ import {
   Salad,
   LayoutGrid,
   Settings2,
+  Palette,
   Tag,
   MapPin,
   Package,
@@ -178,6 +179,11 @@ function AdminLayout() {
             name: "Store Settings",
             icon: Settings2,
             link: "/store-settings",
+          },
+          {
+            name: "Theme Palette",
+            icon: Palette,
+            link: "/theme-palette",
           },
           {
             name: "Payment Settings",
