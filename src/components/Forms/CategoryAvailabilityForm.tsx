@@ -13,6 +13,7 @@ import {
 } from "@/hooks/useCategoryAvailability";
 import { useGetCategory } from "@/hooks/useCategory";
 import SearchableSelect from "@/components/SearchableSelect";
+import { TimePicker } from "@/components/ui/time-picker";
 import type { GroupedAvailability } from "@/api/categoryAvailability";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -272,25 +273,13 @@ function CategoryAvailabilityForm({
                   <label className="text-base font-semibold text-neutral-700">
                     Opening Time <span className="text-destructive">*</span>
                   </label>
-                  <input
-                    type="time"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                    className="w-full h-10 px-3 text-base rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
-                    required
-                  />
+                  <TimePicker value={startTime} onChange={setStartTime} />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-base font-semibold text-neutral-700">
                     Closing Time <span className="text-destructive">*</span>
                   </label>
-                  <input
-                    type="time"
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                    className="w-full h-10 px-3 text-base rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
-                    required
-                  />
+                  <TimePicker value={endTime} onChange={setEndTime} />
                 </div>
               </div>
             )}

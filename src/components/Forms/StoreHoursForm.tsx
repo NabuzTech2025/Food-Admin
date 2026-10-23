@@ -1,11 +1,12 @@
 // src/components/Forms/StoreHoursForm.tsx
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { toast } from "sonner";
 import { Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { TimePicker } from "@/components/ui/time-picker";
 import { useAdminStore } from "@/context/store/useAdminStore";
 import { useAddStoreHour, useDeleteStoreHour } from "@/hooks/usestoreTiming";
 import type { GroupedStoreHour } from "@/api/storeTiming";
@@ -52,6 +53,7 @@ function StoreHoursForm({ open, onClose, editData }: StoreHoursFormProps) {
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors },
@@ -167,12 +169,17 @@ function StoreHoursForm({ open, onClose, editData }: StoreHoursFormProps) {
                 <label className="text-base font-semibold text-neutral-700">
                   Opening Time <span className="text-destructive">*</span>
                 </label>
-                <input
-                  type="time"
-                  className="w-full h-10 px-3 text-base rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
-                  {...register("opening_time", {
-                    required: "Opening time is required",
-                  })}
+                <Controller
+                  control={control}
+                  name="opening_time"
+                  rules={{ required: "Opening time is required" }}
+                  render={({ field }) => (
+                    <TimePicker
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      error={!!errors.opening_time}
+                    />
+                  )}
                 />
                 <FieldError message={errors.opening_time?.message} />
               </div>
@@ -180,12 +187,17 @@ function StoreHoursForm({ open, onClose, editData }: StoreHoursFormProps) {
                 <label className="text-base font-semibold text-neutral-700">
                   Closing Time <span className="text-destructive">*</span>
                 </label>
-                <input
-                  type="time"
-                  className="w-full h-10 px-3 text-base rounded-md border border-input bg-white focus:outline-none focus:ring-1 focus:ring-primary"
-                  {...register("closing_time", {
-                    required: "Closing time is required",
-                  })}
+                <Controller
+                  control={control}
+                  name="closing_time"
+                  rules={{ required: "Closing time is required" }}
+                  render={({ field }) => (
+                    <TimePicker
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      error={!!errors.closing_time}
+                    />
+                  )}
                 />
                 <FieldError message={errors.closing_time?.message} />
               </div>
