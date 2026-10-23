@@ -3,10 +3,13 @@ import type { CouponColor } from "@/constants/themePalettes";
 
 export interface ThemeColors {
   primary: string;
+  secondary?: string;
   accent: string;
   background: string;
   surface: string;
   text: string;
+  "text-secondary"?: string;
+  icons?: string;
   border?: string;
 }
 
