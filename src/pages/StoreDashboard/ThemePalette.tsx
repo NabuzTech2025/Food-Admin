@@ -13,18 +13,20 @@ import {
 } from "@/constants/themePalettes";
 
 const Swatch = ({ label, value }: { label: string; value: string }) => (
-  <div className="flex flex-col items-center gap-1">
+  <div className="flex w-14 flex-col items-center gap-1.5">
     <div
-      className="h-10 w-10 rounded-md border shadow-sm"
+      className="h-11 w-11 rounded-lg border shadow-sm ring-1 ring-black/5"
       style={{ backgroundColor: value }}
-      title={value}
+      title={`${label}: ${value}`}
     />
-    <span className="text-[10px] capitalize text-muted-foreground">{label}</span>
+    <span className="text-center text-[10px] capitalize leading-tight text-muted-foreground">
+      {label.replace("-", " ")}
+    </span>
   </div>
 );
 
 const CouponChip = ({ label, c }: { label: string; c: CouponColor }) => (
-  <div className="rounded-lg px-3 py-2" style={{ backgroundColor: c.bg }}>
+  <div className="rounded-xl px-3 py-2.5" style={{ backgroundColor: c.bg }}>
     <p className="text-sm font-semibold" style={{ color: c.text }}>
       {label}
     </p>
@@ -49,10 +51,10 @@ const PaletteCard = ({
     type="button"
     onClick={onSelect}
     className={cn(
-      "flex flex-col gap-4 rounded-xl border p-5 text-left transition-colors",
+      "flex flex-col gap-4 rounded-2xl border bg-card p-5 text-left shadow-sm transition-all hover:shadow-md",
       selected
         ? "border-primary ring-2 ring-primary/30"
-        : "hover:border-muted-foreground/40",
+        : "border-border hover:border-muted-foreground/40",
     )}
   >
     <div className="flex items-start justify-between gap-2">
@@ -71,7 +73,7 @@ const PaletteCard = ({
       )}
     </div>
 
-    <div className="flex gap-3">
+    <div className="flex flex-wrap gap-2">
       {Object.entries(palette.colors).map(([label, value]) => (
         <Swatch key={label} label={label} value={value} />
       ))}
