@@ -197,6 +197,7 @@ function App() {
               <Route path="seo" element={<StoreSEO />} />
               <Route path="legal-pages" element={<StoreLegalPages />} />
               <Route path="legal-pages/form" element={<StoreLegalPageForm />} />
+              <Route path="theme-palette" element={<ThemePalette />} />
               <Route path="settings" element={<Settings />} />
             </Route>
 

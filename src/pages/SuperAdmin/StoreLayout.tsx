@@ -10,6 +10,7 @@ import {
   Image,
   ListOrdered,
   Settings,
+  Palette,
   Search,
   Scale,
   Landmark,
@@ -188,6 +189,12 @@ function StoreLayout() {
       name: "Legal Pages",
       icon: Scale,
       link: `${base}/legal-pages`,
+      section: "Operations",
+    },
+    {
+      name: "Theme Palette",
+      icon: Palette,
+      link: `${base}/theme-palette`,
       section: "Operations",
     },
     {
