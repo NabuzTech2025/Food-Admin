@@ -62,6 +62,42 @@ export const colorPalettes: ColorPalette[] = [
       },
     },
   },
+
+  {
+    id: "royal-indian-heritage",
+    name: "Royal Indian Heritage",
+    description:
+      "Premium Indian cultural design with royal red, antique gold, and warm ivory",
+    recommended: true,
+    colors: {
+      primary: "#C8202F",
+      secondary: "#791C24",
+      accent: "#D6A64F",
+      background: "#FFF5E5",
+      surface: "#FFFFFF",
+      text: "#211B19",
+      "text-secondary": "#795B50",
+      icons: "#791C24",
+      border: "#E5CFA9",
+    },
+    couponColors: {
+      percent: {
+        bg: "#FBE6E5",
+        text: "#C8202F",
+        subtext: "#8C4145",
+      },
+      amount: {
+        bg: "#F8EACB",
+        text: "#80551A",
+        subtext: "#927849",
+      },
+      delivery: {
+        bg: "#E7F0E2",
+        text: "#386B3F",
+        subtext: "#648067",
+      },
+    },
+  },
   {
     id: "fresh-green",
     name: "Fresh Green",
