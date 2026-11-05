@@ -76,7 +76,7 @@ export const colorPalettes: ColorPalette[] = [
       background: "#FFF5E5",
       surface: "#FFFFFF",
       text: "#211B19",
-      "text-secondary": "#795B50",
+      "text-secondary": "#FFF",
       icons: "#791C24",
       border: "#E5CFA9",
     },
