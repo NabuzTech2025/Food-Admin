@@ -11,6 +11,7 @@ import {
   ListOrdered,
   Settings,
   Palette,
+  Megaphone,
   Search,
   Scale,
   Landmark,
@@ -195,6 +196,12 @@ function StoreLayout() {
       name: "Theme Palette",
       icon: Palette,
       link: `${base}/theme-palette`,
+      section: "Operations",
+    },
+    {
+      name: "Announcements",
+      icon: Megaphone,
+      link: `${base}/announcements`,
       section: "Operations",
     },
     {

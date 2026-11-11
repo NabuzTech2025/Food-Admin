@@ -11,6 +11,7 @@ import {
   LayoutGrid,
   Settings2,
   Palette,
+  Megaphone,
   Tag,
   MapPin,
   Package,
@@ -184,6 +185,11 @@ function AdminLayout() {
             name: "Theme Palette",
             icon: Palette,
             link: "/theme-palette",
+          },
+          {
+            name: "Announcements",
+            icon: Megaphone,
+            link: "/announcements",
           },
           {
             name: "Payment Settings",

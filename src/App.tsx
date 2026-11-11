@@ -57,6 +57,7 @@ import StoreConfigPage from "./pages/SuperAdmin/StoreConfig/StoreConfig";
 import StoreConfigFormPage from "./pages/SuperAdmin/StoreConfig/StoreConfigForm";
 import StoreSetting from "./pages/StoreDashboard/StoreSetting";
 import ThemePalette from "./pages/StoreDashboard/ThemePalette";
+import Announcements from "./pages/StoreDashboard/Announcements";
 import StoreLayout from "./pages/SuperAdmin/StoreLayout";
 import Orders from "./pages/StoreDashboard/Orders/Orders";
 import Reservation from "./pages/StoreDashboard/Reservation/Reservation";
@@ -131,6 +132,7 @@ function App() {
               <Route path="store-timing" element={<StoreTiming />} />
               <Route path="store-settings" element={<StoreSetting />} />
               <Route path="theme-palette" element={<ThemePalette />} />
+              <Route path="announcements" element={<Announcements />} />
               <Route path="discount" element={<Discount />} />
               <Route path="postcode" element={<PostCode />} />
               <Route path="delivery-zone" element={<DeliveryZone />} />
@@ -198,6 +200,7 @@ function App() {
               <Route path="legal-pages" element={<StoreLegalPages />} />
               <Route path="legal-pages/form" element={<StoreLegalPageForm />} />
               <Route path="theme-palette" element={<ThemePalette />} />
+              <Route path="announcements" element={<Announcements />} />
               <Route path="settings" element={<Settings />} />
             </Route>
 

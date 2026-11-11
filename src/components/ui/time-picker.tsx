@@ -59,7 +59,14 @@ export function TimePicker({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-2" align="start">
-        <div className="flex gap-1">
+        {/* stopPropagation: the popover is portaled outside the Dialog, so the
+            dialog's scroll-lock (react-remove-scroll) blocks wheel/touch unless
+            we stop the event before it bubbles to its document listener. */}
+        <div
+          className="flex gap-1"
+          onWheel={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
+        >
           <div className="max-h-56 overflow-y-auto pr-1">
             <div className={colHeader}>Hour</div>
             {HOURS.map((hh) => (
