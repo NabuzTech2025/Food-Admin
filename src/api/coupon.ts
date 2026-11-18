@@ -72,7 +72,7 @@ export const deleteCoupon = async (id: number): Promise<void> => {
 
 export const toggleCouponStatus = async (id: number, newStatus: boolean): Promise<void> => {
   try {
-    const endpoint = newStatus ? `coupons/${id}/activate` : `coupons/${id}/deactivate`;
+    const endpoint = newStatus ? `coupons/${id}/activate` : `coupons/${id}/inactivate`;
     await axiosInstance.patch(endpoint);
   } catch (error) {
     console.error("Toggle Coupon Status Error:", error);

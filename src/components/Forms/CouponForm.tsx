@@ -163,7 +163,8 @@ function CouponForm({ open, onClose, editData }: CouponFormProps) {
             <div className="space-y-1.5">
               <FormLabel required>Coupon Type</FormLabel>
               <select className={SELECT_CLS} {...register("coupon_type")}>
-                <option value="percent">-- select coupon type --</option>
+                <option value="" disabled>-- select coupon type --</option>
+                <option value="percent">Percentage</option>
                 <option value="fixed">Fixed Amount</option>
                 <option value="cart_threshold">Cart Threshold</option>
                 <option value="free_delivery">Free Delivery</option>

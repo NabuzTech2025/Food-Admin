@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,30 +22,79 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Switch } from "@/components/ui/switch";
 import { useAdminStore } from "@/context/store/useAdminStore";
-import { useGetCoupons, useDeleteCoupon } from "@/hooks/useCoupon";
+import {
+  useGetCoupons,
+  useDeleteCoupon,
+  useToggleCouponStatus,
+} from "@/hooks/useCoupon";
 import CouponForm from "@/components/Forms/CouponForm";
 import { toast } from "sonner";
 import type { Coupon } from "@/api/coupon";
 
+const TYPE_LABELS: Record<string, string> = {
+  percent: "Percentage",
+  fixed: "Fixed Amount",
+  cart_threshold: "Cart Threshold",
+  free_delivery: "Free Delivery",
+};
+
 function CouponsPage() {
   const { store_id } = useAdminStore();
   const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [statusTab, setStatusTab] = useState<"active" | "inactive">("active");
   const [formOpen, setFormOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
+  const [togglingId, setTogglingId] = useState<number | null>(null);
+
   const { data: coupons, isLoading } = useGetCoupons(store_id);
   const { mutate: deleteCoupon, isPending: isDeleting } = useDeleteCoupon();
+  const { mutate: toggleStatus } = useToggleCouponStatus();
 
-  const filtered = useMemo(() => {
+  const handleToggle = (c: Coupon) => {
+    setTogglingId(c.id);
+    toggleStatus(
+      { id: c.id, is_active: !c.is_active },
+      {
+        onSuccess: () =>
+          toast.success(
+            c.is_active ? "Coupon deactivated" : "Coupon activated"
+          ),
+        onError: (err: any) =>
+          toast.error(
+            err?.response?.data?.message || "Failed to update coupon status"
+          ),
+        onSettled: () => setTogglingId(null),
+      }
+    );
+  };
+
+  // Search + type filter, independent of the active/inactive tab.
+  const base = useMemo(() => {
     const q = search.toLowerCase();
     return (Array.isArray(coupons) ? coupons : []).filter(
       (c) =>
-        c.code.toLowerCase().includes(q) ||
-        (c.name && c.name.toLowerCase().includes(q))
+        (c.code.toLowerCase().includes(q) ||
+          (c.name && c.name.toLowerCase().includes(q))) &&
+        (typeFilter === "all" || c.coupon_type === typeFilter)
     );
-  }, [coupons, search]);
+  }, [coupons, search, typeFilter]);
+
+  const activeCount = useMemo(
+    () => base.filter((c) => c.is_active).length,
+    [base]
+  );
+  const inactiveCount = base.length - activeCount;
+
+  const filtered = useMemo(
+    () =>
+      base.filter((c) => (statusTab === "active" ? c.is_active : !c.is_active)),
+    [base, statusTab]
+  );
 
   const openAddForm = () => {
     setEditingCoupon(null);
@@ -96,6 +146,18 @@ function CouponsPage() {
                 className="pl-9 w-full sm:w-52"
               />
             </div>
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="h-9 rounded-md border border-input bg-background px-3 text-sm text-neutral-700 shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+            >
+              <option value="all">All types</option>
+              {Object.entries(TYPE_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
             <Button
               onClick={openAddForm}
               className="flex items-center gap-1 whitespace-nowrap cursor-pointer"
@@ -105,6 +167,21 @@ function CouponsPage() {
               <span className="sm:hidden">Add</span>
             </Button>
           </div>
+        </div>
+
+        {/* Active / Inactive tabs */}
+        <div className="flex-shrink-0 px-4 sm:px-5 pt-3">
+          <Tabs
+            value={statusTab}
+            onValueChange={(v) => setStatusTab(v as "active" | "inactive")}
+          >
+            <TabsList>
+              <TabsTrigger value="active">Active ({activeCount})</TabsTrigger>
+              <TabsTrigger value="inactive">
+                Inactive ({inactiveCount})
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
 
         {/* Content Table */}
@@ -155,15 +232,22 @@ function CouponsPage() {
                         {item.usage_limit ? `Limit: ${item.usage_limit}` : "Unlimited"}
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          className={
-                            item.is_active
-                              ? "bg-green-100 text-green-700 hover:bg-green-200"
-                              : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                          }
-                        >
-                          {item.is_active ? "Active" : "Inactive"}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={item.is_active}
+                            disabled={togglingId === item.id}
+                            onCheckedChange={() => handleToggle(item)}
+                          />
+                          <span
+                            className={`text-xs font-medium ${
+                              item.is_active
+                                ? "text-green-700"
+                                : "text-gray-500"
+                            }`}
+                          >
+                            {item.is_active ? "Active" : "Inactive"}
+                          </span>
+                        </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
@@ -219,15 +303,12 @@ function CouponsPage() {
                     <Badge variant="outline" className="capitalize text-[10px] font-semibold text-primary border-primary/20 bg-primary/5">
                       {item.coupon_type}
                     </Badge>
-                    <Badge
-                      className={`text-[10px] px-1.5 py-0 ${
-                        item.is_active
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-100 text-gray-500"
-                      }`}
-                    >
-                      {item.is_active ? "Active" : "Inactive"}
-                    </Badge>
+                    <Switch
+                      checked={item.is_active}
+                      disabled={togglingId === item.id}
+                      onCheckedChange={() => handleToggle(item)}
+                      className="scale-90"
+                    />
                   </div>
                   {item.name && <p className="text-xs text-neutral-500 mt-1">{item.name}</p>}
                   <p className="text-xs text-neutral-500 mt-1">
