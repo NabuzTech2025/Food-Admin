@@ -55,6 +55,7 @@ import StoreStatus from "./pages/SuperAdmin/StoreStatus/StoreStatus";
 import SuperAdminDashboard from "./pages/SuperAdmin/DashBoard/Dashboard";
 import StoreConfigPage from "./pages/SuperAdmin/StoreConfig/StoreConfig";
 import StoreConfigFormPage from "./pages/SuperAdmin/StoreConfig/StoreConfigForm";
+import ThemePresets from "./pages/SuperAdmin/Themes/ThemePresets";
 import StoreSetting from "./pages/StoreDashboard/StoreSetting";
 import ThemePalette from "./pages/StoreDashboard/ThemePalette";
 import Announcements from "./pages/StoreDashboard/Announcements";
@@ -162,6 +163,7 @@ function App() {
               <Route path="super/reservations-v2" element={<ReservationV2 />} />
               <Route path="super/device-status" element={<DeviceStatus />} />
               <Route path="super/store-status" element={<StoreStatus />} />
+              <Route path="super/theme-presets" element={<ThemePresets />} />
               <Route path="super/store-profile" element={<StoreProfile />} />
             </Route>
 

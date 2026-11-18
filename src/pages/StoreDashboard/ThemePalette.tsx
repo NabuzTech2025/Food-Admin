@@ -4,12 +4,12 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useAdminStore } from "@/context/store/useAdminStore";
-import { useGetStoreTheme, useSaveStoreTheme } from "@/hooks/useStoreTheme";
 import {
-  colorPalettes,
-  type ColorPalette,
-  type CouponColor,
-} from "@/constants/themePalettes";
+  useGetStoreTheme,
+  useGetThemePresets,
+  useSaveStoreTheme,
+} from "@/hooks/useStoreTheme";
+import type { ColorPalette, CouponColor } from "@/constants/themePalettes";
 
 const Swatch = ({ label, value }: { label: string; value: string }) => (
   <div className="flex w-14 flex-col items-center gap-1.5">
@@ -96,6 +96,8 @@ const PaletteCard = ({
 function ThemePalette() {
   const { store_id } = useAdminStore();
   const { data: theme, isLoading } = useGetStoreTheme(store_id);
+  const { data: colorPalettes = [], isLoading: presetsLoading } =
+    useGetThemePresets();
   const { mutateAsync: saveTheme, isPending } = useSaveStoreTheme();
 
   const [appliedId, setAppliedId] = useState<string | null>(null);
@@ -141,7 +143,7 @@ function ThemePalette() {
         </p>
       </div>
 
-      {isLoading ? (
+      {isLoading || presetsLoading ? (
         <div className="flex justify-center py-20">
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>

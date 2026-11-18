@@ -127,6 +127,11 @@ function AdminLayout() {
             icon: Store,
             link: "/super/store-status",
           },
+          {
+            name: "Theme Presets",
+            icon: Palette,
+            link: "/super/theme-presets",
+          },
           // Change Password intentionally NOT shown on the global Super Admin
           // dashboard — it belongs inside the per-store screen (StoreLayout.tsx).
         ]

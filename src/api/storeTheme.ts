@@ -1,5 +1,5 @@
 import axiosInstance from "@/api/axiosConfig";
-import type { CouponColor } from "@/constants/themePalettes";
+import type { ColorPalette, CouponColor } from "@/constants/themePalettes";
 
 export interface ThemeColors {
   primary: string;
@@ -22,6 +22,35 @@ export interface StoreTheme {
   };
   store_id: number;
 }
+
+// Public, no token needed. Super-admin-managed presets, sorted by the backend.
+export const getThemePresets = async (): Promise<ColorPalette[]> => {
+  const res = await axiosInstance.get(`themes/`);
+  return res.data;
+};
+
+// Super-admin only (token sent automatically by the axios interceptor).
+export const createThemePreset = async (
+  payload: ColorPalette,
+): Promise<ColorPalette> => {
+  const res = await axiosInstance.post(`superadmin/themes/`, payload);
+  return res.data;
+};
+
+export const updateThemePreset = async ({
+  id,
+  payload,
+}: {
+  id: string;
+  payload: Partial<ColorPalette>;
+}): Promise<ColorPalette> => {
+  const res = await axiosInstance.put(`superadmin/themes/${id}`, payload);
+  return res.data;
+};
+
+export const deleteThemePreset = async (id: string): Promise<void> => {
+  await axiosInstance.delete(`superadmin/themes/${id}`);
+};
 
 // Public, no token needed. Returns default colours if none saved yet.
 export const getStoreTheme = async (
