@@ -124,6 +124,18 @@ export function OrderDetailModal({
           </p>
         </div>
 
+        {/* Order Note */}
+        {order.note && order.note.trim() && (
+          <div className="border-b border-dashed border-border pb-3">
+            <p className="text-base text-neutral-600">
+              <span className="font-medium">Note:</span>{" "}
+              <span className="whitespace-pre-line italic text-neutral-500">
+                {order.note}
+              </span>
+            </p>
+          </div>
+        )}
+
         {/* Items */}
         <div className="border-b border-dashed border-border pb-3 space-y-2">
           {items.map((item) => (
