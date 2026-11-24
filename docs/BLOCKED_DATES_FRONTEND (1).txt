@@ -1,0 +1,158 @@
+BLOCKED DATES – Reservation v2 + Booking v2
+Frontend guide (for testing)
+===========================================
+
+WHAT IT IS
+----------
+The restaurant owner can block specific dates (or date ranges) so that no
+reservation / booking can be made on them. Example: "31 Dec fully booked",
+"private event 14-16 Feb".
+
+This is SEPARATE from Holidays:
+  - Holidays    = restaurant is closed (online ordering closed too). Unchanged.
+  - Blocked dates = only reservations / bookings are stopped. Ordering stays open.
+
+Replace {BASE_URL} below with the test server URL.
+Owner calls need the normal login token:  Authorization: Bearer <token>
+
+
+FIELDS
+------
+  id           int      (response only)
+  store_id     int      required
+  name         string   optional, label e.g. "Silvester - fully booked"
+  start_date   date     required, "YYYY-MM-DD"
+  end_date     date     optional, "YYYY-MM-DD". Leave out for a single day.
+                        Both dates are INCLUSIVE (start..end are all blocked).
+  applies_to   string   "all" (default) | "reservation" | "booking"
+                          all         -> blocks Reservation v2 AND Booking v2
+                          reservation -> blocks only Reservation v2 (table booking)
+                          booking     -> blocks only Booking v2 (events/packages)
+  service_id   int      optional, Booking v2 only. null = all services/packages.
+                        Set it to block only one package (e.g. only "Hochzeit").
+                        Not allowed together with applies_to = "reservation".
+  is_active    bool     default true. false = kept but not blocking.
+
+One request = one single date OR one continuous range.
+Several scattered dates (e.g. 24 Dec, 31 Dec, 14 Feb) = one POST each.
+
+
+1) LIST BLOCKED DATES  (public, no token)
+-----------------------------------------
+GET {BASE_URL}/booking-blocked-dates?store_id=43
+
+Optional query params:
+  from_date=2026-11-23     only entries that end on/after this date (use today)
+  include_inactive=true    also return is_active=false rows (owner screens)
+
+Response 200:
+[
+  {
+    "id": 1,
+    "store_id": 43,
+    "service_id": null,
+    "name": "Silvester - fully booked",
+    "start_date": "2026-12-31",
+    "end_date": "2026-12-31",
+    "applies_to": "all",
+    "is_active": true
+  }
+]
+
+Tip for the calendar: grey out every day between start_date and end_date.
+For Reservation v2 use rows with applies_to "all" or "reservation".
+For Booking v2 use rows with applies_to "all" or "booking", and service_id
+null or equal to the selected package.
+
+
+2) CREATE  (owner/admin token)
+------------------------------
+POST {BASE_URL}/booking-blocked-dates
+Content-Type: application/json
+
+a) single day, both systems:
+{
+  "store_id": 43,
+  "start_date": "2026-12-31",
+  "name": "Silvester - fully booked"
+}
+
+b) date range, only table reservations:
+{
+  "store_id": 43,
+  "start_date": "2026-12-24",
+  "end_date": "2026-12-26",
+  "applies_to": "reservation",
+  "name": "Christmas - no table bookings"
+}
+
+c) one package only (Booking v2):
+{
+  "store_id": 43,
+  "start_date": "2027-02-14",
+  "applies_to": "booking",
+  "service_id": 5,
+  "name": "No weddings on Valentine's"
+}
+
+Response 201: the created object (same shape as in the list).
+
+Errors:
+  422  end_date before start_date / wrong applies_to / service_id with "reservation"
+  400  service_id does not belong to this store
+  403  token is not owner/admin of this store
+  401  no / invalid token
+
+
+3) UPDATE  (owner/admin token)
+------------------------------
+PUT {BASE_URL}/booking-blocked-dates/{id}
+Send only the fields you want to change.
+
+{ "end_date": "2027-01-02" }
+{ "is_active": false }          <- temporarily un-block without deleting
+
+Response 200: the updated object.
+Errors: 404 not found, 400 invalid dates/applies_to, 403, 401
+
+
+4) DELETE  (owner/admin token)
+------------------------------
+DELETE {BASE_URL}/booking-blocked-dates/{id}
+Response 204 (no body).  404 if not found.
+
+
+WHAT HAPPENS ON A BLOCKED DATE
+------------------------------
+Availability (customer website):
+
+  Reservation v2:
+  GET {BASE_URL}/reservations/v2/availability?store_id=43&date=2026-12-31&party_size=2
+    -> 200 { ..., "reason": "blocked_date", "slots": [] }
+
+  Booking v2:
+  GET {BASE_URL}/bookings/v2/availability?service_id=5&date=2026-12-31&party_size=10
+    -> 200 { ..., "reason": "blocked_date", "slots": [] }
+
+  Show something like "No bookings possible on this date".
+  (Holiday days still return reason "closed_holiday" as before.)
+
+Creating a booking anyway (guest or owner, also when rescheduling):
+  POST /reservations/v2/guest, POST /reservations/v2/
+  POST /bookings/v2/guest,     POST /bookings/v2/
+    -> 409 { "detail": { "reason": "blocked_date", "available": 0, "alternatives": [] } }
+
+
+TEST CHECKLIST
+--------------
+[ ] Create a single-day block (a) -> appears in GET list
+[ ] Availability for that day returns reason "blocked_date", no slots
+[ ] Day before / after is still bookable
+[ ] Try to POST a reservation on that day -> 409 blocked_date
+[ ] Create a range (b) -> every day in the range blocked, incl. start and end
+[ ] applies_to "reservation" -> Reservation v2 blocked, Booking v2 still works
+[ ] applies_to "booking" + service_id -> only that package blocked, others work
+[ ] PUT is_active=false -> day bookable again; PUT is_active=true -> blocked again
+[ ] DELETE -> day bookable again
+[ ] Online ordering on that day is NOT affected
+[ ] Without token: GET works, POST/PUT/DELETE -> 401

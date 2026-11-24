@@ -77,6 +77,7 @@ import BookingsList from "./pages/BookingAdmin/Bookings";
 import BookingServices from "./pages/BookingAdmin/Services";
 import BookingResources from "./pages/BookingAdmin/Resources";
 import BookingBlackouts from "./pages/BookingAdmin/Blackouts";
+import BookingBlockedDates from "./pages/BookingAdmin/BlockedDates";
 import BookingSettings from "./pages/BookingAdmin/Settings";
 
 // ✅ Store-scoped page imports (create these pages as needed)
@@ -234,6 +235,7 @@ function App() {
               <Route path="services" element={<BookingServices />} />
               <Route path="resources" element={<BookingResources />} />
               <Route path="blackouts" element={<BookingBlackouts />} />
+              <Route path="blocked-dates" element={<BookingBlockedDates />} />
               <Route path="settings" element={<BookingSettings />} />
             </Route>
           </Route>

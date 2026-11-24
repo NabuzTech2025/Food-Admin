@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   CalendarCheck,
   CalendarX,
+  CalendarOff,
   PlusCircle,
   Package,
   Box,
@@ -19,6 +20,7 @@ const navItems = [
   { name: "Services", icon: Package, to: "services" },
   { name: "Resources", icon: Box, to: "resources" },
   { name: "Blackouts", icon: CalendarX, to: "blackouts" },
+  { name: "Blocked Dates", icon: CalendarOff, to: "blocked-dates" },
   { name: "Create Booking", icon: PlusCircle, to: "create" },
   { name: "Settings", icon: Settings, to: "settings" },
 ];
