@@ -1,14 +1,20 @@
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { format, parse } from "date-fns";
-import { Plus, Pencil, Trash2, CalendarOff } from "lucide-react";
+import type { DateRange } from "react-day-picker";
+import { Plus, Pencil, Trash2, CalendarOff, CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { DatePicker } from "@/components/ui/date-picker";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   Dialog,
@@ -35,6 +41,10 @@ import type { AppliesTo, BlockedDate } from "@/api/blockedDates";
 
 const ALL_SERVICES = "all";
 
+// This screen is embedded in both Booking Admin and the Reservation dashboard.
+// The mode fixes applies_to and whether the package selector is shown.
+export type BlockMode = "booking" | "reservation";
+
 const APPLIES_LABEL: Record<AppliesTo, string> = {
   all: "Reservations & Bookings",
   reservation: "Reservations only",
@@ -46,6 +56,56 @@ const dateLabel = (b: BlockedDate) =>
   b.end_date && b.end_date !== b.start_date
     ? `${fmt(b.start_date)} – ${fmt(b.end_date)}`
     : fmt(b.start_date);
+
+const toDate = (s: string) =>
+  s ? parse(s, "yyyy-MM-dd", new Date()) : undefined;
+const toStr = (d?: Date) => (d ? format(d, "yyyy-MM-dd") : "");
+
+// One calendar for a single day or a range. Click one day for a single date,
+// or a start + end day for a range. Writes back yyyy-MM-dd strings.
+function DateRangePicker({
+  start,
+  end,
+  onChange,
+}: {
+  start: string;
+  end: string;
+  onChange: (start: string, end: string) => void;
+}) {
+  const from = toDate(start);
+  const to = toDate(end);
+  const range: DateRange | undefined = from ? { from, to } : undefined;
+
+  const label = !from
+    ? "Pick a date or range"
+    : to && end !== start
+      ? `${format(from, "PP")} – ${format(to, "PP")}`
+      : format(from, "PP");
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full justify-start font-normal"
+        >
+          <CalendarIcon className="w-4 h-4 mr-2 text-muted-foreground" />
+          {from ? label : <span className="text-muted-foreground">{label}</span>}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar
+          mode="range"
+          selected={range}
+          onSelect={(r) => onChange(toStr(r?.from), toStr(r?.to))}
+          numberOfMonths={2}
+          autoFocus
+        />
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 type FormValues = {
   name: string;
@@ -66,20 +126,24 @@ const defaultsFrom = (b: BlockedDate | null): FormValues => ({
 function BlockedDateForm({
   storeId,
   blockedDate,
+  mode,
   onClose,
 }: {
   storeId: number;
   blockedDate: BlockedDate | null;
+  mode: BlockMode;
   onClose: () => void;
 }) {
   const { data: services = [] } = useServices(storeId, true);
   const create = useCreateBlockedDate();
   const update = useUpdateBlockedDate();
   const isEdit = !!blockedDate;
+  const isBooking = mode === "booking";
 
   const { control, register, handleSubmit, watch, setValue } =
     useForm<FormValues>({ defaultValues: defaultsFrom(blockedDate) });
 
+  const startDate = watch("start_date");
   const endDate = watch("end_date");
 
   const onSubmit = (v: FormValues) => {
@@ -91,9 +155,9 @@ function BlockedDateForm({
       toast.error("End date must be on or after the start date");
       return;
     }
-    // This screen only ever blocks Booking v2. null service_id = all packages.
+    // service_id is Booking v2 only (not allowed with "reservation").
     const service_id =
-      v.service_id !== ALL_SERVICES ? Number(v.service_id) : null;
+      isBooking && v.service_id !== ALL_SERVICES ? Number(v.service_id) : null;
 
     if (isEdit) {
       update.mutate(
@@ -103,7 +167,7 @@ function BlockedDateForm({
             name: v.name.trim() || null,
             start_date: v.start_date,
             end_date: v.end_date || null,
-            applies_to: "booking",
+            applies_to: mode,
             service_id,
             is_active: v.is_active,
           },
@@ -117,7 +181,7 @@ function BlockedDateForm({
           name: v.name.trim() || undefined,
           start_date: v.start_date,
           end_date: v.end_date || undefined,
-          applies_to: "booking",
+          applies_to: mode,
           service_id,
           is_active: v.is_active,
         },
@@ -145,84 +209,70 @@ function BlockedDateForm({
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <Label>Start date</Label>
-            <Controller
-              control={control}
-              name="start_date"
-              render={({ field }) => (
-                <DatePicker
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="Pick a date"
-                />
-              )}
-            />
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <Label>Date / Range</Label>
+            {startDate && (
+              <button
+                type="button"
+                onClick={() => {
+                  setValue("start_date", "");
+                  setValue("end_date", "");
+                }}
+                className="text-xs text-muted-foreground hover:text-destructive"
+              >
+                Clear
+              </button>
+            )}
           </div>
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <Label>End date (optional)</Label>
-              {endDate && (
-                <button
-                  type="button"
-                  onClick={() => setValue("end_date", "")}
-                  className="text-xs text-muted-foreground hover:text-destructive"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-            <Controller
-              control={control}
-              name="end_date"
-              render={({ field }) => (
-                <DatePicker
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="Single day"
-                />
-              )}
-            />
-          </div>
+          <DateRangePicker
+            start={startDate}
+            end={endDate}
+            onChange={(s, e) => {
+              setValue("start_date", s);
+              setValue("end_date", e);
+            }}
+          />
+          <p className="text-xs text-muted-foreground">
+            Click one day for a single date, or a start and end day for a range.
+            Both dates are inclusive.
+          </p>
         </div>
-        <p className="text-xs text-muted-foreground -mt-2">
-          Leave the end date empty to block a single day. Both dates are
-          inclusive.
-        </p>
 
         <div className="space-y-1.5">
           <Label>Applies to</Label>
           <div className="flex h-9 items-center rounded-md border border-input bg-muted px-3 text-sm text-muted-foreground">
-            {APPLIES_LABEL.booking}
+            {APPLIES_LABEL[mode]}
           </div>
         </div>
 
-        <div className="space-y-1.5">
-          <Label>Package</Label>
-          <Controller
-            control={control}
-            name="service_id"
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="All packages" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={ALL_SERVICES}>All packages</SelectItem>
-                  {services.map((s) => (
-                    <SelectItem key={s.id} value={String(s.id)}>
-                      {s.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          <p className="text-xs text-muted-foreground">
-            Leave as “All packages” to block every package that day.
-          </p>
-        </div>
+        {isBooking && (
+          <div className="space-y-1.5">
+            <Label>Package</Label>
+            <Controller
+              control={control}
+              name="service_id"
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="All packages" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ALL_SERVICES}>All packages</SelectItem>
+                    {services.map((s) => (
+                      <SelectItem key={s.id} value={String(s.id)}>
+                        {s.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <p className="text-xs text-muted-foreground">
+              Leave as “All packages” to block every package that day.
+            </p>
+          </div>
+        )}
 
         <div className="flex items-center justify-between">
           <Label>Active</Label>
@@ -248,11 +298,16 @@ function BlockedDateForm({
   );
 }
 
-function BlockedDates() {
+function BlockedDates({ mode = "booking" }: { mode?: BlockMode }) {
   const storeId = useBookingStoreId();
-  const { data: blocked = [], isLoading } = useBlockedDates(storeId);
+  const { data: allBlocked = [], isLoading } = useBlockedDates(storeId);
   const { data: services = [] } = useServices(storeId, true);
   const del = useDeleteBlockedDate();
+
+  // Show rows relevant to this screen: this mode's rows plus "all" rows.
+  const blocked = allBlocked.filter(
+    (b) => b.applies_to === mode || b.applies_to === "all",
+  );
 
   const serviceName = (id: number | null) =>
     id == null
@@ -355,6 +410,7 @@ function BlockedDates() {
               key={editing?.id ?? "new"}
               storeId={storeId}
               blockedDate={editing}
+              mode={mode}
               onClose={() => setFormOpen(false)}
             />
           )}

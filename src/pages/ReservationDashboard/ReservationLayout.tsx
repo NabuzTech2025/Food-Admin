@@ -5,6 +5,7 @@ import { useReservationStoreId } from "@/hooks/useReservationV2";
 import {
   LayoutDashboard,
   CalendarCheck,
+  CalendarOff,
   Settings,
   Utensils,
   X,
@@ -15,6 +16,7 @@ import { NavLink, Outlet, useLocation } from "react-router-dom";
 const navItems = [
   { name: "Overview", icon: LayoutDashboard, to: "overview" },
   { name: "Bookings", icon: CalendarCheck, to: "bookings" },
+  { name: "Blocked Dates", icon: CalendarOff, to: "blocked-dates" },
   { name: "Settings", icon: Settings, to: "settings" },
 ];
 

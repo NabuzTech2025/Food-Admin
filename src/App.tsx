@@ -215,6 +215,10 @@ function App() {
               <Route index element={<Navigate to="overview" replace />} />
               <Route path="overview" element={<ReservationOverview />} />
               <Route path="bookings" element={<ReservationBookings />} />
+              <Route
+                path="blocked-dates"
+                element={<BookingBlockedDates mode="reservation" />}
+              />
               <Route path="settings" element={<ReservationSettings />} />
             </Route>
 
@@ -223,6 +227,10 @@ function App() {
               <Route index element={<Navigate to="overview" replace />} />
               <Route path="overview" element={<ReservationOverview />} />
               <Route path="bookings" element={<ReservationBookings />} />
+              <Route
+                path="blocked-dates"
+                element={<BookingBlockedDates mode="reservation" />}
+              />
               <Route path="settings" element={<ReservationSettings />} />
             </Route>
 
